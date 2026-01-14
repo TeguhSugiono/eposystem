@@ -1,0 +1,67 @@
+<div class="span12">          
+  <div class="widget ">
+    <div class="widget-header">
+      <i class="icon-user"></i>
+      <h3>Your Account</h3>
+    </div> <!-- /widget-header -->
+
+    <div class="widget-content">
+      <div class="tabbable">
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a href="#formcontrols" data-toggle="tab"><label><b>Table Cargo IN</b></label></a>
+          </li>
+          <li ><a href="#jscontrols" data-toggle="tab">JS Controls</a></li>
+        </ul>
+    
+      <br>
+    
+        <div class="tab-content">
+          <div class="tab-pane active" id="formcontrols">
+
+            <div class="span12" style="margin-top: -20px; margin-left: -16px;">
+              <div class="widget widget-nopad">
+                    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+                       <div id="table"></div>
+                    </div>
+                  
+              </div>
+               <div class="spinner" style="display:none; height: 200px;" align="center">
+                <img id="img-spinner" src="<?=base_url();?>assets/gift/loader2.gif" width="200">
+              </div>
+            </div>
+
+          </div>
+          
+          <div class="tab-pane " id="jscontrols" >
+            <div class="span12" style="margin-top: -20px; margin-left: -16px;">
+
+              <label class="span1" style="text-align: left;"><b>No.&nbsp;BC&nbsp;1.1</b></label>
+              <div class="span2">
+                <input type="text" class="span2" name="nobc11"  >
+              </div>
+
+            <label class="span1" style="text-align: left;"><b>Pos.&nbsp;BC&nbsp;1.1</b></label>
+              <div class="span2">
+                <input type="text" class="span2" name="posbc11"  >
+              </div>
+
+            <label class="span1" style="text-align: left;"><b>No.&nbsp;BCF&nbsp;1.5</b></label>
+              <div class="span2">
+                <input type="text" class="span2" name="nobcf15"  >
+              </div>
+
+            <label class="span2" style="text-align:left;"></label>
+            <label class="span1" style="text-align: left;"><b>Tgl.&nbsp;BCF</b></label>
+              <div class="span2">
+                <input type="text" class="span2 date-picker" name="tglbcf" data-date-format="dd M yyyy">
+              </div>
+          </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

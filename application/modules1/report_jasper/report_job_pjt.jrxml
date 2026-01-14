@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_job_pjt" pageWidth="470" pageHeight="470" whenNoDataType="AllSectionsNoDetail" columnWidth="470" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="656830e8-51ee-4fa4-b340-eaa78b46ba6f">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="45"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="nojob" class="java.lang.String"/>
+	<parameter name="jam" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+pibk,DATE_FORMAT(tglpibk,'%d-%m-%Y') as tglpibk,
+nmimportir,CONCAT(nocontainer,'/',size,"'") as nocontainer,
+asalbarang,concat('sd',' ',DATE_FORMAT(DATE_ADD(tgljob, INTERVAL 2 DAY),'%d-%m-%Y')) as 'masaberlaku',
+CONCAT('Surabaya ',', ',DATE_FORMAT(tgljob,'%d-%m-%Y')) as tgljob
+FROM pjt_check_container
+where aktif=0 and nojob = $P{nojob}]]>
+	</queryString>
+	<field name="pibk" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tglpibk" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nmimportir" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nocontainer" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="asalbarang" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="masaberlaku" class="java.lang.String"/>
+	<field name="tgljob" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="279" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-3" x="17" y="32" width="253" height="13" uuid="26a14131-4b8d-4df0-ad05-f688ea74d49a"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Jl. Kalianak No. 65, Surabaya]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-6" x="17" y="15" width="253" height="18" uuid="e1463484-347f-41fc-a897-c14d0627e8a0"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[PT. MULTI BINTANG ABADI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="17" y="44" width="253" height="12" uuid="bf83afb6-4fe1-452b-a310-79921c30402d"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Phone: (62-31) 7492739, Fax: (62-31) 7483841]]></text>
+			</staticText>
+			<line>
+				<reportElement x="17" y="73" width="428" height="1" uuid="5313629b-239c-430d-8067-a7ad83be8346"/>
+			</line>
+			<line>
+				<reportElement x="18" y="95" width="427" height="1" uuid="6aa2dec1-c0bc-4b73-82f6-527a8a42f9f9"/>
+			</line>
+			<staticText>
+				<reportElement key="staticText-3" x="314" y="60" width="66" height="13" uuid="cb5d2afb-4763-4492-bd76-bc189d12a6c7"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[No. Urut JOB : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="380" y="60" width="65" height="13" uuid="0e080dee-3bb0-4625-b04f-e0c48ddd1ae6"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nojob}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="18" y="119" width="427" height="1" uuid="aca6c788-627f-4026-951c-2503d06e4247"/>
+			</line>
+			<line>
+				<reportElement key="line-3" x="17" y="74" width="1" height="186" uuid="b6005cfa-b7ef-44ad-804d-a2d513412ed1"/>
+			</line>
+			<line>
+				<reportElement key="line-3" x="444" y="74" width="1" height="186" uuid="da9d30e0-ebb0-4311-9054-723175baba39"/>
+			</line>
+			<staticText>
+				<reportElement x="18" y="77" width="426" height="15" uuid="aa6d6eca-6c19-4c76-ab01-a3c0c8dfbe6a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[JOB PEMERIKSAAN PJT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="17" y="99" width="427" height="15" uuid="9061258c-d74a-477a-8488-0e2d0097a4e0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[TPS MBA (PJT)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="18" y="212" width="427" height="1" uuid="555cad38-33dc-4a33-a2ee-a6b83268c893"/>
+			</line>
+			<staticText>
+				<reportElement x="21" y="124" width="132" height="12" uuid="d2b63cf7-9100-4c2f-8789-7aad25b6446c"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[NO PIBK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="138" width="132" height="12" uuid="1fe01ff7-8434-44fb-9969-d52d057dc05f"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[TANGGAL / JAM PIBK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="153" width="132" height="12" uuid="ff5b1585-6744-4c2b-be4b-360653da2fed"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[NAMA IMPORTIR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="167" width="132" height="12" uuid="1f4f42df-72bf-48b9-8d65-47e2d785be10"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[NOMER KONTAINER / UK']]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="182" width="132" height="12" uuid="b797e612-ee15-4a6a-867d-81b6cf08e9c8"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[NEGARA ASAL BARANG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="196" width="132" height="12" uuid="614aa468-c69c-43c6-9eec-c5aa4805d87a"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[JOB BERLAKU (MAX 3 HARI)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="154" y="124" width="11" height="12" uuid="ec2e6d13-4489-47ce-972e-9f230e60893f"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="154" y="138" width="11" height="12" uuid="92cf84cd-c358-4c3a-bdbb-9a8325a26c2d"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="154" y="153" width="11" height="12" uuid="8c410a26-5d42-49fc-a29a-33a8259f3359"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="154" y="167" width="11" height="12" uuid="87c15927-49e5-4843-80ae-10f667654b7b"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="154" y="182" width="11" height="12" uuid="3c70c1f7-d8d2-4560-8a3a-4f45033f0947"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="154" y="196" width="11" height="12" uuid="61840ac9-e9cd-4f1d-92e8-bccc3c01831c"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="166" y="124" width="278" height="12" uuid="65ce57aa-e671-4295-bca9-48fdda183ad7"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pibk}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="167" y="138" width="278" height="12" uuid="49120762-0ed0-4b30-ad1a-f7e5ca136cf3"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tglpibk}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="167" y="153" width="278" height="12" uuid="8eab1ce8-61e8-44bd-ab3c-51a3aed117a0"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nmimportir}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="167" y="167" width="278" height="12" uuid="1ca23f5f-f6ce-421b-be8b-df392fa97b90"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nocontainer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="167" y="182" width="278" height="12" uuid="7788f9e4-3cd6-4aba-9b0b-98bfc6ecdcf0"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{asalbarang}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="167" y="196" width="278" height="12" uuid="f0ff9871-9661-4347-a309-cbf2b0bd9ea3"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{masaberlaku}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="22" y="216" width="132" height="12" uuid="d3e857ad-7e18-47e6-a648-098a531783fb"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tgljob}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="18" y="259" width="427" height="1" uuid="f0843f2c-a32e-4d44-91e9-c69034e11b64"/>
+			</line>
+			<textField>
+				<reportElement x="56" y="230" width="98" height="12" uuid="fb8eba17-72ba-4c16-993b-b5b88c8038ad"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{jam}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="22" y="230" width="23" height="12" uuid="0683559d-ba70-4571-925a-d5571be2ead3"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Jam]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="45" y="230" width="11" height="12" uuid="5f54c5ff-2352-4929-a4ab-f3b9969f0c18"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="246" width="132" height="12" uuid="24395742-df2a-40ad-b5e0-d6d135c6f830"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[PT. Multi Bintang Abadi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="264" width="90" height="12" uuid="0397da91-da98-4a5d-aa42-5d2e17bfb410"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Kep. Gudang]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

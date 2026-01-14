@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_daily_movement_in" language="groovy" pageWidth="595" pageHeight="803" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="1db6f2a1-7ef2-42d0-9a68-a3a5cf7a50d2">
+	<property name="ireport.zoom" value="2.6573415000000016"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="startdate" class="java.util.Date"/>
+	<parameter name="enddate" class="java.util.Date"/>
+	<parameter name="subreport_status" class="java.lang.String"/>
+	<parameter name="subreport_size" class="java.lang.String"/>
+	<parameter name="subreport_condition" class="java.lang.String"/>
+	<parameter name="subreport_beg" class="java.lang.String"/>
+	<parameter name="subreport_masuk" class="java.lang.String"/>
+	<parameter name="subreport_out" class="java.lang.String"/>
+	<parameter name="subreport_total" class="java.lang.String"/>
+	<parameter name="garis" class="java.lang.String"/>
+	<parameter name="principal" class="java.lang.String"/>
+	<parameter name="name_principal" class="java.lang.String"/>
+	<parameter name="subreport_begT" class="java.lang.String"/>
+	<parameter name="garisbawah" class="java.lang.String"/>
+	<parameter name="subreport_masukT" class="java.lang.String"/>
+	<parameter name="subreport_outT" class="java.lang.String"/>
+	<parameter name="subreport_totalT" class="java.lang.String"/>
+	<parameter name="grandtotal" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="171">
+			<staticText>
+				<reportElement uuid="ba277804-a34f-471a-9145-2468729ab5d0" key="staticText-5" x="3" y="47" width="84" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Principal                   :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="9a4408c7-a264-42ee-8352-192aa75dd46e" x="62" y="101" width="40" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_size}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="090284bd-8b3a-489b-800a-a6d5279ecf19" key="staticText-3" x="3" y="61" width="350" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[=========================================================================]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="090284bd-8b3a-489b-800a-a6d5279ecf19" key="staticText-3" x="3" y="88" width="350" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[=========================================================================]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cf950e40-0375-49e3-aae9-882f5336a7db" key="staticText-2" x="3" y="34" width="84" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Stock Periode          :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="50b16809-6083-42dc-a053-42c61aec7d53" x="110" y="101" width="56" height="13"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_condition}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="453c50d4-efd8-4992-b98c-7ed93c81ab60" x="3" y="101" width="56" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_status}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5d78e602-67dd-4d06-bb72-be8f3f176021" key="staticText-11" x="3" y="75" width="56" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[STATUS]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d11e663-9548-41f9-ae0c-95f0c0ddc20a" x="167" y="101" width="40" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_beg}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f0a4c276-d5bc-4dcb-b5ae-8c0d0c3f5289" key="staticText-12" x="62" y="75" width="40" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[SIZE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="64c71e71-e7ce-4eb6-9a4c-439d98fbae69" key="staticText-20" x="3" y="20" width="157" height="15"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CONTAINER STOCK RECAPITULATION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a87f2e2b-15e2-463a-a8e7-06eed6990d0d" key="staticText-9" x="137" y="34" width="14" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[to]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8ff51745-42e2-42ab-9f04-c0031ee347fe" key="staticText-13" x="112" y="75" width="57" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CONDITION]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2a9e78cd-cb91-4e9a-953c-6c738bb67311" x="3" y="101" width="350" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{garis}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6b42b185-d992-40fc-b331-697755a8820e" key="staticText-17" x="177" y="74" width="34" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[BEG]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="d7f18e9d-d7b1-4a89-bb9c-af9045d704eb" key="line-8" x="171" y="69" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement uuid="8c4b5710-6f97-4b8e-996e-813c3b01e243" key="line-3" x="59" y="69" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement uuid="de7c54ce-a0d8-47cd-b9d3-1e616b3e1c0f" key="line-4" x="105" y="69" width="1" height="23"/>
+			</line>
+			<staticText>
+				<reportElement uuid="4d63e432-3907-46ac-a248-361ebfe90272" x="3" y="5" width="230" height="13"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PT. MULTI BINTANG ABADI]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="dfea58ec-728b-44e9-9239-acf59888ee2a" x="87" y="35" width="50" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{startdate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eb762746-55bf-4610-97ef-5e705410b677" x="151" y="35" width="50" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{enddate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="45bc2365-070c-4f8b-a0dd-0cd098bf9a80" x="87" y="48" width="170" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{principal} + "    " + $P{name_principal}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="d7f18e9d-d7b1-4a89-bb9c-af9045d704eb" key="line-8" x="212" y="69" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement uuid="d7f18e9d-d7b1-4a89-bb9c-af9045d704eb" key="line-8" x="294" y="69" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement uuid="d7f18e9d-d7b1-4a89-bb9c-af9045d704eb" key="line-8" x="253" y="69" width="1" height="23"/>
+			</line>
+			<staticText>
+				<reportElement uuid="6b42b185-d992-40fc-b331-697755a8820e" key="staticText-17" x="218" y="74" width="34" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[IN]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d11e663-9548-41f9-ae0c-95f0c0ddc20a" x="209" y="101" width="40" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_masuk}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6b42b185-d992-40fc-b331-697755a8820e" key="staticText-17" x="259" y="74" width="34" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[OUT]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d11e663-9548-41f9-ae0c-95f0c0ddc20a" x="249" y="101" width="40" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_out}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6b42b185-d992-40fc-b331-697755a8820e" key="staticText-17" x="299" y="74" width="54" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d11e663-9548-41f9-ae0c-95f0c0ddc20a" x="289" y="101" width="40" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_total}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d11e663-9548-41f9-ae0c-95f0c0ddc20a" x="167" y="101" width="40" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_begT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d11e663-9548-41f9-ae0c-95f0c0ddc20a" x="209" y="101" width="40" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_masukT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d11e663-9548-41f9-ae0c-95f0c0ddc20a" x="249" y="101" width="40" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_outT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d11e663-9548-41f9-ae0c-95f0c0ddc20a" x="289" y="101" width="40" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subreport_totalT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d11e663-9548-41f9-ae0c-95f0c0ddc20a" x="3" y="101" width="148" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{grandtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2a9e78cd-cb91-4e9a-953c-6c738bb67311" x="3" y="101" width="350" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{garisbawah}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

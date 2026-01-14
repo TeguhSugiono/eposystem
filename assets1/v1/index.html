@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Dashboard Lengkap - Horizontal Menu</title>
+    <link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <div class="nav-brand">
+                <a href="#" class="brand-link" data-page="dashboard">
+                    <i class="fa fa-cube"></i> 
+                    <span>Dashboard</span>
+                </a>
+            </div>
+            
+            <!-- Horizontal Menu -->
+            <nav class="horizontal-nav">
+                <ul class="nav-menu">
+                    <!-- Menu Level 1 -->
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="dashboard">
+                            <i class="fa fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Menu Level 1 dengan Submenu -->
+                    <li class="nav-item has-dropdown">
+                        <a href="#" class="nav-link">
+                            <i class="fa fa-users"></i>
+                            <span>Manajemen User</span>
+                            <i class="fa fa-chevron-down dropdown-arrow"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item">
+                                <a href="#" class="dropdown-link" data-page="user-list">
+                                    <i class="fa fa-list"></i>
+                                    <span>Daftar User</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item has-submenu">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fa fa-user-plus"></i>
+                                    <span>Tambah User</span>
+                                    <i class="fa fa-chevron-right submenu-arrow"></i>
+                                </a>
+                                <ul class="dropdown-menu submenu-level-2">
+                                    <li class="dropdown-item">
+                                        <a href="#" class="dropdown-link" data-page="add-admin">
+                                            <i class="fa fa-user-shield"></i>
+                                            <span>Admin</span>
+                                        </a>
+                                    </li>
+                                    <li class="dropdown-item">
+                                        <a href="#" class="dropdown-link" data-page="add-member">
+                                            <i class="fa fa-user"></i>
+                                            <span>Member</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="#" class="dropdown-link" data-page="user-roles">
+                                    <i class="fa fa-user-tag"></i>
+                                    <span>Role & Permission</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Menu Level 1 dengan Submenu Lain -->
+                    <li class="nav-item has-dropdown">
+                        <a href="#" class="nav-link">
+                            <i class="fa fa-chart-bar"></i>
+                            <span>Laporan</span>
+                            <i class="fa fa-chevron-down dropdown-arrow"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item">
+                                <a href="#" class="dropdown-link" data-page="sales-report">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Laporan Penjualan</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item has-submenu">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fa fa-file-invoice"></i>
+                                    <span>Keuangan</span>
+                                    <i class="fa fa-chevron-right submenu-arrow"></i>
+                                </a>
+                                <ul class="dropdown-menu submenu-level-2">
+                                    <li class="dropdown-item">
+                                        <a href="#" class="dropdown-link" data-page="income">
+                                            <i class="fa fa-arrow-up"></i>
+                                            <span>Pemasukan</span>
+                                        </a>
+                                    </li>
+                                    <li class="dropdown-item">
+                                        <a href="#" class="dropdown-link" data-page="expense">
+                                            <i class="fa fa-arrow-down"></i>
+                                            <span>Pengeluaran</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Menu Level 1 Lain -->
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="settings">
+                            <i class="fa fa-cog"></i>
+                            <span>Pengaturan</span>
+                        </a>
+                    </li>
+					
+					<li class="nav-item">
+                        <a href="#" class="nav-link" data-page="settings">
+                            <i class="fa fa-cog"></i>
+                            <span>test1</span>
+                        </a>
+                    </li>
+					
+					<li class="nav-item">
+                        <a href="#" class="nav-link" data-page="settings">
+                            <i class="fa fa-cog"></i>
+                            <span>test2</span>
+                        </a>
+                    </li>
+					
+                </ul>
+            </nav>
+            
+            <!-- Action Buttons -->
+            <div class="nav-actions">
+                <button class="btn btn-primary" onclick="openModal('modal1')">
+                    <i class="fa fa-plus"></i> Modal Demo
+                </button>
+                <button class="btn btn-secondary" onclick="openModal('modalNested')">
+                    <i class="fasfa-layer-group"></i> Nested Modal
+                </button>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1 id="pageTitle">Dashboard</h1>
+                <div class="breadcrumb">
+                    <span id="breadcrumbPath">Dashboard</span>
+                </div>
+            </div>
+            
+            <div class="content-area" id="contentArea">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p class="footer-text">
+                    <span class="footer-brand">ePO System</span> - 
+                    <span class="footer-description">Electronic Purchasing Order System</span>
+                </p>
+                <div class="footer-divider"></div>
+                <p class="footer-copyright">
+                    © 2024 ePO System. All rights reserved.
+                </p>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+        <div class="mobile-menu">
+            <div class="mobile-menu-header">
+                <a href="#" class="brand-link" data-page="dashboard">
+                    <i class="fa fa-cube"></i> 
+                    <span>Dashboard</span>
+                </a>
+                <button class="mobile-menu-close" id="mobileMenuClose">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <nav class="mobile-nav">
+                <!-- Mobile menu items will be cloned here -->
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Modal Templates -->
+    <div id="modalContainer"></div>
+    
+    <!-- Scripts -->
+    <script src="script_old.js"></script>
+</body>
+</html>

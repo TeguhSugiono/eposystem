@@ -1,0 +1,85 @@
+@media (max-width: 768px) {
+    /* div.dataTables_scrollHead {
+        display: none !important;
+    }
+
+    div.dataTables_scrollBody {
+        overflow-x: hidden !important;
+    }
+
+    #tblrequestpo thead {
+        display: none;
+    }
+
+    #tblrequestpo,
+    #tblrequestpo tbody,
+    #tblrequestpo tr,
+    #tblrequestpo td {
+        display: block;
+        width: 100%;
+    }*/
+
+
+    /* #tblrequestpo tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px;
+        display: block;
+        width: 100%;
+        background-color: #f9fbfc !important;
+    } */
+
+    /*
+    #tblrequestpo td {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 8px;
+        border: none !important;
+        border-bottom: 1px solid #eee !important;
+        text-align: right;
+        background-color: transparent !important;
+        color: #333333 !important;
+        font-weight: 500;
+    } */
+
+
+    /* table tr.selected {
+        background-color: #053c42 !important;
+    }
+
+
+    table tr.selected td {
+        color: #ffffff !important;
+        border-bottom: 1px solid #064e56 !important;
+    }
+
+
+    table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        text-align: left;
+        flex: 1;
+        padding-right: 10px;
+        color: #555;
+
+    }
+
+
+    table tr.selected td::before {
+        color: #b3e5fc !important;
+    }
+
+
+
+    table tr.selected td::before {
+        color: #e5ffe9 !important;
+    }
+
+    table tr:not(.selected):hover {
+        background-color: #eef6ff !important; */
+    }
+
+
+    
+}
