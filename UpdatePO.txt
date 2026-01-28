@@ -1,0 +1,2 @@
+1. Po yang sudah direquest , bisa langsung dibatalkan (Ditarik Kembali) Oleh user sebelum data PO tersebut di Hold/Accept/Reject Oleh Pak Helmi
+2. 

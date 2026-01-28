@@ -101,6 +101,10 @@
                         class="btn btn-sm btn-primary" title="Edit">
                         <i class="fa fa-edit"></i>
                         </a>
+                        <button type="button" onclick="BatalRequest('${row.id_request}', '${nopo}')" 
+                        class="btn btn-sm btn-primary" title="Batal Request">
+                        <i class="fa fa-window-close"></i>
+                        </button>
                         <button type="button" onclick="hapusData('${row.id_request}', '${nopo}')" 
                         class="btn btn-sm btn-primary" title="Hapus">
                         <i class="fa fa-trash"></i>
@@ -170,7 +174,7 @@
                     "render": function(data, type, row) {
 
                         if (type === 'display') {
-                            return formatNumberSeparator(row.grandtotal);
+                            return formatNumberNotSeparator(row.grandtotal);
                         }
 
                         return row.grandtotal;
@@ -208,9 +212,11 @@
                     "render": function(data, type, row) {
 
                         if (row.acc_manager == "Y") {
-                            return ` <i class="fa fa-check"></i>`;
-                        } else if (row.acc_manager == "N") {
-                            return '<i class="fa fa-window-close"></i>';
+                            return ` <i class="fa fa-check" title="Accept"></i>`;
+                        } else if (row.acc_manager == "R") {
+                            return '<i class="fa fa-window-close" title="Reject"></i>';
+                        } else if (row.acc_manager == "H") {
+                            return '<i class="fa fa-hand-paper" title="Hold"></i>';
                         }
 
                         return row.acc_manager;
@@ -319,7 +325,7 @@
             "order": [],
             "ordering": true,
             "scrollX": true,
-            "scrollY": "380px",
+            "scrollY": "500px",
             "scrollCollapse": true,
             "searching": true,
             "bLengthChange": true,
@@ -404,11 +410,11 @@
 
     function SendData(id_request, nopo) {
 
-        var Informasi = "Peringatan Data Yang Sudah Dikirim Untuk Proses Persetujuan " + "\n" +
-            "Data No Po Tersebut Sudah Tidak Akan Bisa Di edit " + "\n" +
-            "Pastikan Data Yang Akan dikirim Sudah Benar";
+        // var Informasi = "Peringatan Data Yang Sudah Dikirim Untuk Proses Persetujuan " + "\n" +
+        //     "Data No Po Tersebut Sudah Tidak Akan Bisa Di edit " + "\n" +
+        //     "Pastikan Data Yang Akan dikirim Sudah Benar";
 
-        alert(Informasi);
+        // alert(Informasi);
 
 
         var jawab = confirm(
@@ -429,24 +435,29 @@
             pesan = 'function send_approve data gagal... 😢';
             dataok = multi_ajax_proses(url, data, pesan);
 
+            // console.log(dataok);
+            // return;
+
             if (dataok.msg != 'Ya') {
                 alert(dataok.pesan);
                 return false;
+            } else {
+                alert(dataok.pesan);
+                tblrequestpo.ajax.reload(null, false);
             }
 
-            url = '<?php echo site_url('dashboard/sendEmail') ?>';
-            data = {
-                id_request: id_request
-            };
-            pesan = 'function sendEmail gagal... 😢';
-            dataok1 = multi_ajax_proses(url, data, pesan);
+            // url = '<-?php echo site_url('dashboard/sendEmail') ?>';
+            // data = {
+            //     id_request: id_request
+            // };
+            // pesan = 'function sendEmail gagal... 😢';
+            // dataok1 = multi_ajax_proses(url, data, pesan);
 
         } else {
             return false;
         }
 
-        alert(dataok.pesan);
-        tblrequestpo.ajax.reload(null, false);
+
     }
 
     function hapusData(id_request, nopo) {
@@ -465,6 +476,38 @@
                 id_request: id_request
             };
             pesan = 'function delete data gagal... 😢';
+            dataok = multi_ajax_proses(url, data, pesan);
+
+            if (dataok.msg != 'Ya') {
+                alert(dataok.pesan);
+                return false;
+            }
+
+        } else {
+            return false;
+        }
+
+        alert(dataok.pesan);
+        tblrequestpo.ajax.reload(null, false);
+    }
+
+    function BatalRequest(id_request, nopo) {
+        var jawab = confirm(
+            "YAKIN MAU BATALKAN REQUEST DATA INI?\n\n" +
+            "Kode Request : " + id_request + "\n" +
+            "No PO  : " + nopo + "\n\n" +
+            "😢 Klik Ok untuk batal request!"
+        );
+
+        var dataok;
+
+        if (jawab === true) {
+            url = '<?php echo site_url('request_po/request_batal') ?>';
+            data = {
+                id_request: id_request,
+                nopo: nopo
+            };
+            pesan = 'function request_batal gagal... 😢';
             dataok = multi_ajax_proses(url, data, pesan);
 
             if (dataok.msg != 'Ya') {

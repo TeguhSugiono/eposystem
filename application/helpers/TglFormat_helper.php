@@ -60,6 +60,16 @@ if (!function_exists('format_dolar')) {
     }
 }
 
+if (!function_exists('format_dolar_nol')) {
+
+    function format_dolar_nol($number)
+    {
+        $clean_angka = str_replace(',', '', $number);
+        return number_format((float)$clean_angka, 0, '.', ',');
+        // Output: 555,000
+    }
+}
+
 if (!function_exists('quotStr')) {
     function quotStr($string)
     {

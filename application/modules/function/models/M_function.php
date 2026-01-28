@@ -5,6 +5,9 @@ date_default_timezone_set('Asia/Jakarta');
 //use PhpOffice\PhpSpreadsheet\Spreadsheet;
 //use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+
 class M_function extends CI_Model
 {
 
@@ -358,5 +361,57 @@ class M_function extends CI_Model
         }
 
         return $this->$Database->delete($Table);
+    }
+
+    function CreateLinkManager($email_manager)
+    {
+        $this->load->library('custom_encrypt');
+
+        $ParamArray = array(
+            'Table' => 'masteruser',
+            'WhereData' => array('email' => $email_manager),
+            'Field' => 'password_hash',
+        );
+
+        $password_hash = $this->m_function->check_value($ParamArray);
+
+        $CI = &get_instance();
+
+        $custom_id = $CI->config->item('encryption_key');
+        $data_email = $email_manager;
+        $data_password = $password_hash;
+        $Date = tanggal_sekarang();
+        $delimiter = "::";
+        $combined_data = $data_email . $delimiter . $custom_id . $delimiter . $data_password . $delimiter . $Date;
+
+        $id = $combined_data;
+
+        $enkripsi = $this->custom_encrypt->encode($id);
+
+        $dekripsi = $this->custom_encrypt->decode($enkripsi);
+
+        return $enkripsi;
+    }
+
+
+    function shortenUrl($longUrl)
+    {
+        $apiUrl = 'https://is.gd/create.php?format=simple&url=' . urlencode($longUrl);
+
+        $client = new Client(['timeout' => 10]);
+
+        try {
+            $response = $client->get($apiUrl);
+            if ($response->getStatusCode() === 200) {
+                $shortUrl = trim((string) $response->getBody());
+                if (filter_var($shortUrl, FILTER_VALIDATE_URL)) {
+                    return $shortUrl;
+                }
+            }
+        } catch (Exception $e) {
+            // fallback
+        }
+
+        return $longUrl;
     }
 }

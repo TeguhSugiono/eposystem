@@ -71,21 +71,6 @@
         <h5 class="card-title mb-0">List PO</h5>
 
         <div class="po-action-group">
-
-            <!-- MOBILE ONLY -->
-            <label class="chk-mobile-only">
-                <input type="checkbox" id="chkAll_Mobile">
-                <span>Check All</span>
-            </label>
-
-            <button class="btn btn-primary btn-sm" onclick="approve()">
-                <i class="fa fa-check-square"></i> Approve
-            </button>
-
-            <button class="btn btn-danger btn-sm" onclick="reject()">
-                <i class="fa fa-times-circle"></i> Reject
-            </button>
-
         </div>
     </div>
 
@@ -104,13 +89,12 @@
                 <table class="table table-bordered table-striped table-hover display nowrap" id="tblrequestpo" style="width: 100%">
                     <thead>
                         <tr>
-                            <th>
-                                <div style="text-align: center;"><input type='checkbox' id='chkAll' name='chkAll' /></div>
-                            </th>
                             <th>No</th>
                             <th>id_request</th>
                             <th>id_pesan</th>
+                            <th>Request Type</th>
                             <th>No PO</th>
+                            <th>Dept</th>
                             <th>Total</th>
                             <th>PPN %</th>
                             <th>Nilai Lain</th>
@@ -120,8 +104,8 @@
                             <th>Time Request</th>
                             <th>Reason</th>
                             <th>ID Status Approve</th>
-                            <th>Request Type</th>
                             <th>Acc Manager</th>
+                            <th>Name Manager</th>
                             <th>Acc Direktur</th>
                         </tr>
                     </thead>
@@ -133,11 +117,11 @@
 
         </div>
 
-        <div id="notes_po" style="margin-top: 2% !important;">
+        <!-- <div id="notes_po" style="margin-top: 2% !important;display:none">
         </div>
 
 
-        <div class="datatable-container" style="margin-top: 2% !important;">
+        <div class="datatable-container" style="margin-top: 2% !important;;display:none">
 
             <div class="datatable-wrapper">
                 <h5 class="card-title" style="text-align:center;">Detail PO</h5>
@@ -156,7 +140,7 @@
                 </table>
             </div>
 
-        </div>
+        </div> -->
 
 
     </div>
@@ -173,7 +157,7 @@
 
 <script type="text/javascript">
     var tblrequestpo;
-    var tbltransdet;
+    //var tbltransdet;
     let modalStack = [];
     var ArrayIdRequest = [];
     var id_pesan = "";
@@ -200,44 +184,8 @@
                 },
                 "dataSrc": ""
             },
-            "columns": [{
-                    "data": null,
-                    "orderable": false,
-                    "searchable": false,
-                    "className": "dt-center",
-                    "render": function(data, type, row, meta) {
+            "columns": [
 
-                        var nopo = escapeHtml(row.nopo);
-                        var no = meta.row + 1;
-                        var idRequest = row.id_request;
-
-                        //console.log(row.acc_manager);
-
-                        if (row.acc_manager == "" || row.acc_manager == null) {
-                            return `
-<div style="text-align:center;">
-    <input type="checkbox"
-        id="idchkdata${no}"
-        class="chkdata"
-        data-nopo="${nopo}"
-        onclick="HandleClick(this.id, '${idRequest}')"
-        value="${idRequest}">
-</div>
-`;
-
-                        } else if (row.acc_manager == "Y") {
-                            return '<i class="fa fa-thumbs-up"></i>&nbsp;Approve';
-
-                        } else {
-                            return '<i class="fa fa-window-close"></i>&nbsp;Reject';
-
-                        }
-
-
-
-
-                    }
-                },
                 {
                     "data": null,
                     "render": function(data, type, row, meta) {
@@ -254,13 +202,14 @@
                     "data": "id_pesan"
                 },
                 {
+                    "data": "status_approval"
+                },
+                {
                     "data": "nopo"
-                }
-
-
-
-
-                ,
+                },
+                {
+                    "data": "dept"
+                },
                 {
                     "data": null, //TOTAL
 
@@ -277,17 +226,15 @@
 
                 ,
                 {
-                    "data": "ppn_used" //PPN %
+                    "data": "ppn_used"
                 }
 
                 ,
                 {
-                    "data": null, //NILAI LAIN
+                    "data": null,
 
                     "className": "text-right",
                     "render": function(data, type, row) {
-                        //console.log(row.id_category);
-                        //return formatNumberSeparator(row.nilai_lain);
 
 
                         if (type === 'display') {
@@ -301,7 +248,7 @@
 
                 ,
                 {
-                    "data": null, //PPN
+                    "data": null,
 
                     "className": "text-right",
                     "render": function(data, type, row) {
@@ -353,23 +300,26 @@
                 {
                     "data": "id_status_approval"
                 },
-                {
-                    "data": "status_approval"
-                },
+
                 {
                     "data": null,
                     "className": "text-center",
                     "render": function(data, type, row) {
 
                         if (row.acc_manager == "Y") {
-                            return ` <i class="fa fa-check"></i>`;
-                        } else if (row.acc_manager == "N") {
-                            return '<i class="fa fa-window-close"></i>';
+                            return ` <i class="fa fa-check" title="Accept"></i>`;
+                        } else if (row.acc_manager == "R") {
+                            return '<i class="fa fa-window-close" title="Reject"></i>';
+                        } else if (row.acc_manager == "H") {
+                            return '<i class="fa fa-hand-paper" title="Hold"></i>';
                         }
 
                         return row.acc_manager;
 
                     }
+                },
+                {
+                    "data": "acc_name_manager"
                 },
                 {
                     "data": null,
@@ -391,14 +341,14 @@
             ],
 
             "createdRow": function(row, data, dataIndex) {
-                $('td:eq(0)', row).attr('data-label', 'Check');
-                $('td:eq(1)', row).attr('data-label', 'No');
+                $('td:eq(0)', row).attr('data-label', 'No');
+                $('td:eq(1)', row).attr('data-label', 'Request Type');
                 $('td:eq(2)', row).attr('data-label', 'No PO');
-                $('td:eq(3)', row).attr('data-label', 'Grand Total');
-                $('td:eq(4)', row).attr('data-label', 'User Request');
-                $('td:eq(5)', row).attr('data-label', 'Time Request');
-                $('td:eq(6)', row).attr('data-label', 'Reason');
-                $('td:eq(7)', row).attr('data-label', 'Request Type');
+                $('td:eq(3)', row).attr('data-label', 'Dept');
+                $('td:eq(4)', row).attr('data-label', 'Grand Total');
+                $('td:eq(5)', row).attr('data-label', 'User Request');
+                $('td:eq(6)', row).attr('data-label', 'Time Request');
+                $('td:eq(7)', row).attr('data-label', 'Reason');
                 $('td:eq(8)', row).attr('data-label', 'Acc Manager');
                 $('td:eq(9)', row).attr('data-label', 'Acc Direktur');
             },
@@ -416,7 +366,7 @@
             // "scrollY": window.innerWidth > 768 ? "150px" : false,
 
             "scrollX": isDesktop,
-            "scrollY": isDesktop ? "150px" : "390px",
+            "scrollY": isDesktop ? "500px" : "390px",
 
             //"scrollX": true,
             //"scrollY": "100px",
@@ -427,702 +377,88 @@
             "paging": false,
             "info": false,
             "columnDefs": [{
-                    "targets": [0, 1],
+                    "targets": [0],
                     "orderable": false
                 },
                 {
-                    "targets": [2, 3, 5, 6, 7, 8, 13],
+                    "targets": [1, 2, 6, 7, 8, 9, 14, 16],
                     "visible": false
                 }
             ]
 
-            // columnDefs: [{
-            //         targets: 0,
-            //         orderable: false,
-            //         dataLabel: 'Pilih',
-            //         showMobile: true
-            //     },
-            //     {
-            //         targets: 1,
-            //         dataLabel: 'No',
-            //         showMobile: true
-            //     },
-
-            //     {
-            //         targets: 2,
-            //         visible: false,
-            //         showMobile: false
-            //     },
-            //     {
-            //         targets: 3,
-            //         visible: false,
-            //         showMobile: false
-            //     },
-
-            //     {
-            //         targets: 4,
-            //         dataLabel: 'No PO',
-            //         showMobile: true
-            //     },
-
-            //     {
-            //         targets: 5,
-            //         visible: false,
-            //         showMobile: false
-            //     },
-            //     {
-            //         targets: 6,
-            //         visible: false,
-            //         showMobile: false
-            //     },
-            //     {
-            //         targets: 7,
-            //         visible: false,
-            //         showMobile: false
-            //     },
-            //     {
-            //         targets: 8,
-            //         visible: false,
-            //         showMobile: false
-            //     },
-
-            //     {
-            //         targets: 9,
-            //         dataLabel: 'Grand Total',
-            //         showMobile: true
-            //     },
-            //     {
-            //         targets: 10,
-            //         dataLabel: 'User Request',
-            //         showMobile: true
-            //     },
-            //     {
-            //         targets: 11,
-            //         dataLabel: 'Time Request',
-            //         showMobile: true
-            //     },
-            //     {
-            //         targets: 12,
-            //         dataLabel: 'Reason',
-            //         showMobile: true
-            //     },
-
-            //     {
-            //         targets: 13,
-            //         visible: false,
-            //         showMobile: false
-            //     },
-            //     {
-            //         targets: 14,
-            //         dataLabel: 'Request Type',
-            //         showMobile: true
-            //     },
-            //     {
-            //         targets: 15,
-            //         dataLabel: 'Acc Manager',
-            //         showMobile: true
-            //     },
-            //     {
-            //         targets: 16,
-            //         dataLabel: 'Acc Direktur',
-            //         showMobile: true
-            //     }
-            // ]
 
 
         });
-
-
-        $('#tblrequestpo tbody').on('click', 'input[type="checkbox"]', function(e) {
-            e.stopPropagation();
-        });
-
-
-        tbltransdet = $('#tbltransdet').DataTable({
-            "ajax": {
-                "url": "<?php echo site_url('trans_purchaseorder/fetch_table_detail'); ?>",
-                "type": "POST",
-                "data": function(d) {
-                    d.id_pesan = id_pesan;
-                },
-                "dataSrc": ""
-            },
-            "columns": [{
-                    "data": null,
-                    "render": function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
-                {
-                    "data": null,
-                    "render": function(data, type, row) {
-
-                        return row.itembarang + " " + row.merk + " " + row.type;
-                    }
-                },
-                {
-                    "data": "qtymsk",
-                    "className": "text-right"
-                },
-                {
-                    "data": null,
-                    "className": "text-right",
-                    "render": function(data, type, row) {
-
-                        if (type === 'display') {
-                            return formatNumberSeparator(row.hargasatuan);
-                        }
-                        return row.hargasatuan;
-
-                    }
-                },
-                {
-                    "data": null,
-                    "className": "text-right",
-                    "render": function(data, type, row) {
-
-                        if (type === 'display') {
-                            return formatNumberSeparator(row.diskon);
-                        }
-                        return row.diskon;
-
-                    }
-                },
-                {
-                    "data": null,
-                    "className": "text-right",
-                    "render": function(data, type, row) {
-
-                        if (type === 'display') {
-                            return formatNumberSeparator(row.total);
-                        }
-                        return row.total;
-
-                    }
-                }
-
-            ],
-
-            "createdRow": function(row, data, dataIndex) {
-                $('td', row).each(function(index) {
-                    var header = $('#tbltransdet thead th').eq(index).text();
-                    $(this).attr('data-label', header);
-                });
-            },
-
-
-            "pageLength": 10,
-            "order": [],
-            "ordering": false,
-            "scrollX": true,
-            "scrollY": "380px",
-            "scrollCollapse": true,
-            "searching": false,
-            "bLengthChange": false,
-            "pagingType": "full",
-            "paging": false,
-            "info": false,
-
-
-
-
-            "drawCallback": function(settings) {
-                $('#tbltransdet tbody tr.subtotal-row').remove();
-
-
-
-
-                var subtotalRow = `
-                    <tr class="subtotal-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="text-right"><strong>Subtotal</strong></td>
-                        <td class="text-right"><strong>${formatNumberSeparator(parseFloat(HeadSubtotal))}</strong></td>
-                    </tr>`;
-
-                $('#tbltransdet tbody').append(subtotalRow);
-
-                subtotalRow = `
-                    <tr class="subtotal-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="text-right"><strong>Nilai Lain</strong></td>
-                        <td class="text-right"><strong>${formatNumberSeparator(parseFloat(HeadNilaiLain))}</strong></td>
-                    </tr>`;
-
-                $('#tbltransdet tbody').append(subtotalRow);
-
-                HeadCategory
-                var hitungppn = FuncHitungPPN(HeadCategory, HeadPPNUse, HeadSubtotal).ppn;
-
-                subtotalRow = `
-                    <tr class="subtotal-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="text-right"><strong>PPN</strong></td>
-                        <td class="text-right"><strong>${formatNumberSeparator(parseFloat(hitungppn))}</strong></td>
-                    </tr>`;
-
-                $('#tbltransdet tbody').append(subtotalRow);
-
-
-                subtotalRow = `
-                    <tr class="subtotal-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="text-right"><strong>Grand Total</strong></td>
-                        <td class="text-right"><strong>${formatNumberSeparator(parseFloat(HeadGrandTotal))}</strong></td>
-                    </tr>`;
-
-                $('#tbltransdet tbody').append(subtotalRow);
-
-            }
-        });
-
-
 
 
     });
 
-    // Event untuk Check All Mobile
-    document.getElementById('chkAll_Mobile').addEventListener('click', function() {
-        var isChecked = this.checked; // true jika dicentang, false jika tidak
-        var allCheckboxes = document.querySelectorAll('.chkdata'); // semua checkbox data
-        ArrayIdRequest = []; // reset array (sesuai kode lama kamu)
+    let pressTimer;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-        allCheckboxes.forEach(function(cb) {
-            cb.checked = isChecked; // set checked sesuai chkAll_Mobile
 
-            // Jalankan HandleClick untuk simulasi klik (update array, UI, dll)
-            HandleClick(cb.id, cb.value);
+    // DESKTOP: double click
+    if (!isMobile) {
+        $('#tblrequestpo').on('dblclick', 'tr', function() {
+            selectRow(this);
+            handleRowAction(this);
         });
-    });
-
-
-    // Panggil ini sekali saat halaman load, atau taruh di <script> view
-    document.getElementById('chkAll').addEventListener('click', function() {
-        var isChecked = this.checked;
-        var allCheckboxes = document.querySelectorAll('.chkdata');
-
-        ArrayIdRequest = [];
-
-        allCheckboxes.forEach(function(cb) {
-            cb.checked = isChecked;
-            HandleClick(cb.id, cb.value);
-        });
-    });
-
-    function HandleClick(Chk, param) {
-        var checkbox = document.getElementById(Chk);
-        var chkAll = document.getElementById('chkAll');
-        var allCheckboxes = document.querySelectorAll('.chkdata');
-        var total = allCheckboxes.length;
-        var checkedCount = 0;
-
-        var chkAll_Mobile = document.getElementById('chkAll_Mobile');
-
-        allCheckboxes.forEach(function(cb) {
-            if (cb.checked) {
-                checkedCount++;
-            }
-        });
-
-        if (checkedCount === total && total > 0) {
-            chkAll.checked = true;
-            chkAll_Mobile.checked = true;
-        } else {
-            chkAll.checked = false;
-            chkAll_Mobile.checked = false;
-        }
-
-        if (checkbox.checked) {
-            ArrayIdRequest.push(param);
-        } else {
-            hapus_isi_array(ArrayIdRequest, param);
-        }
-
-        // console.log("Total checkbox:", total);
-        // console.log("Terceklist:", checkedCount);
-        //console.log("ArrayIdRequest:", ArrayIdRequest);
     }
 
-
-
+    // MOBILE: tap
     $('#tblrequestpo').on('click', 'tr', function() {
-        var data = tblrequestpo.row(this).data();
-
-        //console.log(data);
-
-
-
-        if ($(this).hasClass('selected')) {
-            id_pesan = "";
-
-            HeadSubtotal = 0;
-            HeadNilaiLain = 0;
-            HeadNPPN = 'N';
-            HeadPPNUse = 0;
-            HeadGrandTotal = 0;
-            HeadCategory = '';
-
-
-            $("#notes_po").html("");
-            tbltransdet.ajax.reload(null, false);
-            $(this).removeClass('selected');
-        } else {
-            id_pesan = data.id_pesan;
-
-            $.ajax({
-                url: "<?php echo site_url('trans_purchaseorder/fetch_note_po'); ?>",
-                type: "POST",
-                data: {
-                    id_pesan: id_pesan
-                },
-                success: function(res) {
-                    $("#notes_po").html(res);
-                },
-                error: function() {
-                    alert("Gagal mengambil desain notes_po");
-                }
-            });
-
-
-            HeadSubtotal = data.subtotalharga;
-            HeadNilaiLain = data.nilai_lain;
-            HeadNPPN = data.ppn;
-            HeadPPNUse = data.ppn_used;
-            HeadGrandTotal = data.grandtotal;
-            HeadCategory = data.id_category;
-
-            tbltransdet.ajax.reload(null, false);
-            tblrequestpo.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
+        if (isMobile) {
+            selectRow(this);
+            handleRowAction(this);
         }
-
     });
 
-    $('#tbltransdet').on('click', 'tr', function() {
-
-
-        if ($(this).hasClass('subtotal-row')) {
-            return; // abaikan klik
-        }
-
-        if ($(this).hasClass('selected')) {
-            $(this).removeClass('selected');
-        } else {
-
-            tbltransdet.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-
+    // MOBILE: long press
+    $('#tblrequestpo').on('touchstart', 'tr', function() {
+        const row = this;
+        pressTimer = setTimeout(function() {
+            selectRow(row);
+            handleRowAction(row);
+        }, 600);
+    }).on('touchend touchmove', function() {
+        clearTimeout(pressTimer);
     });
 
-    function approve() {
-
-        if (ArrayIdRequest.length == 0) {
-            alert('Belum ada Data Yang dipilih...!!');
-            return;
-        }
-
-        url = '<?php echo site_url('dashboard/proses_approve_manager') ?>';
-        data = {
-            ArrayIdRequest: ArrayIdRequest,
-            proses_request: 'manager'
-        };
-        pesan = 'function proses_approve gagal... 😢';
-        dataok = multi_ajax_proses(url, data, pesan);
-
-        //console.log(dataok);
-
-        if (dataok.msg != 'Ya') {
-            alert(dataok.pesan);
-            return false;
-        }
-
-        alert(dataok.pesan);
-
-
-        // url1 = '<-?php echo site_url('dashboard/sendEmailAccMgr') ?>';
-        // data1 = {
-        //     GetPO: dataok.GetPO,
-        //     proses_request: 'manager'
-        // };
-        // pesan1 = 'function proses_approve gagal... 😢';
-        // dataok1 = multi_ajax_proses(url1, data1, pesan1);
-
-        // console.log(dataok1);
-
-        tblrequestpo.ajax.reload(null, false);
-        document.getElementById('chkAll').checked = false;
-        ArrayIdRequest = [];
+    // Fungsi select row
+    function selectRow(row) {
+        tblrequestpo.$('tr.selected').removeClass('selected');
+        $(row).addClass('selected');
     }
 
+    // Fungsi utama aksi
+    function handleRowAction(row) {
+        const rowData = tblrequestpo.row(row).data();
+        HeadSubtotal = rowData.subtotalharga;
+        HeadNilaiLain = rowData.nilai_lain;
+        HeadNPPN = rowData.ppn;
+        HeadPPNUse = rowData.ppn_used;
+        HeadGrandTotal = rowData.grandtotal;
+        HeadCategory = rowData.id_category;
 
-    function reject() {
-        if (ArrayIdRequest.length == 0) {
-            alert('Belum ada Data Yang dipilih...!!');
-            return;
-        }
+        $.post('<?= site_url("dashboardmanager/proses_po") ?>', {
+            post_id_pesan: rowData.id_pesan,
+            post_id_request: rowData.id_request,
+            // post_HeadSubtotal: HeadSubtotal,
+            // post_HeadNilaiLain: HeadNilaiLain,
+            // post_HeadNPPN: HeadNPPN,
+            // post_HeadPPNUse: HeadPPNUse,
+            // post_HeadGrandTotal: HeadGrandTotal,
+            // post_HeadCategory: HeadCategory
+        }, function(html) {
+            $('#divmodal').html(html);
 
-        url = '<?php echo site_url('dashboard/proses_reject_manager') ?>';
-        data = {
-            ArrayIdRequest: ArrayIdRequest,
-            proses_request: 'manager'
-        };
-        pesan = 'function proses_approve gagal... 😢';
-        dataok = multi_ajax_proses(url, data, pesan);
+            const modal = document.getElementById('id_modal_add');
+            if (modal) {
+                modal.classList.add('active');
+                modalStack = modalStack || [];
+                modalStack.push('id_modal_add');
 
-
-        if (dataok.msg != 'Ya') {
-            alert(dataok.pesan);
-            return false;
-        }
-
-        alert(dataok.pesan);
-
-
-        tblrequestpo.ajax.reload(null, false);
-        document.getElementById('chkAll').checked = false;
-        ArrayIdRequest = [];
+            }
+        });
     }
 </script>
-
-<!-- 
-tblrequestpo = $('#tblrequestpo').DataTable({
-"ajax": {
-"url": "<-?php echo site_url('dashboardmanager/fetch_table'); ?>",
-"type": "POST",
-"data": function(d) {
-
-},
-"dataSrc": ""
-},
-"columns": [{
-"data": null,
-"orderable": false,
-"searchable": false,
-"className": "dt-center",
-"render": function(data, type, row, meta) {
-
-var nopo = escapeHtml(row.nopo);
-var no = meta.row + 1;
-var idRequest = row.id_request;
-
-//console.log(row.acc_manager);
-
-if (row.acc_manager == "" || row.acc_manager == null) {
-return `
-<div style="text-align:center;">
-    <input type="checkbox"
-        id="idchkdata${no}"
-        class="chkdata"
-        data-nopo="${nopo}"
-        onclick="HandleClick(this.id, '${idRequest}')"
-        value="${idRequest}">
-</div>
-`;
-} else {
-return '<i class="fa fa-thumbs-up"></i>&nbsp;Approve';
-
-}
-
-
-
-
-}
-},
-{
-"data": null,
-"render": function(data, type, row, meta) {
-return meta.row + 1;
-}
-},
-{
-"data": "id_request"
-},
-{
-"data": "id_pesan"
-},
-{
-"data": "nopo"
-}
-
-
-
-
-,
-{
-"data": null, //TOTAL
-
-"className": "text-right",
-"render": function(data, type, row) {
-
-if (type === 'display') {
-return formatNumberSeparator(row.subtotalharga);
-}
-
-return row.subtotalharga;
-}
-}
-
-,
-{
-"data": "ppn_used" //PPN %
-}
-
-,
-{
-"data": null, //NILAI LAIN
-
-"className": "text-right",
-"render": function(data, type, row) {
-//console.log(row.id_category);
-//return formatNumberSeparator(row.nilai_lain);
-
-
-if (type === 'display') {
-return formatNumberSeparator(FuncHitungPPN(row.id_category, row.ppn_used, row.subtotalharga).nilai_lain);
-}
-
-return FuncHitungPPN(row.id_category, row.ppn_used, row.subtotalharga).nilai_lain;
-
-}
-}
-
-,
-{
-"data": null, //PPN
-
-"className": "text-right",
-"render": function(data, type, row) {
-if (type === 'display') {
-return formatNumberSeparator(FuncHitungPPN(row.id_category, row.ppn_used, row.subtotalharga).ppn);
-}
-
-return FuncHitungPPN(row.id_category, row.ppn_used, row.subtotalharga).ppn;
-
-}
-},
-
-
-
-
-
-{
-"data": null,
-
-"className": "text-right",
-"render": function(data, type, row) {
-
-if (type === 'display') {
-return formatNumberSeparator(row.grandtotal);
-}
-
-return row.grandtotal;
-}
-},
-{
-"data": "user_request"
-},
-{
-"data": null,
-"className": "text-center",
-"render": function(data, type, row) {
-
-if (type === 'display' || type === 'filter') {
-return tglIndoJam(row.time_request);
-}
-
-return row.time_request;
-}
-
-},
-{
-"data": "reason"
-},
-{
-"data": "id_status_approval"
-},
-{
-"data": "status_approval"
-},
-{
-"data": null,
-"className": "text-center",
-"render": function(data, type, row) {
-
-if (row.acc_manager == "Y") {
-return `
-<i class="fa fa-check"></i>
-`;
-}
-
-return row.acc_manager;
-
-}
-},
-{
-"data": null,
-"className": "text-center",
-"render": function(data, type, row) {
-
-if (row.acc_director == "Y") {
-return `
-<i class="fa fa-check"></i>
-`;
-}
-
-return row.acc_director;
-
-}
-}
-
-
-],
-
-// createdRow: function(row, data, dataIndex) {
-
-// var visibleHeaders = [];
-
-// $('#tblrequestpo thead th').each(function(i) {
-// if ($('#tblrequestpo').DataTable().column(i).visible()) {
-// visibleHeaders.push($(this).text());
-// }
-// });
-
-// $('td', row).each(function(i) {
-// if (visibleHeaders[i]) {
-// $(this).attr('data-label', visibleHeaders[i]);
-// }
-// });
-// },
-"pageLength": 10,
-"order": [],
-"ordering": true,
-"scrollX": true,
-"scrollY": "100px",
-"scrollCollapse": true,
-"searching": false,
-"bLengthChange": true,
-"pagingType": "full",
-"paging": false,
-"info": false,
-"columnDefs": [{
-"targets": [0, 1],
-"orderable": false
-},
-{
-"targets": [2, 3, 5, 6, 7, 8, 13],
-"visible": false
-}
-]
-}); -->

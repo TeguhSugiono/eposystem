@@ -33,7 +33,7 @@
 
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal('id_modal_add')">Batal</button>
+            <button class="btn btn-secondary" onclick="closeModal('id_modal_add')">Close</button>
             <button class="btn btn-primary" onclick="save()">Save</button>
         </div>
     </div>

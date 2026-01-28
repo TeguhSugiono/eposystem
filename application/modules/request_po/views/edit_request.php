@@ -15,7 +15,12 @@
                 <input type="hidden" class="form-control form-control-sm" id="id_pesan_old" name="id_pesan_old" value="<?= $GetDataRequest[0]['id_pesan']; ?>">
                 <input type="hidden" class="form-control form-control-sm" id="id_request" name="id_request" value="<?= $GetDataRequest[0]['id_request']; ?>">
 
-                <div class="row mb-3">
+
+                <div class="row mb-3" style="text-align: center;margin-bottom:40px !important;font-weight: 700;">
+                    <label class="col-sm-12 col-form-label text-end" id="textNOPO"></label>
+                </div>
+
+                <div class="row mb-3" style="display:none;">
                     <label class="col-sm-4 col-form-label text-end">No Po</label>
                     <div class="col-sm-8">
                         <?= $id_pesan; ?>
@@ -37,12 +42,12 @@
 
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal('id_modal_edit')">Batal</button>
-
             <?php if ($GetDataRequest[0]['flag_request'] == 0) { ?>
                 <button class="btn btn-primary" onclick="save()">Save</button>
+            <?php } else { ?>
+                <!-- <button class="btn btn-primary" onclick="batal_request()">Batalkan Request</button> -->
             <?php } ?>
-
+            <button class="btn btn-secondary" onclick="closeModal('id_modal_edit')">Close</button>
         </div>
     </div>
 </div>
@@ -50,6 +55,16 @@
 
 <script type="text/javascript">
     initSelect2('id_modal_edit');
+
+
+    // var textNOPO = $('#id_pesan option:selected').text();
+    // No PO << < >>> & nbsp;
+    // textNOPO; ? > & nbsp; << < >>>
+    // $('#textNOPO').text(textNOPO);
+    //ID Data <<<>>>&nbsp;<-?= $GetDataEdit->kodebarang; ?>&nbsp;<<<>>>
+    var textNOPO = $('#id_pesan option:selected').text();
+    $('#textNOPO').text("NoPO <<<>>> " + textNOPO + " <<<>>>");
+
 
     function closeModal(modalId) {
         const modal = document.getElementById(modalId);
@@ -92,4 +107,32 @@
         tblrequestpo.ajax.reload(null, false);
 
     }
+
+    // function batal_request() {
+    //     if ($('#id_pesan').val() == "") {
+    //         alert('No PO Masih Kosong..!!');
+    //         return;
+    //     }
+
+    //     if ($('#id_status_approval').val() == "") {
+    //         alert('Type Request Masih Kosong..!!');
+    //         return;
+    //     }
+
+    //     var dataPost = $('#formadd').serialize();
+
+
+    //     url = '<?php echo site_url('request_po/update_data') ?>';
+    //     data = dataPost;
+    //     pesan = 'function update data gagal... 😢';
+    //     dataok = multi_ajax_proses(url, data, pesan);
+
+    //     if (dataok.msg != 'Ya') {
+    //         alert(dataok.pesan);
+    //         return false;
+    //     }
+    //     alert(dataok.pesan);
+    //     closeModal('id_modal_edit');
+    //     tblrequestpo.ajax.reload(null, false);
+    // }
 </script>

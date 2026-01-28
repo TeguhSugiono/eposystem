@@ -25,7 +25,7 @@ function multi_ajax_proses(url, data, pesan) {
         },
         error: function (jqXHR, textStatus, errorThrown) {
             // Log error untuk debugging
-            console.error("AJAX Error:", textStatus, errorThrown, jqXHR); 
+            //console.error("AJAX Error:", textStatus, errorThrown, jqXHR); 
             var dataError = {
                 // Gunakan pesan kustom yang diberikan
                 pesan: pesan, 
@@ -93,6 +93,19 @@ function formatNumberSeparator(num) {
     }
 }
 
+function formatNumberNotSeparator(num) {
+    if (num === null || num === undefined || num === '') {
+        return '0';
+    }
+    var angkaBulat = num.toString().split('.')[0];
+    return angkaBulat.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+}
+
+// Uji Coba:
+//console.log(formatNumberSeparator(555000));      // Hasil: "555,000"
+//console.log(formatNumberSeparator("555000.00")); // Hasil: "555,000"
+//console.log(formatNumberSeparator(1250600.75));  // Hasil: "1,250,600"
+
 function UnFormatNumber(str) {
     if (!str || typeof str !== 'string') return str;
 
@@ -135,7 +148,7 @@ function FuncHitungPPN(id_category, jml_ppn, total) {
 
     // Pastikan total adalah angka yang valid
     if (isNaN(total_float)) {
-        console.error("Input 'total' tidak valid.");
+        //console.error("Input 'total' tidak valid.");
         return ArrayReturn;
     }
 
@@ -330,7 +343,7 @@ function SetJatuhTempo(tanggal, jumlahMinggu) {
 function generateComboEdt(data, ParamNameSelect, valueField, textField, defaultValue = ['', '']) {
     var $select = $('#' + ParamNameSelect);
     if ($select.length === 0) {
-        console.error("Select tidak ditemukan: #" + ParamNameSelect);
+        //console.error("Select tidak ditemukan: #" + ParamNameSelect);
         return;
     }
 
@@ -390,7 +403,7 @@ function generateComboEdt(data, ParamNameSelect, valueField, textField, defaultV
 function generateCombo(data, ParamNameSelect, valueField, textField, defaultValue = ['', '']) {
     var $select = $('#' + ParamNameSelect);
     if ($select.length === 0) {
-        console.error("Select tidak ditemukan: #" + ParamNameSelect);
+        //console.error("Select tidak ditemukan: #" + ParamNameSelect);
         return;
     }
 
@@ -436,7 +449,7 @@ function generateCombo(data, ParamNameSelect, valueField, textField, defaultValu
 function generateComboNoSelect(data, ParamNameSelect, valueField, textField, defaultValue = ['', '']) {
     var $select = $('#' + ParamNameSelect);
     if ($select.length === 0) {
-        console.error("Select tidak ditemukan: #" + ParamNameSelect);
+        //console.error("Select tidak ditemukan: #" + ParamNameSelect);
         return;
     }
 
