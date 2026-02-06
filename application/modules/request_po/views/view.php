@@ -247,9 +247,11 @@
                     "render": function(data, type, row) {
 
                         if (row.acc_director == "Y") {
-                            return ` <i class="fa fa-check"></i>`;
-                        } else if (row.acc_director == "N") {
-                            return '<i class="fa fa-window-close"></i>';
+                            return ` <i class="fa fa-check" title="Accept"></i>`;
+                        } else if (row.acc_director == "R") {
+                            return '<i class="fa fa-window-close" title="Reject"></i>';
+                        } else if (row.acc_director == "H") {
+                            return '<i class="fa fa-hand-paper" title="Hold"></i>';
                         }
 
                         return row.acc_director;
@@ -334,7 +336,7 @@
                 "targets": [0, 1],
                 "orderable": false
             }, {
-                "targets": [3, 4, 10],
+                "targets": [3, 4, 10, 18, 19, 20, 21],
                 "visible": false
             }]
         });

@@ -116,8 +116,8 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" onclick="accept()" style="display: <?= $classAccept; ?>;">Accept</button>
-            <button class="btn btn-primary" onclick="hold()" style="display: <?= $classHold; ?>;">Hold</button>
-            <button class="btn btn-primary" onclick="reject()" style="display: <?= $classReject; ?>;">Reject</button>
+            <!-- <button class="btn btn-primary" onclick="hold()" style="display: <--?= $classHold; ?>;">Hold</button> -->
+            <!-- <button class="btn btn-primary" onclick="reject()" style="display: <-?= $classReject; ?>;">Reject</button> -->
             <button class="btn btn-secondary" onclick="closeModal('id_modal_add')">Close</button>
         </div>
     </div>

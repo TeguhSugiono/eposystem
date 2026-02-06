@@ -23,7 +23,7 @@
 
     $classAccept = "block";
     $classReject = "block";
-    if ($GetDataRequest[0]['acc_manager'] == "Y") {
+    if ($GetDataRequest[0]['acc_director'] == "Y") {
         $classAccept = "none";
         $classReject = "none";
         $classHold = "none";
@@ -314,12 +314,12 @@
     });
 
     function hold() {
-        url = '<?php echo site_url('dashboardmanager/proses_hold_manager') ?>';
+        url = '<?php echo site_url('dashboarddirektur/proses_hold_direktur') ?>';
         data = {
             id_pesan_det: id_pesan_det,
             id_request_det: id_request_det
         };
-        pesan = 'function proses_hold_manager gagal... 😢';
+        pesan = 'function proses_hold_direktur gagal... 😢';
         dataok = multi_ajax_proses(url, data, pesan);
 
         if (dataok.msg != 'Ya') {
@@ -332,32 +332,53 @@
     }
 
     function accept() {
-        url = '<?php echo site_url('dashboardmanager/proses_accept_manager') ?>';
+
+        //send back notifikasi
+        url = '<?php echo site_url('dashboarddirektur/send_back_notifikasi') ?>';
         data = {
             id_pesan_det: id_pesan_det,
             id_request_det: id_request_det
         };
-        pesan = 'function proses_accept_manager gagal... 😢';
+        pesan = 'function send_back_notifikasi gagal... 😢';
         dataok = multi_ajax_proses(url, data, pesan);
 
         console.log(dataok);
+
+
+        if (dataok.msg != "Ya") {
+            alert(dataok.pesan);
+            return false;
+        }
+        //end send back notifikasi
+
+
+        url = '<?php echo site_url('dashboarddirektur/proses_accept_direktur') ?>';
+        data = {
+            id_pesan_det: id_pesan_det,
+            id_request_det: id_request_det
+        };
+        pesan = 'function proses_accept_direktur gagal... 😢';
+        dataok = multi_ajax_proses(url, data, pesan);
+
+        //console.log(dataok);
 
         if (dataok.msg != 'Ya') {
             alert(dataok.pesan);
             return false;
         }
         alert(dataok.pesan);
+
         closeModal('id_modal_add');
         tblrequestpo.ajax.reload(null, false);
     }
 
     function reject() {
-        url = '<?php echo site_url('dashboardmanager/proses_reject_manager') ?>';
+        url = '<?php echo site_url('dashboarddirektur/proses_reject_direktur') ?>';
         data = {
             id_pesan_det: id_pesan_det,
             id_request_det: id_request_det
         };
-        pesan = 'function proses_reject_manager gagal... 😢';
+        pesan = 'function proses_reject_direktur gagal... 😢';
         dataok = multi_ajax_proses(url, data, pesan);
 
         if (dataok.msg != 'Ya') {

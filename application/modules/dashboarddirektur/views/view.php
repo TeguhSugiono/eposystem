@@ -272,7 +272,7 @@
                     "render": function(data, type, row) {
 
                         if (type === 'display') {
-                            return formatNumberSeparator(row.grandtotal);
+                            return formatNumberNotSeparator(row.grandtotal);
                         }
 
                         return row.grandtotal;
@@ -327,9 +327,11 @@
                     "render": function(data, type, row) {
 
                         if (row.acc_director == "Y") {
-                            return ` <i class="fa fa-check"></i>`;
-                        } else if (row.acc_director == "N") {
-                            return '<i class="fa fa-window-close"></i>';
+                            return ` <i class="fa fa-check" title="Accept"></i>`;
+                        } else if (row.acc_director == "R") {
+                            return '<i class="fa fa-window-close" title="Reject"></i>';
+                        } else if (row.acc_director == "H") {
+                            return '<i class="fa fa-hand-paper" title="Hold"></i>';
                         }
 
                         return row.acc_director;

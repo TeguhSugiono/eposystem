@@ -54,7 +54,7 @@ class C_dashboardmanager extends CI_Controller
 
         // waktu expired (+2 hari)
         $expiredDate = clone $startDate;
-        $expiredDate->modify('+2 days');
+        $expiredDate->modify('+7 days');
 
         // waktu sekarang
         $now = new DateTime();
@@ -130,7 +130,7 @@ class C_dashboardmanager extends CI_Controller
         $ParamArray = array(
             'Table' => 'transpesan_head v',
             'WhereData' => array('id_pesan' => $id_pesan),
-            'Field' => '*,(SELECT xx.nama_dept FROM masterdivisi xx where xx.kode_divisi=v.kode_divisi) dept'
+            'Field' => '*,(SELECT xx.nama_dept FROM masterdivisi xx where xx.kode_divisi=v.kode_divisi) dept,get_company(nopo) as comp'
         );
         $GetDataHeader = $this->m_function->value_result_array($ParamArray);
 
@@ -140,8 +140,16 @@ class C_dashboardmanager extends CI_Controller
         );
         $GetDataDetail = $this->m_function->value_result_array($ParamArray);
 
+        if ($GetDataHeader[0]['comp'] == "MSA") {
+            $ConectDB = "dbAcct";
+        } else if ($GetDataHeader[0]['comp'] == "BAL") {
+            $ConectDB = "dbAcctBal";
+        } else {
+            $ConectDB = "dbAcct";
+        }
+
         $ParamArray = array(
-            'ConectDB' => 'dbAcct',
+            'ConectDB' => $ConectDB,
             'Table' => 'fin_ap_m_supplier',
             'WhereData' => array('suppl_code' => $GetDataHeader[0]['kodesupplier']),
             'Field' => '*,concat(address1," ",address2," ",address3) alamat',
@@ -512,7 +520,7 @@ class C_dashboardmanager extends CI_Controller
                 $PesanNotfikasi = array(
                     'msg' => 'Ya',
                     'pesan' => "✔ Berhasil kirim ke {$data['target']} via gratis<br>",
-                    'Respon' => $Respon
+                    'Respon' => $Respongratis
                 );
                 return $PesanNotfikasi;
                 die;
@@ -521,7 +529,7 @@ class C_dashboardmanager extends CI_Controller
                 $PesanNotfikasi = array(
                     'msg' => 'Tidak',
                     'pesan' => "❌ Gagal kirim ke {$data['target']} via BAYAR & gratis<br>",
-                    'Respon' => $Respon
+                    'Respon' => $Respongratis
                 );
                 return $PesanNotfikasi;
                 die;

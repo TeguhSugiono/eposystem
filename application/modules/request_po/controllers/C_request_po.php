@@ -625,7 +625,7 @@ class C_request_po extends CI_Controller
                 $PesanNotfikasi = array(
                     'msg' => 'Ya',
                     'pesan' => "✔ Berhasil kirim ke {$data['target']} via gratis<br>",
-                    'Respon' => $Respon
+                    'Respon' => $Respongratis
                 );
                 return $PesanNotfikasi;
                 die;
@@ -634,13 +634,15 @@ class C_request_po extends CI_Controller
                 $PesanNotfikasi = array(
                     'msg' => 'Tidak',
                     'pesan' => "❌ Gagal kirim ke {$data['target']} via BAYAR & gratis<br>",
-                    'Respon' => $Respon
+                    'Respon' => $Respongratis
                 );
                 return $PesanNotfikasi;
                 die;
             }
         }
     }
+
+
 
     function c_send_approveOld()
     {
@@ -712,19 +714,39 @@ class C_request_po extends CI_Controller
         $ParamArray = array(
             'Table' => 'tbl_request_po',
             'WhereData' => array('id_request' => $id_request),
-            'Field' => 'id_status_approval'
         );
-        $id_status_approval = $this->m_function->check_value($ParamArray);
+        $ResultRequest = $this->m_function->value_result_array($ParamArray);
 
 
-        if ($id_status_approval == "4") {
+        if ($ResultRequest[0]['id_status_approval'] == "4") {
             $pesan_data = array(
                 'msg' => 'Tidak',
-                'pesan' => 'Tidak Bisa Dibatalkan , Data PO Sudah Di Hold...!!!  😢',
+                'pesan' => 'Tidak Bisa Dibatalkan , Data PO Sudah Di Hold Oleh Direktur...!!!  😢',
             );
             echo json_encode($pesan_data);
             die;
         }
+
+        if ($ResultRequest[0]['acc_director'] == "Y") {
+            $pesan_data = array(
+                'msg' => 'Tidak',
+                'pesan' => 'Tidak Bisa Dibatalkan , Data PO Sudah Di Accept Oleh Direktur...!!!  😢',
+            );
+            echo json_encode($pesan_data);
+            die;
+        }
+
+        if ($ResultRequest[0]['acc_director'] == "R") {
+            $pesan_data = array(
+                'msg' => 'Tidak',
+                'pesan' => 'Tidak Bisa Dibatalkan , Data PO Sudah Di Reject Oleh Direktur...!!!  😢',
+            );
+            echo json_encode($pesan_data);
+            die;
+        }
+
+
+
 
         $ArrayUpdate = array(
             'flag_request' => 0,
