@@ -7,7 +7,7 @@ $query_builder = TRUE;
 
 $db['default'] = array(
     'dsn' => '',
-    'hostname' => '172.16.1.18',
+    'hostname' => '10.5.57.119',
     'username' => 'teguh',
     'password' => 'teguh',
     'port' => '3316',
@@ -40,7 +40,7 @@ $db['dbAcct'] = array(
     // 'username' => 'teguh',
     // 'password' => 'teguhs12345',
 
-    'hostname' => '172.16.1.18',
+    'hostname' => '10.5.57.119',
     'username' => 'teguh',
     'password' => 'teguh',
     'port' => '3316',
@@ -68,7 +68,7 @@ $db['dbAcctBal'] = array(
     // 'username' => 'adminmsa',
     // 'password' => 'AdminMsa@4400865',
 
-    'hostname' => '172.16.1.18',
+    'hostname' => '10.5.57.119',
     'username' => 'teguh',
     'password' => 'teguh',
     'port' => '3316',

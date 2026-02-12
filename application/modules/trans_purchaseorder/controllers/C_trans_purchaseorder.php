@@ -279,13 +279,13 @@ class C_trans_purchaseorder extends CI_Controller
         $paper = 'A4';
         $orientation = "portrait";
 
-        //$html = $this->load->view('cetakPO', $data, true);
+        $html = $this->load->view('cetakPO', $data, true);
 
         // echo $html;
         // exit;
 
 
-        $html = $this->load->view('cetakPOPage', $data, true);
+        //$html = $this->load->view('cetakPOPage', $data, true);
 
         //print_r($html);die;
         // run dompdf

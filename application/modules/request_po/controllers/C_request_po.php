@@ -495,6 +495,14 @@ class C_request_po extends CI_Controller
         );
         $kode_divisi = $this->m_function->check_value($ParamArray);
 
+
+        // $pesan_data = array(
+        //     'msg' => 'Tidak',
+        //     'pesan' => $kode_divisi,
+        // );
+        // return json_encode($pesan_data);
+        // die;
+
         // Ambil semua target penerima
         $ParamArray = [
             'Table' => 'tbl_rule_approval',

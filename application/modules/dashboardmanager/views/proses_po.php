@@ -117,7 +117,7 @@
         <div class="modal-footer">
             <button class="btn btn-primary" onclick="accept()" style="display: <?= $classAccept; ?>;">Accept</button>
             <!-- <button class="btn btn-primary" onclick="hold()" style="display: <--?= $classHold; ?>;">Hold</button> -->
-            <!-- <button class="btn btn-primary" onclick="reject()" style="display: <-?= $classReject; ?>;">Reject</button> -->
+            <button class="btn btn-primary" onclick="reject()" style="display: <?= $classReject; ?>;">Reject</button>
             <button class="btn btn-secondary" onclick="closeModal('id_modal_add')">Close</button>
         </div>
     </div>
@@ -332,6 +332,24 @@
     }
 
     function accept() {
+
+        url = '<?php echo site_url('dashboardmanager/send_back_notifikasi') ?>';
+        data = {
+            id_pesan_det: id_pesan_det,
+            id_request_det: id_request_det
+        };
+        pesan = 'function send_back_notifikasi gagal... 😢';
+        dataok = multi_ajax_proses(url, data, pesan);
+
+        //console.log(dataok);
+
+
+        if (dataok.msg != "Ya") {
+            alert(dataok.pesan);
+            return false;
+        }
+
+
         url = '<?php echo site_url('dashboardmanager/proses_accept_manager') ?>';
         data = {
             id_pesan_det: id_pesan_det,
@@ -340,7 +358,7 @@
         pesan = 'function proses_accept_manager gagal... 😢';
         dataok = multi_ajax_proses(url, data, pesan);
 
-        console.log(dataok);
+        //console.log(dataok);
 
         if (dataok.msg != 'Ya') {
             alert(dataok.pesan);

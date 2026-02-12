@@ -437,8 +437,6 @@
             pesan = 'function send_approve data gagal... 😢';
             dataok = multi_ajax_proses(url, data, pesan);
 
-            // console.log(dataok);
-            // return;
 
             if (dataok.msg != 'Ya') {
                 alert(dataok.pesan);
@@ -448,12 +446,6 @@
                 tblrequestpo.ajax.reload(null, false);
             }
 
-            // url = '<-?php echo site_url('dashboard/sendEmail') ?>';
-            // data = {
-            //     id_request: id_request
-            // };
-            // pesan = 'function sendEmail gagal... 😢';
-            // dataok1 = multi_ajax_proses(url, data, pesan);
 
         } else {
             return false;

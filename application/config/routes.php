@@ -143,6 +143,7 @@ $route['dashboardmanager/proses_reject_manager'] = 'dashboardmanager/c_dashboard
 $route['dashboardmanager/proses_accept_manager'] = 'dashboardmanager/c_dashboardmanager/c_proses_accept_manager';
 $route['dashboardmanager/proses_accept_manager'] = 'dashboardmanager/c_dashboardmanager/c_proses_accept_manager';
 $route['dashboardmanager/send_approve'] = 'dashboardmanager/c_dashboardmanager/c_send_approve';
+$route['dashboardmanager/send_back_notifikasi'] = 'dashboardmanager/c_dashboardmanager/c_send_back_notifikasi';
 
 
 
@@ -153,3 +154,4 @@ $route['dashboarddirektur/proses_po'] = 'dashboarddirektur/c_dashboarddirektur/c
 $route['dashboarddirektur/proses_hold_direktur'] = 'dashboarddirektur/c_dashboarddirektur/c_proses_hold_direktur';
 $route['dashboarddirektur/proses_accept_direktur'] = 'dashboarddirektur/c_dashboarddirektur/c_proses_accept_direktur';
 $route['dashboarddirektur/send_back_notifikasi'] = 'dashboarddirektur/c_dashboarddirektur/c_send_back_notifikasi';
+$route['dashboarddirektur/proses_reject_direktur'] = 'dashboarddirektur/c_dashboarddirektur/c_proses_reject_direktur';

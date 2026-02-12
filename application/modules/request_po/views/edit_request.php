@@ -20,18 +20,19 @@
                     <label class="col-sm-12 col-form-label text-end" id="textNOPO"></label>
                 </div>
 
-                <div class="row mb-3" style="display:none;">
-                    <label class="col-sm-4 col-form-label text-end">No Po</label>
-                    <div class="col-sm-8">
-                        <?= $id_pesan; ?>
-                    </div>
-                </div>
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label text-end">Type Approve</label>
                     <div class="col-sm-8">
                         <?= $id_status_approval; ?>
                     </div>
                 </div>
+                <div class="row mb-3" style="display:none;">
+                    <label class="col-sm-4 col-form-label text-end">No Po</label>
+                    <div class="col-sm-8">
+                        <?= $id_pesan; ?>
+                    </div>
+                </div>
+
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label text-end">Reason</label>
                     <div class="col-sm-8">

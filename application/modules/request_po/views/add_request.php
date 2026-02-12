@@ -11,16 +11,17 @@
         <div class="modal-body">
 
             <form id="formadd" class="form-horizontal" method="post" action="#">
-                <div class="row mb-3">
-                    <label class="col-sm-4 col-form-label text-end">No Po</label>
-                    <div class="col-sm-8">
-                        <?= $id_pesan; ?>
-                    </div>
-                </div>
+
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label text-end">Type Approve</label>
                     <div class="col-sm-8">
                         <?= $id_status_approval; ?>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label text-end">No Po</label>
+                    <div class="col-sm-8">
+                        <?= $id_pesan; ?>
                     </div>
                 </div>
                 <div class="row mb-3">

@@ -278,61 +278,6 @@ class C_dashboardmanager extends CI_Controller
         $id_pesan_det = $this->input->post('id_pesan_det');
         $id_request_det =  $this->input->post('id_request_det');
 
-        // //update ke transpesan_head
-        // $DataUpdate = array(
-        //     'flag_finish' => 0,
-        //     'flag_id_request' => 0,
-        // );
-
-        // $ParamUpdate = array(
-        //     'Table' => 'transpesan_head',
-        //     'DataUpdate' => $DataUpdate,
-        //     'WhereData' => array('id_pesan' => $id_pesan_det)
-        // );
-
-        // if (!$this->m_function->update_data($ParamUpdate) >= 1) {
-        //     $pesan_data = array(
-        //         'msg' => 'Tidak',
-        //         'pesan' => 'Update ke table transpesan_head gagal...!!!  😢',
-        //     );
-        //     echo json_encode($pesan_data);
-        //     die;
-        // }
-
-
-        // $DataUpdate = array(
-        //     'id_status_approval' => 1,
-        //     'acc_manager' => 'R',
-        //     'time_acc_manager' => tanggal_sekarang(),
-        //     'acc_name_manager' => $this->session->userdata('PO_username'),
-        //     'flag_request' => 0,
-        //     'flag_email_manager' => 0
-        // );
-
-        // $ParamUpdate = array(
-        //     'Table' => 'tbl_request_po',
-        //     'DataUpdate' => $DataUpdate,
-        //     'WhereData' => array('id_request' => $id_request_det)
-        // );
-
-        // if (!$this->m_function->update_data($ParamUpdate) >= 1) {
-        //     $pesan_data = array(
-        //         'msg' => 'Tidak',
-        //         'pesan' => 'Update ke table tbl_request_po gagal...!!!  😢',
-        //     );
-        //     echo json_encode($pesan_data);
-        //     die;
-        // }
-
-        // $pesan_data = array(
-        //     'msg' => 'Ya',
-        //     'pesan' => 'Data Po Di Reject...'
-        // );
-
-        // echo json_encode($pesan_data);
-
-
-
         $notifikasi = $this->c_send_notifikasi($id_request_det, $id_pesan_det);
         // echo json_encode($notifikasi);
         // die;
@@ -534,6 +479,120 @@ class C_dashboardmanager extends CI_Controller
                 return $PesanNotfikasi;
                 die;
             }
+        }
+    }
+
+
+    function  c_send_back_notifikasi()
+    {
+        $this->load->library('Fonnte_guzzle');
+
+        $id_pesan_det = $this->input->post('id_pesan_det');
+        $id_request_det = $this->input->post('id_request_det');
+
+        $ParamArray = [
+            'Table' => 'tbl_akses_token',
+            'WhereData' => ['version' => 'bayar'],
+            'Field' => 'token'
+        ];
+        $TokenBayar = $this->m_function->check_value($ParamArray);
+
+        // Ambil token gratis
+        $ParamArray = [
+            'Table' => 'tbl_akses_token',
+            'WhereData' => ['version' => 'gratis'],
+            'Field' => 'token'
+        ];
+        $Tokengratis = $this->m_function->check_value($ParamArray);
+
+        $ParamArray = array(
+            'Table' => 'tbl_request_po',
+            'WhereData' => array('id_request' => $id_request_det, 'id_pesan' => $id_pesan_det),
+            'Field' => '*,get_nopo(id_pesan) nopo'
+        );
+        $arrayPoRequest = $this->m_function->value_result_array($ParamArray);
+
+        $ParamArray = array(
+            'Table' => 'masteruser',
+            'WhereData' => array('username' =>  $arrayPoRequest[0]['user_request']),
+            'Field' => 'phone'
+        );
+        $phone = $this->m_function->check_value($ParamArray);
+
+        $GetPO = "";
+        foreach ($arrayPoRequest as $arrayPo) {
+            $GetPO = "*" . $arrayPo['nopo'] . "*" . "\n";
+        }
+
+
+        $ParamArray = [
+            'Table' => 'tbl_rule_approval',
+            'WhereData' => ['kode_divisi' => $arrayPoRequest[0]['kode_divisi']]
+        ];
+        $GetReceivedWA = $this->m_function->value_result_array($ParamArray);
+
+
+        $MessageWa = "No PO ini sudah di Approve Oleh Pak {$GetReceivedWA[0]['name_acc1']}\n\n" . $GetPO;
+
+        $data = [
+            'target' => $phone,
+            'message' => $MessageWa,
+            'countryCode' => '62',
+        ];
+
+
+
+        // Kirim via bayar
+        $Respon = $this->fonnte_guzzle->send($data, $TokenBayar);
+        $StatusBayar = (int)($Respon['status'] ?? 0);
+
+        $PesanNotfikasi = array();
+
+
+
+
+        if ($StatusBayar === 1) {
+            // echo "✔ Berhasil kirim ke {$data['target']} via BAYAR<br>";
+            // continue;
+            $PesanNotfikasi = array(
+                'msg' => 'Ya',
+                'pesan' => "Data Po Berhasil Di Approve",
+                'Respon' => $Respon
+            );
+            echo json_encode($PesanNotfikasi);
+            die;
+        } else {
+            $PesanNotfikasi = array(
+                'msg' => 'Tidak',
+                'pesan' => $Respon['reason'],
+                'Respon' => $Respon
+            );
+            // return $PesanNotfikasi;
+        }
+
+
+        // Jika gagal → retry via gratis
+        $Respongratis = $this->fonnte_guzzle->send($data, $Tokengratis);
+        $Statusgratis = (int)($Respongratis['status'] ?? 0);
+
+        if ($Statusgratis === 1) {
+            //echo "✔ Berhasil kirim ke {$data['target']} via gratis<br>";
+            $PesanNotfikasi = array(
+                'msg' => 'Ya',
+                'pesan' => "Data Po Berhasil Di Approve",
+                'Respon' => $Respongratis
+            );
+            echo json_encode($PesanNotfikasi);
+            die;
+        } else {
+            //echo "✖ Gagal kirim ke {$data['target']} via BAYAR & gratis<br>";
+            $PesanNotfikasi = array(
+                'msg' => 'Tidak',
+                'pesan' => $Respongratis['reason'],
+                'Respon' => $Respongratis
+            );
+            echo json_encode($PesanNotfikasi);
+            die;
         }
     }
 }
