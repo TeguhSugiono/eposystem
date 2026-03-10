@@ -102,22 +102,69 @@ class C_dashboarddirektur extends CI_Controller
 
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
-        $ArrayJoin = array(
-            array('transpesan_head b', 'a.id_pesan=b.id_pesan', 'inner'),
-            array('tbl_request_approval c', 'a.id_status_approval=c.id_status_approval', 'inner')
-        );
-
-        $ParamArray = array(
-            'Table' => 'tbl_request_po a',
-            'WhereData' => array('b.status !=' => 'V', 'a.kode_divisi' => $PO_kodedivisi, 'a.flag_request !=' => '9', 'a.flag_email_manager' => '1', 'a.flag_email_director' => '1', 'acc_manager' => 'Y'),
-            'OrderBy' => 'FIELD(a.id_status_approval, 4, 3, 1),a.time_acc_director desc,a.time_request',
-            'ArrayJoin' => $ArrayJoin,
-            'Field' => 'a.*,b.*,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used,
-                        (SELECT nama_dept FROM masterdivisi where kode_divisi=a.kode_divisi) dept'
-        );
+        // $ArrayJoin = array(
+        //     array('transpesan_head b', 'a.id_pesan=b.id_pesan', 'inner'),
+        //     array('tbl_request_approval c', 'a.id_status_approval=c.id_status_approval', 'inner')
+        // );
 
 
-        $GetData = $this->m_function->value_result_array($ParamArray);
+        // $ParamArray = array(
+        //     'Table' => 'tbl_request_po a',
+        //     'WhereData' => array('b.status !=' => 'V', 'a.kode_divisi' => $PO_kodedivisi, 'a.flag_request !=' => '9', 'a.flag_email_manager' => '1', 'a.flag_email_director' => '1', 'acc_manager' => 'Y'),
+        //     'OrderBy' => 'FIELD(a.id_status_approval, 4, 3,2, 1),b.nopo ASC,a.time_acc_director desc,a.time_request',
+        //     'ArrayJoin' => $ArrayJoin,
+        //     'Field' => 'a.*,b.*,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used,
+        //                 (SELECT nama_dept FROM masterdivisi where kode_divisi=a.kode_divisi) dept'
+        // );
+
+        // $GetData = $this->m_function->value_result_array($ParamArray);
+
+        $query = "
+                    SELECT * FROM (
+
+                    SELECT a.id_request,a.id_pesan,a.time_request,a.user_request,a.reason,a.id_status_approval,a.acc_manager,
+                    a.time_acc_manager,a.acc_name_manager,a.acc_director,a.time_acc_director,a.acc_name_director,
+                    a.kode_divisi,a.flag_request,a.flag_email_manager,a.flag_email_director,a.seqno_revisi,
+                    b.no,b.tglpesan,b.nopo,b.kodesupplier,b.noreff,b.nomr,b.dateedited,b.useredited,b.tglkrm,
+                    b.tgltempo,b.matauang,b.pembayaran,b.status,b.subtotalharga,b.ppn,b.keterangan,b.id_bank,b.discount_total,b.ttd,
+                    b.no_invoice,b.faktur_pajak,b.tgl_invoice,b.rec_id,b.lain,b.id_category,b.nilai_lain,b.created_on,b.created_by,
+                    b.flag_finish,b.flag_id_request,b.flag_revisi
+                    ,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, 
+                    id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used,
+                    (SELECT nama_dept FROM masterdivisi where kode_divisi=a.kode_divisi) dept
+                    FROM tbl_request_po a
+                    INNER JOIN `transpesan_head` `b` ON `a`.`id_pesan`=`b`.`id_pesan`
+                    INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
+                    where a.id_request not in (SELECT id_request from transpesan_head_old)
+                    and b.status != 'V' and a.flag_request != '9' and a.flag_email_manager = '1' 
+                    and a.flag_email_director = '1' and a.acc_manager = 'Y'
+
+                    UNION ALL
+
+                    SELECT 
+                    a.id_request,a.id_pesan,a.time_request,a.user_request,a.reason,a.id_status_approval,a.acc_manager,
+                    a.time_acc_manager,a.acc_name_manager,a.acc_director,a.time_acc_director,a.acc_name_director,
+                    a.kode_divisi,a.flag_request,a.flag_email_manager,a.flag_email_director,a.seqno_revisi,
+                    b.no,b.tglpesan,b.nopo,b.kodesupplier,b.noreff,b.nomr,b.dateedited,b.useredited,b.tglkrm,
+                    b.tgltempo,b.matauang,b.pembayaran,b.status,b.subtotalharga,b.ppn,b.keterangan,b.id_bank,b.discount_total,b.ttd,
+                    b.no_invoice,b.faktur_pajak,b.tgl_invoice,b.rec_id,b.lain,b.id_category,b.nilai_lain,b.created_on,b.created_by,
+                    b.flag_finish,b.flag_id_request,b.flag_revisi
+                    ,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, 
+                    id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used,
+                    (SELECT nama_dept FROM masterdivisi where kode_divisi=a.kode_divisi) dept
+                    FROM tbl_request_po a
+                    INNER JOIN `transpesan_head_old` `b` ON `a`.`id_request`=`b`.`id_request`
+                    INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
+                    and b.status != 'V' and a.flag_request != '9' and a.flag_email_manager = '1' 
+                    and a.flag_email_director = '1' and a.acc_manager = 'Y'
+
+                    ) x
+                    ORDER BY  FIELD(id_status_approval, 4, 3,2, 1),time_acc_director desc,time_request ";
+        //ORDER BY  id_request ASC,nopo ASC ";
+
+
+
+        $GetData =  $this->db->query($query)->result_array();
 
         echo json_encode($GetData);
     }
@@ -127,35 +174,60 @@ class C_dashboarddirektur extends CI_Controller
         $id_pesan = $this->input->post('post_id_pesan');
         $id_request = $this->input->post('post_id_request');
 
-        $ParamArray = array(
-            'Table' => 'transpesan_head v',
-            'WhereData' => array('id_pesan' => $id_pesan),
-            'Field' => '*,(SELECT xx.nama_dept FROM masterdivisi xx where xx.kode_divisi=v.kode_divisi) dept,get_company(nopo) as comp'
-        );
-        $GetDataHeader = $this->m_function->value_result_array($ParamArray);
+        $ckdta = $this->db->get_where('transpesan_head_old', array('id_pesan' => $id_pesan, 'id_request' => $id_request));
 
-        $ParamArray = array(
-            'Table' => 'transpesan_det',
-            'WhereData' => array('id_pesan' => $id_pesan),
-        );
-        $GetDataDetail = $this->m_function->value_result_array($ParamArray);
+        if ($ckdta->num_rows() == 0) {
+            $ParamArray = array(
+                'Table' => 'transpesan_head v',
+                'WhereData' => array('id_pesan' => $id_pesan),
+                'Field' => '*,(SELECT xx.nama_dept FROM masterdivisi xx where xx.kode_divisi=v.kode_divisi) dept,get_company(nopo) as comp'
+            );
+            $GetDataHeader = $this->m_function->value_result_array($ParamArray);
+
+            $ParamArray = array(
+                'Table' => 'transpesan_det',
+                'WhereData' => array('id_pesan' => $id_pesan),
+            );
+            $GetDataDetail = $this->m_function->value_result_array($ParamArray);
 
 
-        if ($GetDataHeader[0]['comp'] == "MSA") {
-            $ConectDB = "dbAcct";
-        } else if ($GetDataHeader[0]['comp'] == "BAL") {
-            $ConectDB = "dbAcctBal";
+            if ($GetDataHeader[0]['comp'] == "MSA") {
+                $ConectDB = "dbAcct";
+            } else if ($GetDataHeader[0]['comp'] == "BAL") {
+                $ConectDB = "dbAcctBal";
+            } else {
+                $ConectDB = "dbAcct";
+            }
+
+            $ParamArray = array(
+                'ConectDB' =>  $ConectDB,
+                'Table' => 'fin_ap_m_supplier',
+                'WhereData' => array('suppl_code' => $GetDataHeader[0]['kodesupplier']),
+                'Field' => '*,concat(address1," ",address2," ",address3) alamat',
+            );
+            $GetDataSupplier = $this->m_function->value_result_array($ParamArray);
         } else {
-            $ConectDB = "dbAcct";
+
+            $ParamArray = array(
+                'Table' => 'transpesan_head_old v',
+                'WhereData' => array('id_pesan' => $id_pesan, 'id_request' => $id_request),
+                'Field' => '*,(SELECT xx.nama_dept FROM masterdivisi xx where xx.kode_divisi=v.kode_divisi) dept,get_company(nopo) as comp,
+                            concat(address1," ",address2," ",address3) as alamat'
+            );
+            $GetDataHeader = $this->m_function->value_result_array($ParamArray);
+
+            //$hehehe =  $GetDataHeader;
+
+            $GetDataSupplier = $this->m_function->value_result_array($ParamArray);
+
+            $ParamArray = array(
+                'Table' => 'transpesan_det_old',
+                'WhereData' => array('id_pesan' => $id_pesan, 'id_old' => $GetDataHeader[0]['id_old']),
+            );
+            $GetDataDetail = $this->m_function->value_result_array($ParamArray);
         }
 
-        $ParamArray = array(
-            'ConectDB' =>  $ConectDB,
-            'Table' => 'fin_ap_m_supplier',
-            'WhereData' => array('suppl_code' => $GetDataHeader[0]['kodesupplier']),
-            'Field' => '*,concat(address1," ",address2," ",address3) alamat',
-        );
-        $GetDataSupplier = $this->m_function->value_result_array($ParamArray);
+
 
 
         $ParamArray = array(
@@ -164,13 +236,37 @@ class C_dashboarddirektur extends CI_Controller
         );
         $GetDataRequest = $this->m_function->value_result_array($ParamArray);
 
+
+        $GetDataHeaderOld = array();
+        $GetDataDetailOld = array();
+
+        if ($GetDataRequest[0]['id_status_approval'] == '3') {
+            $ParamArray = array(
+                'Table' => 'transpesan_head_old v',
+                'WhereData' => array('id_pesan' => $id_pesan),
+                'Field' => '*,(SELECT xx.nama_dept FROM masterdivisi xx where xx.kode_divisi=v.kode_divisi) dept,get_company(nopo) as comp,
+                            concat(address1," ",address2," ",address3) alamat,ppn_param_date(v.tglpesan) AS ppn_used,
+                            hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, 
+                            id_category, discount_total ) AS grandtotal'
+            );
+            $GetDataHeaderOld = $this->m_function->value_result_array($ParamArray);
+
+            $ParamArray = array(
+                'Table' => 'transpesan_det_old',
+                'WhereData' => array('id_pesan' => $id_pesan),
+            );
+            $GetDataDetailOld = $this->m_function->value_result_array($ParamArray);
+        }
+
         $comp = array(
             'id_pesan' => $id_pesan,
             'id_request' => $id_request,
             'GetDataHeader' => $GetDataHeader,
             'GetDataDetail' => $GetDataDetail,
             'GetDataSupplier' => $GetDataSupplier,
-            'GetDataRequest' => $GetDataRequest
+            'GetDataRequest' => $GetDataRequest,
+            'GetDataHeaderOld' => $GetDataHeaderOld,
+            'GetDataDetailOld' => $GetDataDetailOld
         );
 
         $this->load->view('proses_po', $comp);
@@ -181,12 +277,40 @@ class C_dashboarddirektur extends CI_Controller
         $id_pesan_det = $this->input->post('id_pesan_det');
         $id_request_det =  $this->input->post('id_request_det');
 
+
+        $ParamArray = array(
+            'Table' => 'tbl_request_po',
+            'WhereData' => array('id_pesan' => $id_pesan_det, 'id_request' => $id_request_det),
+            'Field' => 'id_status_approval',
+        );
+        $RequestDataPO = $this->m_function->value_result_array($ParamArray);
+
+        $id_status_approval_set = "";
+        foreach ($RequestDataPO as $RequestPO) {
+            $id_status_approval_set = $RequestPO['id_status_approval'];
+        }
+
+
+
         $DataUpdate = array(
             'id_status_approval' => 4, //kode 4 adalah hold po
             'acc_director' => 'H',
             'time_acc_director' => tanggal_sekarang(),
             'acc_name_director' => $this->session->userdata('PO_username')
         );
+
+        if ($id_status_approval_set == 3 || $id_status_approval_set == 2) {
+            unset($DataUpdate['id_status_approval']);
+        }
+
+        // $pesan_data = array(
+        //     'msg' => 'Tidak',
+        //     'pesan' => 'Update ke table tbl_request_po gagal...!!!  😢',
+        //     'id_status_approval_set' => $id_status_approval_set,
+        //     'DataUpdate' => $DataUpdate
+        // );
+        // echo json_encode($pesan_data);
+        // die;
 
         $ParamUpdate = array(
             'Table' => 'tbl_request_po',
@@ -256,56 +380,115 @@ class C_dashboarddirektur extends CI_Controller
         $id_pesan_det = $this->input->post('id_pesan_det');
         $id_request_det =  $this->input->post('id_request_det');
 
+        // //disini ambil case tipe requestnya
+        $ParamArray = [
+            'Table' => 'tbl_request_po',
+            'Field' => 'id_status_approval',
+            'WhereData' => array('id_request' => $id_request_det),
+        ];
+        $id_status = $this->m_function->check_value($ParamArray);
+
 
         //buat qrcode 
-        $keycode = generateUUID();
+        if ($id_status == 2) { //Cancel PO
 
-        $ArraySave = array(
-            'keycode' => $keycode,
-            'id_request' => $id_request_det,
-            'id_pesan' => $id_pesan_det,
-            'url' => site_url('scanqrcode/' . $keycode),
-            'path' => base_url('img_qrcode/' . $keycode . '.png')
-        );
+            $LogData = $this->m_function->GoToHistoriData($id_pesan_det, $id_request_det);
 
-        $ParamSave = array(
-            'Table' => 'transpesan_qrcode',
-            'DataInsert' => $ArraySave
-        );
+            if ($LogData['msg'] != "Ya") {
+                $pesan_data = array(
+                    'msg' => 'Tidak',
+                    'pesan' => $LogData['pesan'],
+                );
+                echo json_encode($pesan_data);
+                die;
+            }
+        } else {
 
-        if (!$this->m_function->save_data($ParamSave) >= 1) {
-            $pesan_data = array(
-                'msg' => 'Tidak',
-                'pesan' => 'Insert ke table transpesan_qrcode gagal...!!!  😢',
+            $keycode = generateUUID();
+
+            $ArraySave = array(
+                'keycode' => $keycode,
+                'id_request' => $id_request_det,
+                'id_pesan' => $id_pesan_det,
+                'url' => site_url('scanqrcode/' . $keycode),
+                'path' => base_url('img_qrcode/' . $keycode . '.png')
             );
-            echo json_encode($pesan_data);
-            die;
+
+            $ParamSave = array(
+                'Table' => 'transpesan_qrcode',
+                'DataInsert' => $ArraySave
+            );
+
+            if (!$this->m_function->save_data($ParamSave) >= 1) {
+                $pesan_data = array(
+                    'msg' => 'Tidak',
+                    'pesan' => 'Insert ke table transpesan_qrcode gagal...!!!  😢',
+                );
+                echo json_encode($pesan_data);
+                die;
+            }
+
+
+            $this->load->library('ciqrcode');
+
+            $params['data'] = $keycode;
+            $params['level'] = 'H';
+            $params['size'] = 10;
+            $params['savename'] = FCPATH . 'img_qrcode/' . $keycode . '.png';
+            $this->ciqrcode->generate($params);
         }
 
 
-        $this->load->library('ciqrcode');
-
-        $params['data'] = $keycode;
-        $params['level'] = 'H';
-        $params['size'] = 10;
-        $params['savename'] = FCPATH . 'img_qrcode/' . $keycode . '.png';
-        $this->ciqrcode->generate($params);
-
-
         //end buat qrcode
-
         $DataUpdate = array(
-            'id_status_approval' => 1,
             'acc_director' => 'Y',
             'time_acc_director' => tanggal_sekarang(),
             'acc_name_director' => $this->session->userdata('PO_username'),
         );
+
+        if ($id_status == 2) { //Cancel PO
+
+            $ParamArray = [
+                'Table' => 'tbl_request_po',
+                'Field' => 'ifnull(MAX(seqno_revisi),0) + 1 as seqno_revisi',
+                'WhereData' => array('id_pesan' => $id_pesan_det),
+            ];
+            $seqno_revisi = $this->m_function->check_value($ParamArray);
+
+            $DataUpdate['id_status_approval'] = '3'; //Revisi PO
+            $DataUpdate['seqno_revisi'] = $seqno_revisi; //Revisi KEBERAPA
+
+            $DataUpdate['acc_director'] = '';
+            $DataUpdate['time_acc_director'] = Null;
+            $DataUpdate['acc_name_director'] = '';
+
+            $DataUpdate['acc_manager'] = '';
+            $DataUpdate['time_acc_manager'] = Null;
+            $DataUpdate['acc_name_manager'] = '';
+
+            $DataUpdate['flag_request'] = '0';
+            $DataUpdate['flag_email_manager'] = '0';
+            $DataUpdate['flag_email_director'] = '0';
+
+            $ParamUpdate = array(
+                'Table' => 'transpesan_head',
+                'DataUpdate' => array('flag_revisi' => '1'),
+                'WhereData' => array('id_pesan' => $id_pesan_det)
+            );
+            $this->m_function->update_data($ParamUpdate);
+        }
+
+        if ($id_status == 4) {
+            $DataUpdate['id_status_approval'] = '1';
+        }
 
         $ParamUpdate = array(
             'Table' => 'tbl_request_po',
             'DataUpdate' => $DataUpdate,
             'WhereData' => array('id_request' => $id_request_det)
         );
+
+
 
         if (!$this->m_function->update_data($ParamUpdate) >= 1) {
             $pesan_data = array(
@@ -331,12 +514,6 @@ class C_dashboarddirektur extends CI_Controller
         $id_pesan_det = $this->input->post('id_pesan_det');
         $id_request_det = $this->input->post('id_request_det');
 
-        // $PesanNotfikasi = array(
-        //     'msg' => 'Ya',
-        //     'pesan' => "Data Po Berhasil Di Approve",
-        // );
-        // echo json_encode($PesanNotfikasi);
-        // die;
 
         $ParamArray = [
             'Table' => 'tbl_akses_token',
@@ -380,17 +557,17 @@ class C_dashboarddirektur extends CI_Controller
             'countryCode' => '62',
         ];
 
-        // $ParamArray = [
-        //     'Table' => 'tbl_rule_approval',
-        //     'WhereData' => ['kode_divisi' => $arrayPoRequest[0]['kode_divisi']]
-        // ];
-        // $GetReceivedWA = $this->m_function->value_result_array($ParamArray);
+        $ParamArray = [
+            'Table' => 'tbl_rule_approval',
+            'WhereData' => ['kode_divisi' => $arrayPoRequest[0]['kode_divisi']]
+        ];
+        $GetReceivedWA = $this->m_function->value_result_array($ParamArray);
 
-        // $data_sendto_manager = [
-        //     'target' => $GetReceivedWA[0]['phone_acc1'],
-        //     'message' => $MessageWa,
-        //     'countryCode' => '62',
-        // ];
+        $data_sendto_manager = [
+            'target' => $GetReceivedWA[0]['phone_acc1'],
+            'message' => $MessageWa,
+            'countryCode' => '62',
+        ];
 
         // Kirim via bayar
         $Respon = $this->fonnte_guzzle->send($data, $TokenBayar);
@@ -398,7 +575,7 @@ class C_dashboarddirektur extends CI_Controller
 
         $PesanNotfikasi = array();
 
-        //$ResponMGR = $this->fonnte_guzzle->send($data_sendto_manager, $TokenBayar);
+        $ResponMGR = $this->fonnte_guzzle->send($data_sendto_manager, $TokenBayar);
 
 
         if ($StatusBayar === 1) {
@@ -426,6 +603,124 @@ class C_dashboarddirektur extends CI_Controller
         $Statusgratis = (int)($Respongratis['status'] ?? 0);
 
         //$RespongratisMGR = $this->fonnte_guzzle->send($data_sendto_manager, $Tokengratis);
+
+        if ($Statusgratis === 1) {
+            //echo "✔ Berhasil kirim ke {$data['target']} via gratis<br>";
+            $PesanNotfikasi = array(
+                'msg' => 'Ya',
+                'pesan' => "Data Po Berhasil Di Approve",
+                'Respon' => $Respongratis
+            );
+            echo json_encode($PesanNotfikasi);
+            die;
+        } else {
+            //echo "✖ Gagal kirim ke {$data['target']} via BAYAR & gratis<br>";
+            $PesanNotfikasi = array(
+                'msg' => 'Tidak',
+                'pesan' => $Respongratis['reason'],
+                'Respon' => $Respongratis
+            );
+            echo json_encode($PesanNotfikasi);
+            die;
+        }
+    }
+
+    function  c_send_back_notifikasi_reject()
+    {
+        $this->load->library('Fonnte_guzzle');
+
+        $id_pesan_det = $this->input->post('id_pesan_det');
+        $id_request_det = $this->input->post('id_request_det');
+
+
+        $ParamArray = [
+            'Table' => 'tbl_akses_token',
+            'WhereData' => ['version' => 'bayar'],
+            'Field' => 'token'
+        ];
+        $TokenBayar = $this->m_function->check_value($ParamArray);
+
+        // Ambil token gratis
+        $ParamArray = [
+            'Table' => 'tbl_akses_token',
+            'WhereData' => ['version' => 'gratis'],
+            'Field' => 'token'
+        ];
+        $Tokengratis = $this->m_function->check_value($ParamArray);
+
+        $ParamArray = array(
+            'Table' => 'tbl_request_po',
+            'WhereData' => array('id_request' => $id_request_det, 'id_pesan' => $id_pesan_det),
+            'Field' => '*,get_nopo(id_pesan) nopo'
+        );
+        $arrayPoRequest = $this->m_function->value_result_array($ParamArray);
+
+        $ParamArray = array(
+            'Table' => 'masteruser',
+            'WhereData' => array('username' =>  $arrayPoRequest[0]['user_request']),
+            'Field' => 'phone'
+        );
+        $phone = $this->m_function->check_value($ParamArray);
+
+        $GetPO = "";
+        foreach ($arrayPoRequest as $arrayPo) {
+            $GetPO = "*" . $arrayPo['nopo'] . "*" . "\n";
+        }
+
+        $MessageWa = "No PO ini sudah di Reject Oleh Pak Helmi\n\n" . $GetPO;
+
+        $data = [
+            'target' => $phone,
+            'message' => $MessageWa,
+            'countryCode' => '62',
+        ];
+
+        $ParamArray = [
+            'Table' => 'tbl_rule_approval',
+            'WhereData' => ['kode_divisi' => $arrayPoRequest[0]['kode_divisi']]
+        ];
+        $GetReceivedWA = $this->m_function->value_result_array($ParamArray);
+
+        $data_sendto_manager = [
+            'target' => $GetReceivedWA[0]['phone_acc1'],
+            'message' => $MessageWa,
+            'countryCode' => '62',
+        ];
+
+        // Kirim via bayar
+        $Respon = $this->fonnte_guzzle->send($data, $TokenBayar);
+        $StatusBayar = (int)($Respon['status'] ?? 0);
+
+        $PesanNotfikasi = array();
+
+        $ResponMGR = $this->fonnte_guzzle->send($data_sendto_manager, $TokenBayar);
+
+
+        if ($StatusBayar === 1) {
+            // echo "✔ Berhasil kirim ke {$data['target']} via BAYAR<br>";
+            // continue;
+            $PesanNotfikasi = array(
+                'msg' => 'Ya',
+                'pesan' => "Data Po Berhasil Di Approve",
+                'Respon' => $Respon
+            );
+            echo json_encode($PesanNotfikasi);
+            die;
+        } else {
+            $PesanNotfikasi = array(
+                'msg' => 'Tidak',
+                'pesan' => $Respon['reason'],
+                'Respon' => $Respon
+            );
+            // return $PesanNotfikasi;
+        }
+
+
+        // Jika gagal → retry via gratis
+        $Respongratis = $this->fonnte_guzzle->send($data, $Tokengratis);
+        $Statusgratis = (int)($Respongratis['status'] ?? 0);
+
+        $RespongratisMGR = $this->fonnte_guzzle->send($data_sendto_manager, $Tokengratis);
 
         if ($Statusgratis === 1) {
             //echo "✔ Berhasil kirim ke {$data['target']} via gratis<br>";

@@ -2,11 +2,9 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set('Asia/Jakarta');
-//use PhpOffice\PhpSpreadsheet\Spreadsheet;
-//use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class M_function extends CI_Model
 {
@@ -363,6 +361,126 @@ class M_function extends CI_Model
         return $this->$Database->delete($Table);
     }
 
+
+    function GoToHistoriData($id_pesan_det, $id_request_det)
+    {
+
+        //disini kita cari nopo atau id po yang ada sebelumnya pada saat request
+        $query = " SELECT id_request, id_pesan
+                    FROM (
+                        SELECT
+                            id_request,
+                            id_pesan,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY id_pesan
+                                ORDER BY id_request DESC
+                            ) AS rn
+                        FROM tbl_request_po
+                        WHERE id_pesan = '" . $id_pesan_det . "'
+                    ) t
+                    WHERE rn = 2 ";
+
+        $dataBefore = $this->db->query($query)->result_array();
+
+        foreach ($dataBefore as $resdataBefore) {
+            $id_pesan_det = $resdataBefore['id_pesan'];
+            $id_request_det = $resdataBefore['id_request'];
+        }
+
+
+
+        $ParamArray = array(
+            'Table' => 'transpesan_head',
+            'WhereData' => array('id_pesan' => $id_pesan_det),
+            'Field' => '*,get_company(nopo) as comp'
+        );
+        $GetHeaderPO = $this->m_function->value_result_array($ParamArray);
+        $ConectDB = "";
+        if ($GetHeaderPO[0]['comp'] == "MSA") {
+            $ConectDB = "dbAcct";
+        } else if ($GetHeaderPO[0]['comp'] == "BAL") {
+            $ConectDB = "dbAcctBal";
+        } else {
+            $ConectDB = "dbAcct";
+        }
+
+        $ParamArray = array(
+            'ConectDB' => $ConectDB,
+            'Table' => 'fin_ap_m_supplier',
+            'WhereData' => array('suppl_code' => $GetHeaderPO[0]['kodesupplier']),
+        );
+
+        $GetSupplier = $this->m_function->value_result_array($ParamArray);
+
+
+
+        $ParamArray = [
+            'Table' => 'transpesan_head_old',
+            'Field' => 'ifnull(MAX(id_old),0) + 1 as nomor'
+        ];
+        $runNumber = $this->m_function->check_value($ParamArray);
+
+        //insert ke transpesan_head_old
+        $Query1 = " insert into transpesan_head_old (no,id_pesan,tglpesan,nopo,kodesupplier,noreff,nomr,kode_divisi,dateedited,useredited,
+                    tglkrm,tgltempo,matauang,pembayaran,status,subtotalharga,ppn,keterangan,id_bank,discount_total,
+                    ttd,no_invoice,faktur_pajak,tgl_invoice,rec_id,lain,id_category,nilai_lain,created_on,created_by,
+                    flag_finish,flag_id_request,flag_revisi,tipedata,id_old,id_request,suppl_name,address1,address2,address3,phone,fax,contact_person) ";
+        $Query1 .= " select *," . $runNumber . "," . $id_request_det . ",'" . $GetSupplier[0]['suppl_name'] . "', 
+                    '" . $GetSupplier[0]['address1'] . "' ,'" . $GetSupplier[0]['address2'] . "' ,
+                    '" . $GetSupplier[0]['address3'] . "' ,'" . $GetSupplier[0]['phone'] . "' ,
+                    '" . $GetSupplier[0]['fax'] . "' ,'" . $GetSupplier[0]['contact_person'] . "' 
+                    from  transpesan_head where id_pesan='" . $id_pesan_det . "' ";
+        $hasil1 = $this->db->query($Query1);
+
+        if (!$hasil1 >= 1) {
+            $pesan_data = array(
+                'msg' => 'Tidak',
+                'pesan' => 'Simpan Log transpesan_head  Gagal...!!!  😢',
+            );
+            return $pesan_data;
+            die;
+        }
+
+        //insert ke transpesan_det_old
+        $Query2 = " insert into transpesan_det_old (no,id_pesan,kodebarang,qtymsk,hargasatuan,diskon,kodeproyek,
+                    Keterangan_detail,total,sn,id_old,itembarang,merk,type,category,satuan) ";
+        $Query2 .= " select a.*," . $runNumber . ",b.itembarang,b.merk,b.type,b.category,b.satuan 
+                        from  transpesan_det a  INNER JOIN masterbarang b on a.kodebarang=b.kodebarang where a.id_pesan='" . $id_pesan_det . "' ";
+        $hasil2 = $this->db->query($Query2);
+
+        if (!$hasil2 >= 1) {
+            $pesan_data = array(
+                'msg' => 'Tidak',
+                'pesan' => 'Simpan Log transpesan_det  Gagal...!!!  😢',
+            );
+            return $pesan_data;
+            die;
+        }
+
+
+
+        //insert ke transpesan_det_keterangan_old
+        $Query3 = " insert into transpesan_det_keterangan_old (id_transpesan_det,id_ket_detail,seqno,keteranganbarang,id_old) ";
+        $Query3 .= " SELECT a.*," . $runNumber . " FROM transpesan_det_keterangan a INNER JOIN transpesan_det b 
+                        on a.id_transpesan_det=b.no 
+                        where b.id_pesan='" . $id_pesan_det . "' ";
+        $hasil3 = $this->db->query($Query3);
+
+        if (!$hasil3 >= 1) {
+            $pesan_data = array(
+                'msg' => 'Tidak',
+                'pesan' => 'Simpan Log transpesan_det_keterangan  Gagal...!!!  😢',
+            );
+            return $pesan_data;
+            die;
+        }
+
+        $pesan_data = array(
+            'msg' => 'Ya',
+        );
+        return $pesan_data;
+    }
+
     function CreateLinkManager($email_manager)
     {
         $this->load->library('custom_encrypt');
@@ -373,7 +491,7 @@ class M_function extends CI_Model
             'Field' => 'password_hash',
         );
 
-        $password_hash = $this->m_function->check_value($ParamArray);
+        $password_hash = $this->check_value($ParamArray);
 
         $CI = &get_instance();
 
@@ -393,25 +511,140 @@ class M_function extends CI_Model
         return $enkripsi;
     }
 
-
-    function shortenUrl($longUrl)
+    function generator_xls($setting_xls)
     {
-        $apiUrl = 'https://is.gd/create.php?format=simple&url=' . urlencode($longUrl);
 
-        $client = new Client(['timeout' => 10]);
+        $jumlah_sheet = $setting_xls['jumlah_sheet'];
+        $nama_sheet = $setting_xls['nama_sheet'];
+        $data_all_sheet = $setting_xls['data_all_sheet'];
+        $nama_excel = $setting_xls['nama_excel'];
 
-        try {
-            $response = $client->get($apiUrl);
-            if ($response->getStatusCode() === 200) {
-                $shortUrl = trim((string) $response->getBody());
-                if (filter_var($shortUrl, FILTER_VALIDATE_URL)) {
-                    return $shortUrl;
-                }
+        $spreadsheet = new Spreadsheet();
+        for ($a = 0; $a < $jumlah_sheet; $a++) {
+
+            $baris = 1;
+            $kolom = 1;
+
+            $spreadsheet->createSheet();
+
+            $spreadsheet->setActiveSheetIndex($a);
+            $spreadsheet->getActiveSheet()->setTitle($nama_sheet[$a]);
+            $sheet = $spreadsheet->getActiveSheet();
+
+            //JUDUL TABLE
+            foreach ($setting_xls['data_all_sheet'][$a][0] as $key => $value) {
+                $sheet->setCellValueByColumnAndRow($kolom, $baris, $key);
+                $kolom++;
             }
-        } catch (Exception $e) {
-            // fallback
+
+            $baris++;
+            $nomor = 1;
+            //ISI TABLE TABLE
+            for ($v = 0; $v < count($setting_xls['data_all_sheet'][$a]); $v++) {
+                $array_value = array_values($setting_xls['data_all_sheet'][$a][$v]);
+
+
+                $kolom = 1;
+                for ($b = 0; $b < count($array_value); $b++) {
+
+                    $nilai = $array_value[$b];
+
+
+                    if ($b == 0 && $array_value[$b] == "nomor") {
+                        $sheet->setCellValueByColumnAndRow($kolom, $baris, $nomor);
+                    } else {
+                        //$sheet->setCellValueByColumnAndRow($kolom, $baris, trim($array_value[$b]));
+                        //$this->setCellValueSmart($sheet, $kolom, $baris, $nilai);
+
+                        $value = trim($array_value[$b]);
+
+                        // cek apakah angka format 750,000.00
+                        if (is_numeric(str_replace(',', '', $value))) {
+
+                            $angka = str_replace(',', '', $value);
+
+                            $sheet->setCellValueByColumnAndRow($kolom, $baris, $angka);
+
+                            // set format number excel
+                            $sheet->getStyleByColumnAndRow($kolom, $baris)
+                                ->getNumberFormat()
+                                ->setFormatCode('#,##0.00');
+                        } else {
+
+                            $sheet->setCellValueByColumnAndRow($kolom, $baris, $value);
+                        }
+                    }
+                    $kolom++;
+                }
+                $baris++;
+                $nomor++;
+            }
+
+            $kolom = 1;
+            foreach ($setting_xls['data_all_sheet'][0][0] as $key => $value) {
+                $sheet->getColumnDimensionByColumn($kolom)->setAutoSize(true);
+                $kolom++;
+            }
         }
 
-        return $longUrl;
+
+        $spreadsheet->setActiveSheetIndex(0);
+        $writer = new Xlsx($spreadsheet);
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $nama_excel . '.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output');
     }
+
+    function setCellValueSmart($sheet, $kolom, $baris, $nilai)
+    {
+        $nilai = trim($nilai ?? '');  // aman kalau null
+
+        // Coba bersihkan format angka Indonesia/Internasional yang umum
+        $clean = str_replace(['.', ','], ['', '.'], $nilai);  // ganti titik ribuan → kosong, koma desimal → titik
+        $clean = preg_replace('/[^0-9.-]/', '', $clean);     // buang semua selain angka, minus, titik
+
+        if (is_numeric($clean) && $clean !== '') {
+            $number = (float)$clean;
+
+            $sheet->setCellValueByColumnAndRow($kolom, $baris, $number);
+
+            // Format: ribuan pakai koma + 2 desimal (sesuai contoh 750,000.00)
+            $sheet->getStyleByColumnAndRow($kolom, $baris)
+                ->getNumberFormat()
+                ->setFormatCode('#,##0.00');
+
+            // Optional: rata kanan (default number sudah begitu, tapi bisa ditegaskan)
+            $sheet->getStyleByColumnAndRow($kolom, $baris)
+                ->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+        } else {
+            // Bukan angka → simpan sebagai string biasa
+            $sheet->setCellValueByColumnAndRow($kolom, $baris, $nilai);
+        }
+    }
+
+
+    // function shortenUrl($longUrl)
+    // {
+    //     $apiUrl = 'https://is.gd/create.php?format=simple&url=' . urlencode($longUrl);
+
+    //     $client = new Client(['timeout' => 10]);
+
+    //     try {
+    //         $response = $client->get($apiUrl);
+    //         if ($response->getStatusCode() === 200) {
+    //             $shortUrl = trim((string) $response->getBody());
+    //             if (filter_var($shortUrl, FILTER_VALIDATE_URL)) {
+    //                 return $shortUrl;
+    //             }
+    //         }
+    //     } catch (Exception $e) {
+    //         // fallback
+    //     }
+
+    //     return $longUrl;
+    // }
 }

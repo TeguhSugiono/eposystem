@@ -11,14 +11,23 @@
         font-size: 16px !important;
     }
 
+    .textTableDifferent {
+        color: #3B82F6 !important;
+    }
+
+
     /* 1	Accept PO
         2	Cancel PO
         3	Revisi PO
         4	Hold PO */
     <?php
+
+    $classCancel = "none";
+
     $classHold = "block";
     if ($GetDataRequest[0]['id_status_approval'] == "4") {
         $classHold = "none";
+        $classCancel = "none";
     }
 
     $classAccept = "block";
@@ -27,6 +36,11 @@
         $classAccept = "none";
         $classReject = "none";
         $classHold = "none";
+        $classCancel = "block";
+    }
+
+    if ($GetDataRequest[0]['acc_director'] == "Y") {
+        $classCancel = "none";
     }
     ?>
 </style>
@@ -44,6 +58,10 @@
                 <input type="hidden" class="form-control form-control-sm textBold" id="id_pesan" name="id_pesan" value="<?= $id_pesan; ?>">
                 <input type="hidden" class="form-control form-control-sm textBold" id="id_request" name="id_request" value="<?= $id_request; ?>">
 
+                <?php
+                //print_r($hehehe);
+                ?>
+
                 <div class="row">
                     <!-- <div class="col-md-4">
                         <div class="form-group row rowX">
@@ -54,27 +72,53 @@
                         </div>
                     </div> -->
 
+                    <?php
+                    $addClass1 = "";
+                    if (count($GetDataHeaderOld) > 0) {
+                        if ($GetDataSupplier[0]['suppl_name'] != $GetDataHeaderOld[0]['suppl_name']) {
+                            $addClass1 = "color: #3B82F6 !important;";
+                        }
+                    }
+                    ?>
                     <div class="col-md-4">
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">Nama Supplier</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm textBold" id="suppl_name" name="suppl_name" value="<?= $GetDataSupplier[0]['suppl_name']; ?>" readonly>
+                                <input type="text" style="<?= $addClass1; ?>" class="form-control form-control-sm textBold" id="suppl_name" name="suppl_name" value="<?= $GetDataSupplier[0]['suppl_name']; ?>" readonly>
                             </div>
                         </div>
                     </div>
+
+                    <?php
+                    $addClass2 = "";
+                    if (count($GetDataHeaderOld) > 0) {
+                        if ($GetDataSupplier[0]['alamat'] != $GetDataHeaderOld[0]['alamat']) {
+                            $addClass2 = "color: #3B82F6 !important;";
+                        }
+                    }
+                    ?>
                     <div class="col-md-4">
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">Alamat</label>
                             <div class="col-sm-9">
-                                <textarea readonly id="alamat" name="alamat" rows="3" cols="40" class="form-control textBold"><?= $GetDataSupplier[0]['alamat']; ?></textarea>
+                                <textarea readonly id="alamat" style="<?= $addClass2; ?>" name="alamat" rows="3" cols="40" class="form-control textBold"><?= $GetDataSupplier[0]['alamat']; ?></textarea>
                             </div>
                         </div>
                     </div>
+
+                    <?php
+                    $addClass3 = "";
+                    if (count($GetDataHeaderOld) > 0) {
+                        if ($GetDataHeader[0]['keterangan'] != $GetDataHeaderOld[0]['keterangan']) {
+                            $addClass3 = "color: #3B82F6 !important;";
+                        }
+                    }
+                    ?>
                     <div class="col-md-4">
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">Keterangan</label>
                             <div class="col-sm-9">
-                                <textarea readonly id="keterangan" name="keterangan" rows="3" cols="40" class="form-control textBold"><?= $GetDataHeader[0]['keterangan']; ?></textarea>
+                                <textarea readonly id="keterangan" style="<?= $addClass3; ?>" name="keterangan" rows="3" cols="40" class="form-control textBold"><?= $GetDataHeader[0]['keterangan']; ?></textarea>
                             </div>
                         </div>
                     </div>
@@ -118,6 +162,7 @@
             <button class="btn btn-primary" onclick="accept()" style="display: <?= $classAccept; ?>;">Accept</button>
             <!-- <button class="btn btn-primary" onclick="hold()" style="display: <--?= $classHold; ?>;">Hold</button> -->
             <button class="btn btn-primary" onclick="reject()" style="display: <?= $classReject; ?>;">Reject</button>
+            <button class="btn btn-primary" onclick="BatalRequest()" style="display: <?= $classCancel; ?>;">Cancel Request</button>
             <button class="btn btn-secondary" onclick="closeModal('id_modal_add')">Close</button>
         </div>
     </div>
@@ -129,11 +174,46 @@
     var tbltransdet;
     var id_pesan_det = "<?= $id_pesan; ?>";
     var id_request_det = "<?= $id_request; ?>";
+    var pono = "<?= $GetDataHeader[0]['nopo']; ?>";
 
     //alert(id_pesan_det);
 
 
     //initSelect2('id_modal_add');
+
+    function BatalRequest() {
+        var jawab = confirm(
+            "YAKIN MAU BATALKAN REQUEST DATA INI?\n\n" +
+            "Kode Request : " + id_request_det + "\n" +
+            "No PO  : " + pono + "\n\n" +
+            "😢 Klik Ok untuk batal request!"
+        );
+
+        var dataok;
+
+        if (jawab === true) {
+            url = '<?php echo site_url('request_po/request_batal') ?>';
+            data = {
+                id_request: id_request_det,
+                pono: pono
+            };
+            pesan = 'function request_batal gagal... 😢';
+            dataok = multi_ajax_proses(url, data, pesan);
+
+            if (dataok.msg != 'Ya') {
+                alert(dataok.pesan);
+                return false;
+            }
+
+            closeModal('id_modal_add');
+            tblrequestpo.ajax.reload(null, false);
+
+        } else {
+            return false;
+        }
+
+
+    }
 
     function closeModal(modalId = 'id_modal_add') {
         const modal = document.getElementById(modalId);
@@ -152,8 +232,9 @@
                 if (typeof counter !== 'undefined') counter = 0;
 
                 // Reload tabel utama kalau ada
-                if (typeof tblmstbarang !== 'undefined') {
-                    tblmstbarang.ajax.reload(null, false);
+                if (typeof tblrequestpo !== 'undefined') {
+                    //tblmstbarang.ajax.reload(null, false);
+                    tblrequestpo.ajax.reload(null, false);
                 }
             }, 300);
         }
@@ -161,13 +242,35 @@
 
     $(document).ready(function() {
 
+        var GetDataDetailOld = <?= json_encode(!empty($GetDataDetailOld) ? $GetDataDetailOld : []); ?>;
+        var GetDataHeaderOld = <?= json_encode(!empty($GetDataHeaderOld) ? $GetDataHeaderOld : []); ?>;
+
+        var HeadSubtotalOld = 0;
+        var HeadNilaiLainOld = 0;
+        var HeadNPPNOld = 0;
+        var HeadPPNUseOld = 0;
+        var HeadGrandTotalOld = 0;
+        var HeadCategoryOld = "";
+
+        if (GetDataHeaderOld && GetDataHeaderOld.length > 0) {
+            var old = GetDataHeaderOld[0];
+
+            HeadSubtotalOld = old['subtotalharga'];
+            HeadNilaiLainOld = old['nilai_lain'];
+            HeadNPPNOld = old['ppn'];
+            HeadPPNUseOld = old['ppn_used'];
+            HeadGrandTotalOld = old['grandtotal'];
+            HeadCategoryOld = old['id_category'];
+        }
+
 
         tbltransdet = $('#tbltransdet').DataTable({
             "ajax": {
-                "url": "<?php echo site_url('trans_purchaseorder/fetch_table_detail'); ?>",
+                "url": "<?php echo site_url('dashboardmanager/fetch_table_detail'); ?>",
                 "type": "POST",
                 "data": function(d) {
                     d.id_pesan = id_pesan_det;
+                    d.id_request = id_request_det;
                 },
                 "dataSrc": ""
             },
@@ -231,7 +334,49 @@
                 $('td', row).each(function(index) {
                     var header = $('#tbltransdet thead th').eq(index).text();
                     $(this).attr('data-label', header);
+
                 });
+
+
+                if (GetDataDetailOld && GetDataDetailOld.length > 0) {
+
+                    var namabarangOld = GetDataDetailOld[dataIndex]['itembarang'] + " " + GetDataDetailOld[dataIndex]['merk'] + " " + GetDataDetailOld[dataIndex]['type'];
+                    var namabarangNew = data['itembarang'] + " " + data['merk'] + " " + data['type'];
+
+                    if (namabarangOld != namabarangNew) {
+                        $('td', row).eq(1).addClass('textTableDifferent');
+                    }
+
+                    var qtyold = GetDataDetailOld[dataIndex]['qtymsk'];
+                    var qtynew = data['qtymsk'];
+
+                    if (qtyold != qtynew) {
+                        $('td', row).eq(2).addClass('textTableDifferent');
+                    }
+
+                    var hargaold = GetDataDetailOld[dataIndex]['hargasatuan'];
+                    var harganew = data['hargasatuan'];
+
+                    if (hargaold != harganew) {
+                        $('td', row).eq(3).addClass('textTableDifferent');
+                    }
+
+                    var diskonold = GetDataDetailOld[dataIndex]['diskon'];
+                    var diskonnew = data['diskon'];
+
+                    if (diskonold != diskonnew) {
+                        $('td', row).eq(4).addClass('textTableDifferent');
+                    }
+
+                    var totalold = GetDataDetailOld[dataIndex]['total'];
+                    var totalnew = data['total'];
+
+                    if (totalold != totalnew) {
+                        $('td', row).eq(5).addClass('textTableDifferent');
+                    }
+
+                }
+
             },
 
 
@@ -254,7 +399,19 @@
                 $('#tbltransdet tbody tr.subtotal-row').remove();
 
 
+                // console.log(HeadSubtotalOld);
+                // console.log(HeadNilaiLainOld);
+                // console.log(HeadNPPNOld);
+                // console.log(HeadPPNUseOld);
+                // console.log(HeadGrandTotalOld);
+                // console.log(HeadCategoryOld);
 
+                var addclass1 = "";
+                if (GetDataHeaderOld && GetDataHeaderOld.length > 0) {
+                    if (HeadSubtotal != HeadSubtotalOld) {
+                        addclass1 = "color: #3B82F6 !important;";
+                    }
+                }
 
                 var subtotalRow = `
                     <tr class="subtotal-row">
@@ -263,10 +420,18 @@
                         <td></td>
                         <td></td>
                         <td class="text-right"><strong>Subtotal</strong></td>
-                        <td class="text-right"><strong>${formatNumberSeparator(parseFloat(HeadSubtotal))}</strong></td>
+                        <td class="text-right" style="${addclass1}"><strong>${formatNumberSeparator(parseFloat(HeadSubtotal))}</strong></td>
                     </tr>`;
 
                 $('#tbltransdet tbody').append(subtotalRow);
+
+
+                var addclass2 = "";
+                if (GetDataHeaderOld && GetDataHeaderOld.length > 0) {
+                    if (HeadNilaiLain != HeadNilaiLainOld) {
+                        addclass2 = "color: #3B82F6 !important;";
+                    }
+                }
 
                 subtotalRow = `
                     <tr class="subtotal-row">
@@ -275,13 +440,23 @@
                         <td></td>
                         <td></td>
                         <td class="text-right"><strong>Nilai Lain</strong></td>
-                        <td class="text-right"><strong>${formatNumberSeparator(parseFloat(HeadNilaiLain))}</strong></td>
+                        <td class="text-right" style="${addclass2}"><strong>${formatNumberSeparator(parseFloat(HeadNilaiLain))}</strong></td>
                     </tr>`;
 
                 $('#tbltransdet tbody').append(subtotalRow);
 
-                HeadCategory
+
+
+                //HeadCategory
                 var hitungppn = FuncHitungPPN(HeadCategory, HeadPPNUse, HeadSubtotal).ppn;
+                var hitungppnOld = FuncHitungPPN(HeadCategoryOld, HeadPPNUseOld, HeadSubtotalOld).ppn;
+
+                var addclass3 = "";
+                if (GetDataHeaderOld && GetDataHeaderOld.length > 0) {
+                    if (hitungppn != hitungppnOld) {
+                        addclass3 = "color: #3B82F6 !important;";
+                    }
+                }
 
                 subtotalRow = `
                     <tr class="subtotal-row">
@@ -290,11 +465,17 @@
                         <td></td>
                         <td></td>
                         <td class="text-right"><strong>PPN</strong></td>
-                        <td class="text-right"><strong>${formatNumberSeparator(parseFloat(hitungppn))}</strong></td>
+                        <td class="text-right" style="${addclass3}"><strong>${formatNumberSeparator(parseFloat(hitungppn))}</strong></td>
                     </tr>`;
 
                 $('#tbltransdet tbody').append(subtotalRow);
 
+                var addclass4 = "";
+                if (GetDataHeaderOld && GetDataHeaderOld.length > 0) {
+                    if (HeadGrandTotal != HeadGrandTotalOld) {
+                        addclass4 = "color: #3B82F6 !important;";
+                    }
+                }
 
                 subtotalRow = `
                     <tr class="subtotal-row">
@@ -303,7 +484,7 @@
                         <td></td>
                         <td></td>
                         <td class="text-right"><strong>Grand Total</strong></td>
-                        <td class="text-right"><strong>${formatNumberSeparator(parseFloat(HeadGrandTotal))}</strong></td>
+                        <td class="text-right" style="${addclass4}"><strong>${formatNumberSeparator(parseFloat(HeadGrandTotal))}</strong></td>
                     </tr>`;
 
                 $('#tbltransdet tbody').append(subtotalRow);

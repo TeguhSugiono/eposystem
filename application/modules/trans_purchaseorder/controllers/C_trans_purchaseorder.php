@@ -226,7 +226,7 @@ class C_trans_purchaseorder extends CI_Controller
                             <td valign='top' class='no-border-top-bottom' style='height:14px;'></td>
                             <td valign='top' class='no-border-top-bottom'></td>
                             <td nowrap='nowrap' class='no-border-top-bottom'></td>
-                            <td class='textcenter' class='no-border-top-bottom'></td>
+                            <td class='no-border-top-bottom'></td>
                             <td class='no-border-top-bottom'></td>
                             <td align='right' class='no-border-top-bottom'></td>
                             <td align='right' class='no-border-top-bottom'></td>
@@ -305,6 +305,7 @@ class C_trans_purchaseorder extends CI_Controller
         $ParamArray = array(
             'Table' => 'transpesan_head a',
             'WhereData' => array('a.kode_divisi' => $PO_kodedivisi, 'a.status !=' => 'V'),
+            'Clause' => "a.tipedata is null",
             'OrderBy' => 'a.created_on desc,a.tglpesan desc',
             'ArrayJoin' => $ArrayJoin,
             'Field' => 'a.*,b.nama_divisi AS nama_divisi,c.namasupplier,ppn_param_date(a.tglpesan) AS ppn_used,get_company(a.nopo) as comp'
@@ -536,6 +537,31 @@ class C_trans_purchaseorder extends CI_Controller
         echo $html;
     }
 
+    // function c_getnamesupplier()
+    // {
+    //     $kodesupplier = $this->input->post('kodesupplier');
+
+    //     $ParamArray = array(
+    //         'ConectDB' => 'dbAcct',
+    //         'Table' => 'fin_ap_m_supplier',
+    //         'WhereData' => array('active_status' => 'Y', 'suppl_code' => $kodesupplier),
+    //     );
+
+    //     if ($kodesupplier == "") {
+    //         unset($ParamArray['WhereData']['suppl_code']);
+    //     }
+
+    //     $ArraySupplier = array();
+    //     if ($this->m_function->check_row($ParamArray) > 0) {
+    //         //$ParamArray['Field'] = 'suppl_name';
+    //         $ArraySupplier = $this->m_function->value_result_array($ParamArray);
+    //     } else {
+    //         $ArraySupplier = array(array("suppl_name" => ""));
+    //     }
+
+    //     echo json_encode($ArraySupplier);
+    // }
+
     function c_getnamesupplier()
     {
         $kodesupplier = $this->input->post('kodesupplier');
@@ -544,16 +570,27 @@ class C_trans_purchaseorder extends CI_Controller
             'ConectDB' => 'dbAcct',
             'Table' => 'fin_ap_m_supplier',
             'WhereData' => array('active_status' => 'Y', 'suppl_code' => $kodesupplier),
+            'Field' => '*,"MSA" as dbPt '
+        );
+
+        $ParamArrayBal = array(
+            'ConectDB' => 'dbAcctBal',
+            'Table' => 'fin_ap_m_supplier',
+            'WhereData' => array('active_status' => 'Y', 'suppl_code' => $kodesupplier),
+            'Field' => '*,"BAL" as dbPt '
         );
 
         if ($kodesupplier == "") {
             unset($ParamArray['WhereData']['suppl_code']);
+            unset($ParamArrayBal['WhereData']['suppl_code']);
         }
 
+
         $ArraySupplier = array();
-        if ($this->m_function->check_row($ParamArray) > 0) {
+        if ($this->m_function->check_row($ParamArray) > 0 || $this->m_function->check_row($ParamArrayBal) > 0) {
             //$ParamArray['Field'] = 'suppl_name';
-            $ArraySupplier = $this->m_function->value_result_array($ParamArray);
+            //$ArraySupplier = $this->m_function->value_result_array($ParamArray);
+            $ArraySupplier = array_merge($this->m_function->value_result_array($ParamArray), $this->m_function->value_result_array($ParamArrayBal));
         } else {
             $ArraySupplier = array(array("suppl_name" => ""));
         }
@@ -592,6 +629,8 @@ class C_trans_purchaseorder extends CI_Controller
         $nilai_lain = 0;
         $ppn = "";
         $flag_finish = 0;
+        $flag_revisi = 0;
+
 
         foreach ($ArrayPoHeader as $PoHeader) {
             $company = $PoHeader['comp'];
@@ -611,6 +650,7 @@ class C_trans_purchaseorder extends CI_Controller
             $nilai_lain = $PoHeader['nilai_lain'];
             $ppn = $PoHeader['ppn'];
             $flag_finish = $PoHeader['flag_finish'];
+            $flag_revisi = $PoHeader['flag_revisi'];
         }
 
         $ParamArray = array(
@@ -793,6 +833,7 @@ class C_trans_purchaseorder extends CI_Controller
             'dataBarang' => $dataBarang,
             'id_pesan' => $id_pesan,
             'flag_finish' => $flag_finish,
+            'flag_revisi' => $flag_revisi
         );
 
         $this->load->view('edit', $comp);
@@ -1158,7 +1199,7 @@ class C_trans_purchaseorder extends CI_Controller
             }
         }
 
-        $GetNoPO = sprintf("%04s", $this->m_function->check_value($ParamArray));
+        $GetNoPO = sprintf("%03d", $this->m_function->check_value($ParamArray)); //%04d
 
         $nopo   = "{$GetNoPO}/{$GetNameDivisi}/{$company}/{$bln}/{$tahun}";
 
@@ -1428,6 +1469,8 @@ class C_trans_purchaseorder extends CI_Controller
         $lain = $this->input->post('lain');
         $grandtotal = $this->input->post('grandtotal');
 
+        $flag_revisi = $this->input->post('flag_revisi');
+
 
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
@@ -1601,6 +1644,25 @@ class C_trans_purchaseorder extends CI_Controller
         }
 
         //end update data
+
+
+        if ($flag_revisi == 1) {
+
+            $ParamUpdate = array(
+                'Table' => 'transpesan_head',
+                'DataUpdate' => $ArrayHeader,
+                'WhereData' => array('id_pesan' => $id_pesan)
+            );
+
+            if (!$this->m_function->update_data($ParamUpdate) >= 1) {
+                $pesan_data = array(
+                    'msg' => 'Tidak',
+                    'pesan' => 'Update ke table transpesan_head gagal...!!!  😢',
+                );
+                echo json_encode($pesan_data);
+                die;
+            }
+        }
 
 
         $pesan_data = array(

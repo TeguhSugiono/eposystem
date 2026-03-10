@@ -1,2 +1,36 @@
-1. Po yang sudah direquest , bisa langsung dibatalkan (Ditarik Kembali) Oleh user sebelum data PO tersebut di Hold/Accept/Reject Oleh Pak Helmi
-2. 
+
+
+1. User Membuat PO (PO belum ada kode QR jika dicetak)
+
+2. User Menambahkan PO kedalam antrian untuk request permintaan persetujuan (tipe request New PO)
+
+3. User mengirimkan Po
+
+4. PO akan terkirim ke Manager untuk di approve
+
+5. Jika ada kesalahan data maka user bisa meminta manager untuk melakukan reject
+
+6. jika tidak ada kesalahan maka data PO akan approve manager
+   pada saat manager approve maka akan memberikan notifikasi ke user
+   dan permintaan approve po akan diteruskan ke direktur
+   
+7. pada saat data po suda masuk ke dalam antrian request di direktur
+   Data PO masih bisa ditarik oleh manager jika data belum di Hold/Accept/Reject
+   
+9. Po di approve direktur
+   setelah di approve maka akan memberikan notifikasi ke user dan manager
+   
+10. Setelah disetujui direktur data PO akan terkunci dan tidak dapat di modifikasi atau di hapus
+    kode QR PO otomatis terbuat .
+	
+	
+11. Revisi PO
+
+Sama dengan point 2. 
+   a. User Menambahkan PO kedalam antrian untuk request permintaan persetujuan dengan (tipe request Cancel PO)
+      Untuk prosesnya sama hingga dengan point 9.
+   
+   b. pada saat po di approve untuk tipe request Cancel maka
+      tipe request Cancel akan berubah menjadi Revisi
+	  status data po akan kembali ke user dan secara otomatis
+	  po yg terkunci akan terbuka dan bisa di edit oleh user

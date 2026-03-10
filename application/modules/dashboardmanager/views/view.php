@@ -31,7 +31,7 @@
 
 
     .table-striped>tbody>tr:nth-child(odd)>td {
-        background-color: #e5f3f5ff !important;
+        /* background-color: #e5f3f5ff !important; */
     }
 
 
@@ -48,21 +48,36 @@
         font-weight: bold !important;
     }
 
-    /* DETAIL */
 
-    #tbltransdet tbody tr.selected td {
+
+    /* #tbltransdet tbody tr.selected td {
         background-color: #053c42 !important;
         box-shadow: inset 0 0 0 9999px #053c42 !important;
         color: #ffffff !important;
         font-weight: bold !important;
-    }
-
-    /* END DETAIL */
+    } */
 </style>
 
 
 <link rel="stylesheet" href="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/'); ?>css_approve_manager.css">
 
+<style>
+    .clsHold {
+        background-color: #26afd9 !important;
+    }
+
+    .clsHCancel {
+        background-color: #f9f9c3 !important;
+    }
+
+    .clsRevisi {
+        background-color: #e7ad83 !important;
+    }
+
+    .clsNew {
+        background-color: #bdfabd !important;
+    }
+</style>
 
 <div class="card cardwith">
 
@@ -186,11 +201,19 @@
             },
             "columns": [
 
+                // {
+                //     "data": null,
+                //     "render": function(data, type, row, meta) {
+                //         return meta.row + 1;
+                //     }
+                // },
+
                 {
                     "data": null,
-                    "render": function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
+                    "orderable": false,
+                    "searchable": false,
+                    "className": "dt-center",
+                    "defaultContent": ""
                 },
 
 
@@ -353,6 +376,24 @@
                 $('td:eq(7)', row).attr('data-label', 'Reason');
                 $('td:eq(8)', row).attr('data-label', 'Acc Manager');
                 $('td:eq(9)', row).attr('data-label', 'Acc Direktur');
+
+
+
+
+
+
+                if (data['id_status_approval'] == '1') {
+                    $(row).addClass('clsNew');
+                } else if (data['id_status_approval'] == '2') {
+                    $(row).addClass('clsHCancel');
+                } else if (data['id_status_approval'] == '3') {
+                    $(row).addClass('clsRevisi');
+                } else if (data['id_status_approval'] == '4') {
+                    $(row).addClass('clsHold');
+                }
+
+
+
             },
 
 
@@ -386,7 +427,16 @@
                     "targets": [1, 2, 6, 7, 8, 9, 14, 16],
                     "visible": false
                 }
-            ]
+            ],
+            "rowCallback": function(row, data, index) {
+                // Hitung nomor urut berdasarkan urutan di hasil filtered + pagination
+                var info = tblrequestpo.page.info();
+                var page = info.page; // halaman saat ini (0-based)
+                var pageLength = info.length; // berapa baris per halaman
+                var rowNumber = page * pageLength + index + 1;
+
+                $('td:eq(0)', row).html(rowNumber); // eq(1) = kolom nomor urut (indeks ke-1)
+            }
 
 
 

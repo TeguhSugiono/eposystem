@@ -101,16 +101,16 @@
                         class="btn btn-sm btn-primary" title="Edit">
                         <i class="fa fa-edit"></i>
                         </a>
-                        <button type="button" onclick="BatalRequest('${row.id_request}', '${nopo}')" 
-                        class="btn btn-sm btn-primary" title="Batal Request">
-                        <i class="fa fa-window-close"></i>
-                        </button>
+                        
                         <button type="button" onclick="hapusData('${row.id_request}', '${nopo}')" 
                         class="btn btn-sm btn-primary" title="Hapus">
                         <i class="fa fa-trash"></i>
                         </button>
                         `;
-
+                        // <button type="button" onclick="BatalRequest('${row.id_request}', '${nopo}')" 
+                        // class="btn btn-sm btn-primary" title="Batal Request">
+                        // <i class="fa fa-window-close"></i>
+                        // </button>
                         // <button type="button" onclick="printData(this,'${row.id_pesan}', '${nopo}')"
                         // class="btn btn-sm btn-primary" title="Cetak" > <i class="fa fa-print" ></i> </button>
                     }

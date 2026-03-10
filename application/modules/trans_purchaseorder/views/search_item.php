@@ -80,12 +80,21 @@
                             `;
                     }
                 },
+                // {
+                //     "data": null,
+                //     "render": function(data, type, row, meta) {
+                //         return meta.row + 1;
+                //     }
+                // },
+
                 {
                     "data": null,
-                    "render": function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
+                    "orderable": false,
+                    "searchable": false,
+                    "className": "dt-center",
+                    "defaultContent": ""
                 },
+
                 {
                     "data": "kodebarang"
                 },
@@ -124,7 +133,16 @@
                     "targets": [0],
                     "visible": false
                 }
-            ]
+            ],
+            "rowCallback": function(row, data, index) {
+                // Hitung nomor urut berdasarkan urutan di hasil filtered + pagination
+                var info = tabelItemBarang.page.info();
+                var page = info.page; // halaman saat ini (0-based)
+                var pageLength = info.length; // berapa baris per halaman
+                var rowNumber = page * pageLength + index + 1;
+
+                $('td:eq(0)', row).html(rowNumber); // eq(1) = kolom nomor urut (indeks ke-1)
+            }
         });
 
     });

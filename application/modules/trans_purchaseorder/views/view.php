@@ -189,6 +189,8 @@
         pesan = 'function save data gagal... 😢';
         arraysupplier = multi_ajax_proses(url, data, pesan);
 
+        //console.log(arraysupplier);
+
 
         tbltranshead = $('#tbltranshead').DataTable({
             "ajax": {
@@ -280,23 +282,41 @@
                     "data": null,
                     "className": "text-left",
                     "render": function(data, type, row) {
+
                         if (row.namasupplier && row.namasupplier !== '') {
                             return row.namasupplier;
                         } else {
                             var supplierName = 'Tidak Ditemukan';
 
+                            //console.log(row.comp);
+
+                            // if (row.kodesupplier && arraysupplier && arraysupplier.length > 0) {
+                            //     var found = arraysupplier.find(function(sup) {
+                            //         return sup.suppl_code === row.kodesupplier;
+                            //     });
+
+                            //     if (found && found.suppl_name) {
+                            //         supplierName = found.suppl_name;
+                            //     }
+                            // }
+
                             if (row.kodesupplier && arraysupplier && arraysupplier.length > 0) {
                                 var found = arraysupplier.find(function(sup) {
-                                    return sup.suppl_code === row.kodesupplier;
+                                    // Mencocokkan berdasarkan kodesupplier DAN dbPt
+                                    return sup.suppl_code === row.kodesupplier && sup.dbPt === row.comp;
                                 });
 
                                 if (found && found.suppl_name) {
                                     supplierName = found.suppl_name;
+                                } else {
+                                    // Opsional: Berikan fallback jika tidak ditemukan kombinasi yang pas
+                                    supplierName = "Supplier Tidak Ditemukan";
                                 }
                             }
 
                             return supplierName;
                         }
+
                     }
                 }
 

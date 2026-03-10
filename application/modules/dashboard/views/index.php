@@ -55,9 +55,22 @@
 <body>
     <div class="app-container">
 
+        <?php
+
+        $jabatan = $this->db->query("SELECT jabatan FROM masteruser a 
+                INNER JOIN posisi b on a.kode_posisi=b.kode_posisi where username='" . $this->session->userdata('PO_username') . "' limit 1 ")->row()->jabatan;
+        if ($jabatan == 'Manager') {
+            $linkdashboard = 'dashboardmanager';
+        } elseif ($jabatan == 'Direktur') {
+            $linkdashboard = 'dashboarddirektur';
+        } else {
+            $linkdashboard = 'dashboard';
+        }
+        ?>
+
         <header class="top-nav">
             <div class="nav-brand">
-                <a href="<?= site_url(); ?>" class="brand-link" style="font-weight: 700;color: #ecf0f1;">
+                <a href="<?= site_url($linkdashboard); ?>" class="brand-link" style="font-weight: 700;color: #ecf0f1;">
                     <i class="fa fa-store"></i>
                     <span>ePO System</span>
                 </a>
@@ -66,6 +79,8 @@
             <?php
             // Ambil nama halaman dari URL
             $pgname = $this->uri->segment(1);
+
+
 
             // --- 1. DEFINISIKAN MENU DALAM BENTUK ARRAY ---
             $menu_items = [
@@ -78,7 +93,6 @@
                     'title'    => 'Master',
                     'icon'     => 'fa fa-wrench',
                     'children' => [
-                        // ['title' => 'Customer', 'url' => 'mst_customer', 'icon' => 'fa fa-list'],
                         ['title' => 'Category',   'url' => 'mst_category',   'icon' => 'fa fa-list'],
                         ['title' => 'Satuan',   'url' => 'mst_satuan',   'icon' => 'fa fa-list'],
                         ['title' => 'Barang',   'url' => 'mst_barang',   'icon' => 'fa fa-list'],
@@ -100,23 +114,39 @@
                     'url'   => 'request_po',
                     'icon'  => 'fa fa-paper-plane'
                 ]
-                // ,
-                // [
-                //     'title'    => 'Manajemen User',
-                //     'icon'     => 'fa fa-users',
-                //     'children' => [
-                //         ['title' => 'TEST1', 'url' => 'test1', 'icon' => 'fa fa-list'],
-                //         [
-                //             'title'    => 'Sub Test',
-                //             'icon'     => 'fa fa-user-plus',
-                //             'children' => [
-                //                 ['title' => 'Admin',  'url' => 'test2', 'icon' => 'fa fa-user-shield'],
-                //                 ['title' => 'Member', 'url' => 'test3', 'icon' => 'fa fa-user']
-                //             ]
-                //         ]
-                //     ]
-                // ]
+
             ];
+
+
+
+            if ($jabatan == 'Manager') {
+                $menu_items = [
+                    [
+                        'title' => 'Dashboard',
+                        'url'   => '',
+                        'icon'  => 'fa fa-home'
+                    ]
+                ];
+
+                $menu_items[0]['url'] = 'dashboardmanager';
+            } elseif ($jabatan == 'Direktur') {
+                $menu_items = [
+                    [
+                        'title' => 'Dashboard',
+                        'url'   => '',
+                        'icon'  => 'fa fa-home'
+                    ],
+                    [
+                        'title' => 'Report',
+                        'url'   => 'report_direktur',
+                        'icon'  => 'fa fa-file-alt'
+                    ]
+                ];
+
+                $menu_items[0]['url'] = 'dashboarddirektur';
+            } else {
+                $menu_items[0]['url'] = 'dashboard';
+            }
 
             // --- 2. FUNGSI UNTUK MEMBANGUN HTML MENU (SUDAH DIPERBAIKI) ---
             function build_menu_html($items, $pgname, $level = 0)
@@ -284,15 +314,12 @@
             'title'    => 'Master',
             'icon'     => 'fa fa-wrench',
             'children' => [
-                // ['title' => 'Customer', 'url' => 'mst_customer', 'icon' => 'fa fa-list'],
                 ['title' => 'Category',   'url' => 'mst_category',   'icon' => 'fa fa-list'],
                 ['title' => 'Satuan',   'url' => 'mst_satuan',   'icon' => 'fa fa-list'],
                 ['title' => 'Barang',   'url' => 'mst_barang',   'icon' => 'fa fa-list'],
                 ['title' => 'Supplier', 'url' => 'mst_supplier', 'icon' => 'fa fa-list'],
                 ['title' => 'Bank', 'url' => 'mst_bank', 'icon' => 'fa fa-list'],
                 ['title' => 'Proyek',   'url' => 'mst_proyek',   'icon' => 'fa fa-list']
-                // Tambahkan menu master lainnya di sini
-                // ['title' => 'Barang', 'url' => 'mst_barang', 'icon' => 'fa fa-list'],
             ]
         ],
         [
@@ -308,38 +335,35 @@
             'url'   => 'request_po',
             'icon'  => 'fa fa-paper-plane'
         ]
-        // ,
-        // [
-        //     'title'    => 'Manajemen User',
-        //     'icon'     => 'fa fa-users',
-        //     'children' => [
-        //         ['title' => 'Daftar User', 'url' => 'user', 'icon' => 'fa fa-list'],
-        //         ['title' => 'Tambah Admin', 'url' => 'user/create/admin', 'icon' => 'fa fa-user-shield'],
-        //         ['title' => 'Tambah Member', 'url' => 'user/create/member', 'icon' => 'fa fa-user'],
-        //         ['title' => 'Role & Permission', 'url' => 'role', 'icon' => 'fa fa-user-tag'],
-        //     ]
-        // ],
-        // [
-        //     'title'    => 'Laporan',
-        //     'icon'     => 'fa fa-chart-bar',
-        //     'children' => [
-        //         ['title' => 'Laporan Penjualan', 'url' => 'laporan/penjualan', 'icon' => 'fa fa-shopping-cart'],
-        //         [
-        //             'title'    => 'Keuangan',
-        //             'icon'     => 'fa fa-file-invoice',
-        //             'children' => [
-        //                 ['title' => 'Pemasukan', 'url' => 'keuangan/pemasukan', 'icon' => 'fa fa-arrow-up'],
-        //                 ['title' => 'Pengeluaran', 'url' => 'keuangan/pengeluaran', 'icon' => 'fa fa-arrow-down'],
-        //             ]
-        //         ]
-        //     ]
-        // ],
-        // [
-        //     'title' => 'Pengaturan',
-        //     'url'   => 'pengaturan',
-        //     'icon'  => 'fa fa-cog'
-        // ]
     ];
+
+
+    if ($jabatan == 'Manager') {
+        $menu_items = [
+            [
+                'title' => 'Dashboard',
+                'url'   => '',
+                'icon'  => 'fa fa-home'
+            ]
+        ];
+        $menu_items[0]['url'] = 'dashboardmanager';
+    } elseif ($jabatan == 'Direktur') {
+        $menu_items = [
+            [
+                'title' => 'Dashboard',
+                'url'   => '',
+                'icon'  => 'fa fa-home'
+            ],
+            [
+                'title' => 'Report',
+                'url'   => 'report_direktur',
+                'icon'  => 'fa fa-file-alt'
+            ]
+        ];
+        $menu_items[0]['url'] = 'dashboarddirektur';
+    } else {
+        $menu_items[0]['url'] = 'dashboard';
+    }
 
     // --- 2. FUNGSI-FUNGSI PEMBANTU (SUDAH DIPERBAIKI) ---
 
@@ -465,20 +489,20 @@
     <script src="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/'); ?>function.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
-            // url = '<-?php echo site_url('dashboard/sendEmail') ?>';
-            // data = "";
-            // pesan = 'function sendEmail gagal... 😢';
-            // dataok = multi_ajax_proses(url, data, pesan);
+        //$(document).ready(function() {
+        // url = '<-?php echo site_url('dashboard/sendEmail') ?>';
+        // data = "";
+        // pesan = 'function sendEmail gagal... 😢';
+        // dataok = multi_ajax_proses(url, data, pesan);
 
-            // console.log(dataok);
+        // console.log(dataok);
 
-            // setInterval(function(){
-            //     //SinKronDO();
-            // send_otomatis();
-            // }, 180000); // 180.000 milidetik (3 menit)
+        // setInterval(function(){
+        //     //SinKronDO();
+        // send_otomatis();
+        // }, 180000); // 180.000 milidetik (3 menit)
 
-        });
+        //});
 
 
 

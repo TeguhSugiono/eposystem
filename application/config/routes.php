@@ -19,11 +19,11 @@ $route['dashboard/sendEmail'] = 'dashboard/c_dashboard/c_sendEmail';
 $route['CreateLinkManager'] = 'dashboard/c_dashboard/CreateLinkManager';
 $route['CreateLinkDirektur'] = 'dashboard/c_dashboard/CreateLinkDirektur';
 $route['CreatePasswordHash'] = 'dashboard/c_dashboard/CreatePasswordHash';
-$route['dashboard/sendEmailAccMgr'] = 'dashboard/c_dashboard/c_sendEmailAccMgr';
-$route['dashboard/proses_approve_manager'] = 'dashboard/c_dashboard/c_proses_approve_manager';
-$route['dashboard/proses_approve_direktur'] = 'dashboard/c_dashboard/c_proses_approve_direktur';
-$route['dashboard/proses_reject_manager'] = 'dashboard/c_dashboard/c_proses_reject_manager';
-$route['dashboard/proses_reject_direktur'] = 'dashboard/c_dashboard/c_proses_reject_direktur';
+// $route['dashboard/sendEmailAccMgr'] = 'dashboard/c_dashboard/c_sendEmailAccMgr';
+// $route['dashboard/proses_approve_manager'] = 'dashboard/c_dashboard/c_proses_approve_manager';
+// $route['dashboard/proses_approve_direktur'] = 'dashboard/c_dashboard/c_proses_approve_direktur';
+// $route['dashboard/proses_reject_manager'] = 'dashboard/c_dashboard/c_proses_reject_manager';
+// $route['dashboard/proses_reject_direktur'] = 'dashboard/c_dashboard/c_proses_reject_direktur';
 
 
 
@@ -119,7 +119,7 @@ $route['request_po/update_data'] = 'request_po/c_request_po/c_update_data';
 $route['request_po/send_approve'] = 'request_po/c_request_po/c_send_approve';
 $route['request_po/delete_data'] = 'request_po/c_request_po/c_delete_data';
 $route['request_po/request_batal'] = 'request_po/c_request_po/c_request_batal';
-
+$route['request_po/refresh_cbo_po'] = 'request_po/c_request_po/c_refresh_cbo_po';
 
 
 //$route['request_po/test_wa'] = 'request_po/c_request_po/c_test_wa';
@@ -144,6 +144,7 @@ $route['dashboardmanager/proses_accept_manager'] = 'dashboardmanager/c_dashboard
 $route['dashboardmanager/proses_accept_manager'] = 'dashboardmanager/c_dashboardmanager/c_proses_accept_manager';
 $route['dashboardmanager/send_approve'] = 'dashboardmanager/c_dashboardmanager/c_send_approve';
 $route['dashboardmanager/send_back_notifikasi'] = 'dashboardmanager/c_dashboardmanager/c_send_back_notifikasi';
+$route['dashboardmanager/fetch_table_detail'] = 'dashboardmanager/c_dashboardmanager/c_fetch_table_detail';
 
 
 
@@ -155,3 +156,10 @@ $route['dashboarddirektur/proses_hold_direktur'] = 'dashboarddirektur/c_dashboar
 $route['dashboarddirektur/proses_accept_direktur'] = 'dashboarddirektur/c_dashboarddirektur/c_proses_accept_direktur';
 $route['dashboarddirektur/send_back_notifikasi'] = 'dashboarddirektur/c_dashboarddirektur/c_send_back_notifikasi';
 $route['dashboarddirektur/proses_reject_direktur'] = 'dashboarddirektur/c_dashboarddirektur/c_proses_reject_direktur';
+$route['dashboarddirektur/send_back_notifikasi_reject'] = 'dashboarddirektur/c_dashboarddirektur/c_send_back_notifikasi_reject';
+
+
+$route['report_direktur'] = 'report_direktur/c_report_direktur';
+$route['report_direktur/getnamesupplier'] = 'report_direktur/c_report_direktur/c_getnamesupplier';
+$route['report_direktur/fetch_table'] = 'report_direktur/c_report_direktur/c_fetch_table';
+$route['report_direktur/export'] = 'report_direktur/c_report_direktur/c_export';

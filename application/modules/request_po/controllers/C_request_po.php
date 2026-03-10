@@ -64,21 +64,76 @@ class C_request_po extends CI_Controller
 
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
-        $ArrayJoin = array(
-            array('transpesan_head b', 'a.id_pesan=b.id_pesan', 'inner'),
-            array('tbl_request_approval c', 'a.id_status_approval=c.id_status_approval', 'inner')
-        );
+        // $ArrayJoin = array(
+        //     array('transpesan_head b', 'a.id_pesan=b.id_pesan', 'inner'),
+        //     array('tbl_request_approval c', 'a.id_status_approval=c.id_status_approval', 'inner')
+        // );
 
-        $ParamArray = array(
-            'Table' => 'tbl_request_po a',
-            'WhereData' => array('b.status !=' => 'V', 'a.kode_divisi' => $PO_kodedivisi, 'a.flag_request !=' => '9'),
-            'OrderBy' => 'id_request desc',
-            'ArrayJoin' => $ArrayJoin,
-            'Field' => 'a.*,b.*,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used'
-        );
+        // $ParamArray = array(
+        //     'Table' => 'tbl_request_po a',
+        //     'WhereData' => array('b.status !=' => 'V', 'a.kode_divisi' => $PO_kodedivisi, 'a.flag_request !=' => '9'),
+        //     'OrderBy' => 'id_request desc',
+        //     'ArrayJoin' => $ArrayJoin,
+        //     'Field' => 'a.*,b.*,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used'
+        // );
 
 
-        $GetData = $this->m_function->value_result_array($ParamArray);
+        // $ArrayJoinOld = array(
+        //     array('transpesan_head_old b', 'a.id_pesan=b.id_pesan', 'inner'),
+        //     array('tbl_request_approval c', 'a.id_status_approval=c.id_status_approval', 'inner')
+        // );
+
+        // $ParamArrayOld = array(
+        //     'Table' => 'tbl_request_po a',
+        //     'WhereData' => array('b.status !=' => 'V', 'a.kode_divisi' => $PO_kodedivisi, 'a.flag_request !=' => '9', 'a.flag_email_manager' => '1', 'a.flag_email_director' => '1', 'acc_manager' => 'Y'),
+        //     'OrderBy' => 'FIELD(a.id_status_approval, 4, 3,2, 1),a.time_acc_director desc,a.time_request',
+        //     'ArrayJoin' => $ArrayJoinOld,
+        //     'Field' => 'a.*,b.*,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used,
+        //                 (SELECT nama_dept FROM masterdivisi where kode_divisi=a.kode_divisi) dept'
+        // );
+
+
+        // $GetData = array_merge($this->m_function->value_result_array($ParamArray), $this->m_function->value_result_array($ParamArrayOld));
+
+        $query = "
+                    SELECT * FROM (
+
+                    SELECT a.id_request,a.id_pesan,a.time_request,a.user_request,a.reason,a.id_status_approval,a.acc_manager,
+                    a.time_acc_manager,a.acc_name_manager,a.acc_director,a.time_acc_director,a.acc_name_director,
+                    a.kode_divisi,a.flag_request,a.flag_email_manager,a.flag_email_director,a.seqno_revisi,
+                    b.no,b.tglpesan,b.nopo,b.kodesupplier,b.noreff,b.nomr,b.dateedited,b.useredited,b.tglkrm,
+                    b.tgltempo,b.matauang,b.pembayaran,b.status,b.subtotalharga,b.ppn,b.keterangan,b.id_bank,b.discount_total,b.ttd,
+                    b.no_invoice,b.faktur_pajak,b.tgl_invoice,b.rec_id,b.lain,b.id_category,b.nilai_lain,b.created_on,b.created_by,
+                    b.flag_finish,b.flag_id_request,b.flag_revisi
+                    ,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, 
+                    id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used
+                    FROM tbl_request_po a
+                    INNER JOIN `transpesan_head` `b` ON `a`.`id_pesan`=`b`.`id_pesan`
+                    INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
+                    where a.id_request not in (SELECT id_request from transpesan_head_old)
+
+                    UNION ALL
+
+                    SELECT 
+                    a.id_request,a.id_pesan,a.time_request,a.user_request,a.reason,a.id_status_approval,a.acc_manager,
+                    a.time_acc_manager,a.acc_name_manager,a.acc_director,a.time_acc_director,a.acc_name_director,
+                    a.kode_divisi,a.flag_request,a.flag_email_manager,a.flag_email_director,a.seqno_revisi,
+                    b.no,b.tglpesan,b.nopo,b.kodesupplier,b.noreff,b.nomr,b.dateedited,b.useredited,b.tglkrm,
+                    b.tgltempo,b.matauang,b.pembayaran,b.status,b.subtotalharga,b.ppn,b.keterangan,b.id_bank,b.discount_total,b.ttd,
+                    b.no_invoice,b.faktur_pajak,b.tgl_invoice,b.rec_id,b.lain,b.id_category,b.nilai_lain,b.created_on,b.created_by,
+                    b.flag_finish,b.flag_id_request,b.flag_revisi
+                    ,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, 
+                    id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used
+                    FROM tbl_request_po a
+                    INNER JOIN `transpesan_head_old` `b` ON `a`.`id_request`=`b`.`id_request`
+                    INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
+
+                    ) x
+                    ORDER BY  id_request ASC,nopo ASC ";
+
+
+
+        $GetData =  $this->db->query($query)->result_array();
 
         echo json_encode($GetData);
     }
@@ -92,7 +147,9 @@ class C_request_po extends CI_Controller
         $ParamArray = array(
             'Table' => 'transpesan_head',
             'Field' => 'id_pesan,nopo',
-            'WhereData' => array('status !=' => 'V', 'kode_divisi' => $PO_kodedivisi, 'flag_finish' => 0)
+            'WhereData' => array('status !=' => 'V', 'kode_divisi' => $PO_kodedivisi, 'flag_finish' => 0),
+            'Clause' => "tipedata is null",
+            'OrderBy' => 'id_pesan asc'
         );
         $arraydata = $this->m_function->value_result_array($ParamArray);
         array_push($arraydata, array('id_pesan' => '', 'nopo' => '~Pilih PO~'));
@@ -233,7 +290,8 @@ class C_request_po extends CI_Controller
         $ParamArray = array(
             'Table' => 'transpesan_head',
             'Field' => 'id_pesan,nopo',
-            'WhereData' => array('status !=' => 'V', 'kode_divisi' => $PO_kodedivisi)
+            'WhereData' => array('status !=' => 'V', 'kode_divisi' => $PO_kodedivisi),
+            'OrderBy' => 'id_pesan asc'
         );
         $arraydata = $this->m_function->value_result_array($ParamArray);
 
@@ -246,9 +304,17 @@ class C_request_po extends CI_Controller
         );
         $id_pesan = ComboDb($createcombo);
 
+        // $ParamArray = array(
+        //     'Table' => 'tbl_request_approval',
+        //     'Field' => 'id_status_approval,status_approval'
+        // );
+        // $arraydata = $this->m_function->value_result_array($ParamArray);
+        // array_push($arraydata, array('id_status_approval' => '', 'status_approval' => '~Pilih Type~'));
+
         $ParamArray = array(
             'Table' => 'tbl_request_approval',
-            'Field' => 'id_status_approval,status_approval'
+            'Field' => 'id_status_approval,status_approval',
+            'WhereIN' => array('fieldIN' => 'id_status_approval', 'fieldINValue' => array('1', '2'))
         );
         $arraydata = $this->m_function->value_result_array($ParamArray);
         array_push($arraydata, array('id_status_approval' => '', 'status_approval' => '~Pilih Type~'));
@@ -268,6 +334,41 @@ class C_request_po extends CI_Controller
         );
 
         $this->load->view('edit_request', $comp);
+    }
+
+    function c_refresh_cbo_po()
+    {
+
+        $id_status_approval = $this->input->post('id_status_approval');
+
+        $ParamArray = array();
+        $arraydata = array();
+        if ($id_status_approval == 2 || $id_status_approval == 3) {
+            $ParamArray = array(
+                'Table' => 'tbl_request_po',
+                'Field' => 'id_pesan,get_nopo(id_pesan) as nopo',
+                'WhereData' => array('acc_manager' => 'Y', 'acc_director' => 'Y')
+            );
+            $arraydata = $this->m_function->value_result_array($ParamArray);
+        } else {
+
+            $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
+
+            $ParamArray = array(
+                'Table' => 'transpesan_head',
+                'Field' => 'id_pesan,nopo',
+                'WhereData' => array('status !=' => 'V', 'kode_divisi' => $PO_kodedivisi, 'flag_finish' => 0)
+            );
+            $arraydata = $this->m_function->value_result_array($ParamArray);
+            array_push($arraydata, array('id_pesan' => '', 'nopo' => '~Pilih PO~'));
+        }
+
+        $pesan_data = array(
+            'msg' => 'Ya',
+            'pesan' => "Refresh Combo Berhasill : " . $id_status_approval . " 😊",
+            'list_po_acc' => $arraydata
+        );
+        echo json_encode($pesan_data);
     }
 
 
@@ -812,6 +913,7 @@ class C_request_po extends CI_Controller
             'WhereData' => array('flag_request !=' => 0, 'id_request' => $id_request)
         );
         if ($this->m_function->check_row($ParamArray) > 0) {
+
             $pesan_data = array(
                 'msg' => 'Tidak',
                 'pesan' => 'Po Sudah di Request ...!!! 😢',

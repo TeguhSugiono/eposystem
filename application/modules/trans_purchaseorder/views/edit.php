@@ -182,6 +182,9 @@
 
                 <input type="hidden" class="form-control form-control-sm" id="company" name="company" value="<?= $company; ?>">
 
+                <input type="hidden" class="form-control form-control-sm" id="flag_revisi" name="flag_revisi" value="<?= $flag_revisi; ?>">
+
+
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group row rowX">
@@ -426,6 +429,8 @@
                 </div>
 
 
+
+
             </form>
 
 
@@ -435,6 +440,8 @@
             <button class="btn btn-secondary" onclick="closeModal('id_modal_edit')">Batal</button>
 
             <?php if ($flag_finish == 0) { ?>
+                <button class="btn btn-primary" onclick="update()">Update</button>
+            <?php } else if ($flag_finish == 1 && $flag_revisi == 1) { ?>
                 <button class="btn btn-primary" onclick="update()">Update</button>
             <?php } ?>
 

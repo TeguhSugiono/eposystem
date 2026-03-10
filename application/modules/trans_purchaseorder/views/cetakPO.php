@@ -81,7 +81,7 @@
         <table border='0' style="width:100% !important;" class="font1">
             <tr>
                 <td width="45%">
-                    <table border="0" width="100%" style="border:1px solid black;">
+                    <table width="100%" style="border:1px solid black;">
                         <tr>
                             <td>Kepada Yth.(Attention) </br>
                                 <b> <?= $GetSupplier[0]['suppl_name']; ?> </b> </br>
@@ -94,7 +94,7 @@
                 </td>
                 <td width="10%"></td>
                 <td width="45%">
-                    <table border="0" width="100%" style="border:1px solid black;">
+                    <table width="100%" style="border:1px solid black;">
                         <tr>
                             <td valign='top' class="textcenter"><b>PURCHASE ORDER </b></td>
                         </tr>
@@ -179,7 +179,7 @@
                         <tr>
                             <td width="50% !important">Mata Uang <i>(Currency)</i></td>
                             <td width="4% !important">:</td>
-                            <td width="46% !important" style="border:1px solid black" class="textcenter"><?= $GetHeaderPO[0]['matauang']; ?></td>
+                            <td width="46% !important" style="border:1px solid black !important" class="textcenter"><?= $GetHeaderPO[0]['matauang']; ?></td>
                         </tr>
                         <tr>
                             <td></td>
@@ -189,7 +189,7 @@
                         <tr>
                             <td width="50%">Cara Pembayaran </td>
                             <td>:</td>
-                            <td style="border:1px solid black" class="textcenter"><?= $GetHeaderPO[0]['pembayaran']; ?></td>
+                            <td style="border:1px solid black !important" class="textcenter"><?= $GetHeaderPO[0]['pembayaran']; ?></td>
                         </tr>
                         <tr>
                             <td><i>(Payment Method)</i> </td>
@@ -199,7 +199,7 @@
                         <tr>
                             <td width="50%">Untuk dikirim pd tgl. </td>
                             <td>:</td>
-                            <td style="border:1px solid black" class="textcenter"><?= showdate_inv2($GetHeaderPO[0]['tglkrm']); ?></td>
+                            <td style="border:1px solid black !important" class="textcenter"><?= showdate_inv2($GetHeaderPO[0]['tglkrm']); ?></td>
                         </tr>
                         <tr>
                             <td><i>(Delivery date)</i> </td>
@@ -214,7 +214,7 @@
                         <tr>
                             <td width="50% !important">Jatuh tempo Tanggal </td>
                             <td width="4% !important">:</td>
-                            <td width="46% !important" style="border:1px solid black" class="textcenter"><?= showdate_inv2($GetHeaderPO[0]['tgltempo']); ?></td>
+                            <td width="46% !important" style="border:1px solid black !important" class="textcenter"><?= showdate_inv2($GetHeaderPO[0]['tgltempo']); ?></td>
                         </tr>
                         <tr>
                             <td><i>(Due Date)</i></td>
@@ -224,7 +224,7 @@
                         <tr>
                             <td width="50%" rowspan='3' valign='top'>Keterangan </td>
                             <td rowspan='3' valign='top'>: </td>
-                            <td rowspan='3' height='80' valign='top' style="border:1px solid black"><?= $GetHeaderPO[0]['keterangan']; ?></td>
+                            <td rowspan='3' height='80' valign='top' style="border:1px solid black !important"><?= $GetHeaderPO[0]['keterangan']; ?></td>
                         </tr>
                     </table>
                 </td>
