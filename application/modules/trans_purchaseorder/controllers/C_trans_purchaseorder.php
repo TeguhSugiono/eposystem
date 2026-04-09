@@ -21,7 +21,25 @@ class C_trans_purchaseorder extends CI_Controller
     function index()
     {
 
+        // $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
+        // //combo awal tampilan 
+        // $ParamArray = array(
+        //     'Table' => 'mastersupplier',
+        //     'Field' => 'kodesupplier as suppl_code,namasupplier as suppl_name',
+        //     'WhereData' => array('kode_divisi' => $PO_kodedivisi, 'flagdelete' => 0),
+        // );
+        // $arraydata = $this->m_function->value_result_array($ParamArray);
+        // array_push($arraydata, array('suppl_code' => '', 'suppl_name' => '~Pilih Supplier~'));
 
+        // $createcombo = array(
+        //     'data' => array_reverse($arraydata, true),
+        //     'set_data' => array('set_id' => ''),
+        //     'attribute' => array('idname' => 'suppl_code', 'class' => 'select2 form-control form-control-sm', 'placeholder' => '~Pilih Supplier~'),
+        // );
+        // $suppl_code = ComboDb($createcombo);
+
+        // print_r($suppl_code);
+        // die;
 
 
 
@@ -78,18 +96,10 @@ class C_trans_purchaseorder extends CI_Controller
         //End GetHeader PO
 
         //Get Supplier
-        if ($GetHeaderPO[0]['comp'] == "MSA") {
-            $ConectDB = "dbAcct";
-        } else if ($GetHeaderPO[0]['comp']) {
-            $ConectDB = "dbAcctBal";
-        } else {
-            $ConectDB = "dbAcct";
-        }
-
         $ParamArray = array(
-            'ConectDB' =>  $ConectDB,
-            'Table' => 'fin_ap_m_supplier',
-            'WhereData' => array('suppl_code' => $GetHeaderPO[0]['kodesupplier']),
+            'Table' => 'mastersupplier',
+            'WhereData' => array('kodesupplier' => $GetHeaderPO[0]['kodesupplier']),
+            'Field' => '*'
         );
         $GetSupplier = $this->m_function->value_result_array($ParamArray);
 
@@ -103,12 +113,14 @@ class C_trans_purchaseorder extends CI_Controller
             'WhereData' => array('username' => $GetHeaderPO[0]['ttd']),
         );
         $GetTTD = $this->m_function->value_result_array($ParamArray);
+
+
+
         //End TTD
 
         //Get BANK
         $ParamArray = array(
-            'ConectDB' =>  $ConectDB,
-            'Table' => 'fin_ap_m_supplier_bank',
+            'Table' => 'masterbank',
             'WhereData' => array('id_bank' => $GetHeaderPO[0]['id_bank']),
         );
         $GetBank = $this->m_function->value_result_array($ParamArray);
@@ -150,7 +162,7 @@ class C_trans_purchaseorder extends CI_Controller
         // echo $JumlahKet;
         // die;
         //end hitung data detail dan keterangan barang
-        $batasbarisbawah = 17;
+        $batasbarisbawah = 18;
         $sisabaris = 0;
         if ($JumlahDetail + $JumlahKet <= $batasbarisbawah) {
             //patok baris detail dan keterangan
@@ -491,21 +503,10 @@ class C_trans_purchaseorder extends CI_Controller
 
         $GetHeaderPO = $this->m_function->value_result_array($ParamArray);
 
-        $ConectDB = "";
-
-        if ($GetHeaderPO[0]['comp'] == "MSA") {
-            $ConectDB = "dbAcct";
-        } else if ($GetHeaderPO[0]['comp'] == "BAL") {
-            $ConectDB = "dbAcctBal";
-        } else {
-            $ConectDB = "dbAcct";
-        }
-
 
         $ParamArray = array(
-            'ConectDB' => $ConectDB,
-            'Table' => 'fin_ap_m_supplier',
-            'WhereData' => array('suppl_code' => $GetHeaderPO[0]['kodesupplier']),
+            'Table' => 'mastersupplier',
+            'WhereData' => array('kodesupplier' => $GetHeaderPO[0]['kodesupplier']),
         );
 
         $GetSupplier = $this->m_function->value_result_array($ParamArray);
@@ -562,35 +563,59 @@ class C_trans_purchaseorder extends CI_Controller
     //     echo json_encode($ArraySupplier);
     // }
 
+    // function c_getnamesupplierOld()
+    // {
+    //     $kodesupplier = $this->input->post('kodesupplier');
+
+    //     $ParamArray = array(
+    //         'ConectDB' => 'dbAcct',
+    //         'Table' => 'fin_ap_m_supplier',
+    //         'WhereData' => array('active_status' => 'Y', 'suppl_code' => $kodesupplier),
+    //         'Field' => '*,"MSA" as dbPt '
+    //     );
+
+    //     $ParamArrayBal = array(
+    //         'ConectDB' => 'dbAcctBal',
+    //         'Table' => 'fin_ap_m_supplier',
+    //         'WhereData' => array('active_status' => 'Y', 'suppl_code' => $kodesupplier),
+    //         'Field' => '*,"BAL" as dbPt '
+    //     );
+
+    //     if ($kodesupplier == "") {
+    //         unset($ParamArray['WhereData']['suppl_code']);
+    //         unset($ParamArrayBal['WhereData']['suppl_code']);
+    //     }
+
+
+    //     $ArraySupplier = array();
+    //     if ($this->m_function->check_row($ParamArray) > 0 || $this->m_function->check_row($ParamArrayBal) > 0) {
+    //         //$ParamArray['Field'] = 'suppl_name';
+    //         //$ArraySupplier = $this->m_function->value_result_array($ParamArray);
+    //         $ArraySupplier = array_merge($this->m_function->value_result_array($ParamArray), $this->m_function->value_result_array($ParamArrayBal));
+    //     } else {
+    //         $ArraySupplier = array(array("suppl_name" => ""));
+    //     }
+
+    //     echo json_encode($ArraySupplier);
+    // }
+
     function c_getnamesupplier()
     {
         $kodesupplier = $this->input->post('kodesupplier');
+        $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
         $ParamArray = array(
-            'ConectDB' => 'dbAcct',
-            'Table' => 'fin_ap_m_supplier',
-            'WhereData' => array('active_status' => 'Y', 'suppl_code' => $kodesupplier),
-            'Field' => '*,"MSA" as dbPt '
+            'Table' => 'mastersupplier',
+            'WhereData' => array('flagdelete' => '0', 'kode_divisi' => $PO_kodedivisi, 'kodesupplier' => $kodesupplier),
+            'Field' => '*'
         );
 
-        $ParamArrayBal = array(
-            'ConectDB' => 'dbAcctBal',
-            'Table' => 'fin_ap_m_supplier',
-            'WhereData' => array('active_status' => 'Y', 'suppl_code' => $kodesupplier),
-            'Field' => '*,"BAL" as dbPt '
-        );
-
-        if ($kodesupplier == "") {
-            unset($ParamArray['WhereData']['suppl_code']);
-            unset($ParamArrayBal['WhereData']['suppl_code']);
-        }
 
 
         $ArraySupplier = array();
-        if ($this->m_function->check_row($ParamArray) > 0 || $this->m_function->check_row($ParamArrayBal) > 0) {
+        if ($this->m_function->check_row($ParamArray) > 0) {
             //$ParamArray['Field'] = 'suppl_name';
-            //$ArraySupplier = $this->m_function->value_result_array($ParamArray);
-            $ArraySupplier = array_merge($this->m_function->value_result_array($ParamArray), $this->m_function->value_result_array($ParamArrayBal));
+            $ArraySupplier = $this->m_function->value_result_array($ParamArray);
         } else {
             $ArraySupplier = array(array("suppl_name" => ""));
         }
@@ -630,6 +655,7 @@ class C_trans_purchaseorder extends CI_Controller
         $ppn = "";
         $flag_finish = 0;
         $flag_revisi = 0;
+        $tgl_noreff = "";
 
 
         foreach ($ArrayPoHeader as $PoHeader) {
@@ -651,13 +677,13 @@ class C_trans_purchaseorder extends CI_Controller
             $ppn = $PoHeader['ppn'];
             $flag_finish = $PoHeader['flag_finish'];
             $flag_revisi = $PoHeader['flag_revisi'];
+            $tgl_noreff =  $PoHeader['tgl_noreff'];
         }
 
         $ParamArray = array(
-            'ConectDB' => 'dbAcct',
-            'Table' => 'fin_ap_m_supplier_bank',
+            'Table' => 'masterbank',
             'WhereData' => array('id_bank' => $id_bank),
-            'Field' => 'no_rek'
+            'Field' => 'norek as no_rek'
         );
         $NoRek = $this->m_function->check_value($ParamArray);
 
@@ -669,20 +695,12 @@ class C_trans_purchaseorder extends CI_Controller
         );
         $ttd = ComboNonDb($arraydata, 'ttd', $ttd, 'form-control form-control-sm', '~Pilih TTD~');
 
-        $ConectDB = "";
 
-        if ($company == "MSA") {
-            $ConectDB = "dbAcct";
-        } else if ($company == "BAL") {
-            $ConectDB = "dbAcctBal";
-        } else {
-            $ConectDB = "dbAcct";
-        }
 
         $ParamArray = array(
-            'ConectDB' => $ConectDB,
-            'Table' => 'fin_ap_m_supplier',
-            'Field' => 'suppl_code,suppl_name'
+            'Table' => 'mastersupplier',
+            'Field' => 'kodesupplier as suppl_code,namasupplier as suppl_name',
+            'WhereData' => array('kode_divisi' => $PO_kodedivisi, 'flagdelete' => 0),
         );
         $arraydata = $this->m_function->value_result_array($ParamArray);
         array_push($arraydata, array('suppl_code' => '', 'suppl_name' => '~Pilih Supplier~'));
@@ -705,9 +723,8 @@ class C_trans_purchaseorder extends CI_Controller
 
 
         $ParamArray = array(
-            'ConectDB' => $ConectDB,
-            'Table' => 'fin_ap_m_supplier_bank',
-            'Field' => 'id_bank,concat(nama_bank,"~",atas_nama)'
+            'Table' => 'masterbank',
+            'Field' => 'id_bank,concat(namabank,"~",atasnama) as nama_bank'
         );
         $arraydata = $this->m_function->value_result_array($ParamArray);
         array_push($arraydata, array('id_bank' => '', 'nama_bank' => '~Pilih Bank~'));
@@ -833,7 +850,8 @@ class C_trans_purchaseorder extends CI_Controller
             'dataBarang' => $dataBarang,
             'id_pesan' => $id_pesan,
             'flag_finish' => $flag_finish,
-            'flag_revisi' => $flag_revisi
+            'flag_revisi' => $flag_revisi,
+            'tgl_noreff' => $tgl_noreff
         );
 
         $this->load->view('edit', $comp);
@@ -908,7 +926,7 @@ class C_trans_purchaseorder extends CI_Controller
             'koen' => 'Soehono Koenarto',
             'didi' => 'Didi Agustiawan'
         );
-        $ttd = ComboNonDb($arraydata, 'ttd', 'helmi', 'form-control form-control-sm', '~Pilih TTD~');
+        $ttd = ComboNonDb($arraydata, 'ttd', '', 'form-control form-control-sm', '~Pilih TTD~');
 
 
         $arraydata = array(
@@ -920,12 +938,12 @@ class C_trans_purchaseorder extends CI_Controller
         $pembayaran = ComboNonDb($arraydata, 'pembayaran', '', 'form-control form-control-sm', '~Pilih Pembayaran~');
 
 
-
+        $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
         //combo awal tampilan 
         $ParamArray = array(
-            'ConectDB' => 'dbAcct',
-            'Table' => 'fin_ap_m_supplier',
-            'Field' => 'suppl_code,suppl_name'
+            'Table' => 'mastersupplier',
+            'Field' => 'kodesupplier as suppl_code,namasupplier as suppl_name',
+            'WhereData' => array('kode_divisi' => $PO_kodedivisi, 'flagdelete' => 0),
         );
         $arraydata = $this->m_function->value_result_array($ParamArray);
         array_push($arraydata, array('suppl_code' => '', 'suppl_name' => '~Pilih Supplier~'));
@@ -939,9 +957,8 @@ class C_trans_purchaseorder extends CI_Controller
 
 
         $ParamArray = array(
-            'ConectDB' => "dbAcct",
-            'Table' => 'fin_ap_m_supplier_bank',
-            'Field' => 'id_bank,concat(nama_bank,"~",atas_nama)'
+            'Table' => 'masterbank',
+            'Field' => 'id_bank,concat(namabank,"~",atasnama) as nama_bank'
         );
         $arraydata = $this->m_function->value_result_array($ParamArray);
         array_push($arraydata, array('id_bank' => '', 'nama_bank' => '~Pilih Bank~'));
@@ -994,6 +1011,15 @@ class C_trans_purchaseorder extends CI_Controller
     {
         $tglpesan = date_db($this->input->post('tglpesan'));
 
+        // $pesan_data = array(
+        //     'msg' => 'Ya',
+        //     'tgl1' => $tglpesan,
+        //     'tgl2' => $this->input->post('tglpesan'),
+        //     'tgl3' =>  date_db($this->input->post('tglpesan'))
+        // );
+        // echo json_encode($pesan_data);
+        // die;
+
 
         $ParamArray = array(
             'Table' => 'tbl_setting_ppn',
@@ -1010,7 +1036,8 @@ class C_trans_purchaseorder extends CI_Controller
             'msg' => 'Ya',
             'pesan' => "Get No PO Berhasill : " . $tglpesan . " 😊",
             'company' => $tglpesan,
-            'po_ppn' => $arraydata
+            'po_ppn' => $arraydata,
+            'query' => $this->db->last_query()
         );
         echo json_encode($pesan_data);
     }
@@ -1048,21 +1075,12 @@ class C_trans_purchaseorder extends CI_Controller
     function c_get_po_supplier()
     {
 
-        $company = $this->input->post('company');
-
-        $CnDB = "";
-        if ($company == "MSA") {
-            $CnDB = 'dbAcct';
-        } else if ($company == "BAL") {
-            $CnDB = "dbAcctBal";
-        } else {
-            $CnDB = 'dbAcct';
-        }
+        $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
         $ParamArray = array(
-            'ConectDB' => $CnDB,
-            'Table' => 'fin_ap_m_supplier',
-            'Field' => 'suppl_code,suppl_name'
+            'Table' => 'mastersupplier',
+            'Field' => 'kodesupplier as suppl_code,namasupplier as suppl_name',
+            'WhereData' => array('kode_divisi' => $PO_kodedivisi),
         );
 
         $arraydata = $this->m_function->value_result_array($ParamArray);
@@ -1070,8 +1088,8 @@ class C_trans_purchaseorder extends CI_Controller
 
         $pesan_data = array(
             'msg' => 'Ya',
-            'pesan' => "Get No PO Berhasill : " . $company . " 😊",
-            'company' => $company,
+            // 'pesan' => "Get No PO Berhasill : " . $company . " 😊",
+            // 'company' => $company,
             'po_supplier' => $arraydata
         );
         echo json_encode($pesan_data);
@@ -1084,20 +1102,10 @@ class C_trans_purchaseorder extends CI_Controller
         $company = $this->input->post('company');
         $suppl_code = $this->input->post('suppl_code');
 
-        $CnDB = "";
-        if ($company == "MSA") {
-            $CnDB = 'dbAcct';
-        } else if ($company == "BAL") {
-            $CnDB = "dbAcctBal";
-        } else {
-            $CnDB = 'dbAcct';
-        }
-
         $ParamArray = array(
-            'ConectDB' => $CnDB,
-            'Table' => 'fin_ap_m_supplier_bank',
-            'Field' => 'id_bank,nama_bank',
-            'WhereData' => array('id_suppl' => $suppl_code)
+            'Table' => 'masterbank',
+            'Field' => 'id_bank,namabank as nama_bank',
+            'WhereData' => array('kodesupplier' => $suppl_code)
         );
 
         $arraydata = $this->m_function->value_result_array($ParamArray);
@@ -1117,19 +1125,9 @@ class C_trans_purchaseorder extends CI_Controller
         $id_bank = $this->input->post('id_bank');
         $company = $this->input->post('company');
 
-        $CnDB = "";
-        if ($company == "MSA") {
-            $CnDB = 'dbAcct';
-        } else if ($company == "BAL") {
-            $CnDB = "dbAcctBal";
-        } else {
-            $CnDB = 'dbAcct';
-        }
-
         $ParamArray = array(
-            'ConectDB' => $CnDB,
-            'Table' => 'fin_ap_m_supplier_bank',
-            'Field' => 'no_rek',
+            'Table' => 'masterbank',
+            'Field' => 'norek as no_rek',
             'WhereData' => array('id_bank' => $id_bank)
         );
 
@@ -1149,6 +1147,8 @@ class C_trans_purchaseorder extends CI_Controller
     function c_get_po_number()
     {
 
+
+
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
         $company = $this->input->post('company');
@@ -1163,6 +1163,8 @@ class C_trans_purchaseorder extends CI_Controller
         );
 
         $GetNameDivisi = $this->m_function->check_value($ParamArray);
+
+        $this->db->query("LOCK TABLES run_number WRITE");
 
         $ParamArray = array(
             'Table' => 'run_number',
@@ -1203,6 +1205,8 @@ class C_trans_purchaseorder extends CI_Controller
 
         $nopo   = "{$GetNoPO}/{$GetNameDivisi}/{$company}/{$bln}/{$tahun}";
 
+        $this->db->query("UNLOCK TABLES");
+
         $pesan_data = array(
             'msg' => 'Ya',
             'pesan' => "Get No PO Berhasill : " . $nopo . " 😊",
@@ -1232,6 +1236,10 @@ class C_trans_purchaseorder extends CI_Controller
         $tgltempo = $this->input->post('tgltempo');
         $matauang = $this->input->post('matauang');
         $id_category = $this->input->post('id_category');
+        $tgl_noreff = $this->input->post('tgl_noreff');
+        if ($tgl_noreff == "") {
+            $tgl_noreff = NULL;
+        }
 
         $subtotalharga = $this->input->post('subtotalharga');
         $nilai_lain = $this->input->post('nilai_lain');
@@ -1271,12 +1279,13 @@ class C_trans_purchaseorder extends CI_Controller
             'id_bank' => $id_bank,
             'discount_total' => 0, //belum
             'ttd' => $ttd,
-            'rec_id' => 1,
+            'rec_id' => 0,
             'subtotalharga' => str_replace(",", "", $subtotalharga),
             'ppn' => $chkppn,
             'lain' => str_replace(",", "", $lain),
             'nilai_lain' => str_replace(",", "", $nilai_lain),
-            'id_category' => $id_category
+            'id_category' => $id_category,
+            'tgl_noreff' => $tgl_noreff
         );
 
 
@@ -1448,8 +1457,8 @@ class C_trans_purchaseorder extends CI_Controller
 
         $id_pesan = $this->input->post('id_pesan');
         $nopo = $this->input->post('nopo');
-        $tglpesan = $this->input->post('tglpesan');
-        $tglkrm = $this->input->post('tglkrm');
+        $tglpesan = date_db($this->input->post('tglpesan'));
+        $tglkrm = date_db($this->input->post('tglkrm'));
         $noreff = $this->input->post('noreff');
         $nomr = $this->input->post('nomr');
         $ttd = $this->input->post('ttd');
@@ -1474,6 +1483,14 @@ class C_trans_purchaseorder extends CI_Controller
 
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
+        $tgl_noreff = $this->input->post('tgl_noreff');
+
+        if ($tgl_noreff == "") {
+            $tgl_noreff = NULL;
+        } else {
+            $tgl_noreff = date_db($tgl_noreff);
+        }
+
         $ArrayHeader = array(
             'tglpesan' => $tglpesan,
             'nopo' => $nopo,
@@ -1495,7 +1512,8 @@ class C_trans_purchaseorder extends CI_Controller
             'ppn' => $chkppn,
             'lain' => str_replace(",", "", $lain),
             'nilai_lain' => str_replace(",", "", $nilai_lain),
-            'id_category' => $id_category
+            'id_category' => $id_category,
+            'tgl_noreff' => $tgl_noreff
         );
 
 

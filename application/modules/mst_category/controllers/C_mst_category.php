@@ -26,9 +26,11 @@ class C_mst_category extends CI_Controller
     function c_fetch_table()
     {
 
+        $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
+
         $ParamArray = array(
             'Table' => 'categorybarang',
-            'WhereData' => array('flagdelete' => 0),
+            'WhereData' => array('flagdelete' => 0, 'kode_divisi' => $PO_kodedivisi),
             'OrderBy' => 'created_on desc'
         );
 
@@ -49,11 +51,14 @@ class C_mst_category extends CI_Controller
 
 
         $namacategory = $this->input->post('namacategory');
+        $ex = $this->input->post('ex');
 
         $ArraySave = array(
             'nama' => $namacategory,
             'created_on' => tanggal_sekarang(),
-            'created_by' => $this->session->userdata('PO_username')
+            'created_by' => $this->session->userdata('PO_username'),
+            'kode_divisi' => $this->session->userdata('PO_kodedivisi'),
+            'ex' => $ex
         );
 
 
@@ -101,13 +106,15 @@ class C_mst_category extends CI_Controller
 
         $no = $this->input->post('no');
         $namacategory = $this->input->post('namacategory');
-
+        $ex = $this->input->post('ex');
 
 
         $ArrayUpdate = array(
             'nama' => $namacategory,
             'edited_on' => tanggal_sekarang(),
-            'edited_by' => $this->session->userdata('PO_username')
+            'edited_by' => $this->session->userdata('PO_username'),
+            'kode_divisi' => $this->session->userdata('PO_kodedivisi'),
+            'ex' => $ex
         );
 
         $ParamUpdate = array(

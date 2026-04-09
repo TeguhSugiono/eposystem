@@ -103,11 +103,15 @@
                 }
 
             ],
-            "pageLength": 10,
+            "lengthMenu": [
+                [10, 25, 50, 100, 1000],
+                [10, 25, 50, 100, 1000]
+            ],
+            "pageLength": 25,
             "order": [],
             "ordering": true,
             "scrollX": true,
-            "scrollY": "380px",
+            "scrollY": "560px",
             "scrollCollapse": true,
             "searching": true,
             "bLengthChange": true,

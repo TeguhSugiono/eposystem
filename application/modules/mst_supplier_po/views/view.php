@@ -1,9 +1,9 @@
 <div class="card">
     <div class="card-header">
         <h5 class="card-title">Master Supplier</h5>
-        <!-- <button class="btn btn-primary" onclick="addData()">
+        <button class="btn btn-primary" onclick="addData()">
             <i class="fa fa-plus"></i> Add Supplier
-        </button> -->
+        </button>
     </div>
     <div class="card-body">
 
@@ -57,7 +57,7 @@
     $(document).ready(function() {
         tblmstsupplier = $('#tblmstsupplier').DataTable({
             "ajax": {
-                "url": "<?php echo site_url('mst_supplier/fetch_table'); ?>",
+                "url": "<?php echo site_url('mst_supplier_po/fetch_table'); ?>",
                 "type": "POST",
                 "data": function(d) {
 
@@ -86,12 +86,21 @@
                         `;
                     }
                 },
+                // {
+                //     "data": null,
+                //     "render": function(data, type, row, meta) {
+                //         return meta.row + 1;
+                //     }
+                // },
+
                 {
                     "data": null,
-                    "render": function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
+                    "orderable": false,
+                    "searchable": false,
+                    "className": "dt-center",
+                    "defaultContent": ""
                 },
+
                 {
                     "data": "kodesupplier"
                 },
@@ -108,11 +117,15 @@
                     "data": "fax"
                 }
             ],
-            "pageLength": 10,
+            "lengthMenu": [
+                [10, 25, 50, 100, 1000],
+                [10, 25, 50, 100, 1000]
+            ],
+            "pageLength": 25,
             "order": [],
             "ordering": true,
             "scrollX": true,
-            "scrollY": "380px",
+            "scrollY": "560px",
             "scrollCollapse": true,
             "searching": true,
             "bLengthChange": true,
@@ -120,12 +133,22 @@
             "columnDefs": [{
                     "targets": [0, 1],
                     "orderable": false
-                },
-                {
-                    "targets": [0],
-                    "visible": false
                 }
-            ]
+                // ,
+                // {
+                //     "targets": [0],
+                //     "visible": false
+                // }
+            ],
+            "rowCallback": function(row, data, index) {
+                // Hitung nomor urut berdasarkan urutan di hasil filtered + pagination
+                var info = tblmstsupplier.page.info();
+                var page = info.page; // halaman saat ini (0-based)
+                var pageLength = info.length; // berapa baris per halaman
+                var rowNumber = page * pageLength + index + 1;
+
+                $('td:eq(1)', row).html(rowNumber); // eq(1) = kolom nomor urut (indeks ke-1)
+            }
         });
 
     });
@@ -147,7 +170,8 @@
     });
 
     function addData() {
-        $.post('<?= site_url("mst_supplier/add_data") ?>', {}, function(html) {
+
+        $.post('<?= site_url("mst_supplier_po/add_data") ?>', {}, function(html) {
             $('#divmodal').html(html);
 
             const modal = document.getElementById('id_modal_add');
@@ -156,13 +180,48 @@
                 modalStack = modalStack || [];
                 modalStack.push('id_modal_add');
 
+                // INI YANG PENTING — INIT SEMUA FITUR SETELAH MODAL MASUK DOM!
+                setTimeout(() => {
+                    // 1. Tambah 1 baris pertama
+                    if (typeof tambahBarisUtama === 'function' && $('#bodyItem tr').length === 0) {
+                        tambahBarisUtama();
+                    }
+
+                    // 2. Init Select2 — PASTI BISA KETIK & CARI!
+                    $('#id_modal_add select.select2').each(function() {
+                        if ($(this).data('select2')) $(this).select2('destroy');
+                    });
+                    $('#id_modal_add .select2-container').remove();
+
+                    $('#id_modal_add select.select2').select2({
+                        allowClear: true,
+                        width: '100%',
+                        dropdownParent: $('#id_modal_add'),
+                        placeholder: 'Ketik untuk mencari...',
+                        minimumResultsForSearch: 0
+                    });
+
+                }, 300); // 300ms cukup buat modal muncul penuh
             }
         });
+
     }
 
     function editData(kodesupplier) {
 
-        $.post('<?= site_url("mst_supplier/edit_data") ?>/' + kodesupplier, {}, function(html) {
+        // $.post('<?= site_url("mst_supplier_po/edit_data") ?>/' + kodesupplier, {}, function(html) {
+        //     $('#divmodal').html(html);
+
+        //     const modal = document.getElementById('id_modal_edit');
+        //     if (modal) {
+        //         modal.classList.add('active');
+        //         modalStack = modalStack || [];
+        //         modalStack.push('id_modal_edit');
+
+        //     }
+        // });
+
+        $.post('<?= site_url("mst_supplier_po/edit_data") ?>/' + kodesupplier, {}, function(html) {
             $('#divmodal').html(html);
 
             const modal = document.getElementById('id_modal_edit');
@@ -171,6 +230,30 @@
                 modalStack = modalStack || [];
                 modalStack.push('id_modal_edit');
 
+                // INI YANG PENTING — INIT SEMUA FITUR SETELAH MODAL MASUK DOM!
+                setTimeout(() => {
+                    // 1. Tambah 1 baris pertama
+                    if (typeof tambahBarisUtama === 'function' && $('#bodyItem tr').length === 0) {
+                        tambahBarisUtama();
+                    }
+
+                    // 2. Init Select2 — PASTI BISA KETIK & CARI!
+                    $('#id_modal_edit select.select2').each(function() {
+                        if ($(this).data('select2')) $(this).select2('destroy');
+                    });
+                    $('#id_modal_edit .select2-container').remove();
+
+                    $('#id_modal_edit select.select2').select2({
+                        allowClear: true,
+                        width: '100%',
+                        dropdownParent: $('#id_modal_edit'),
+                        placeholder: 'Ketik untuk mencari...',
+                        minimumResultsForSearch: 0
+                    });
+
+
+
+                }, 300);
             }
         });
     }
@@ -186,7 +269,7 @@
         var dataok;
 
         if (jawab === true) {
-            url = '<?php echo site_url('mst_supplier/delete_data') ?>';
+            url = '<?php echo site_url('mst_supplier_po/delete_data') ?>';
             data = {
                 kodesupplier: kodesupplier
             };

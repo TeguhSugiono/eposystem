@@ -322,6 +322,7 @@ class M_function extends CI_Model
         $Table      = $ParamArray['Table'];
         $DataUpdate = $ParamArray['DataUpdate'] ?? [];
         $WhereData  = $ParamArray['WhereData'] ?? [];
+        $WhereIN = isset($ParamArray['WhereIN']) ? $ParamArray['WhereIN'] : array();
 
         // Handle raw expression (seq_no + 1)
         foreach ($DataUpdate as $field => $value) {
@@ -335,6 +336,13 @@ class M_function extends CI_Model
 
         if (!empty($WhereData)) {
             $this->$Database->where($WhereData);
+        }
+
+
+
+
+        if (count((array) $WhereIN) > 0) {
+            $this->$Database->where_in($WhereIN['fieldIN'], $WhereIN['fieldINValue']);
         }
 
         return $this->$Database->update($Table);

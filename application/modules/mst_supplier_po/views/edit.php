@@ -42,7 +42,7 @@
                         <input type="text" class="form-control form-control-sm" id="fax" name="fax" value="<?= quotStr($GetDataEdit->fax); ?>" required>
                     </div>
                 </div>
-                <div class="row mb-3">
+                <div class="row mb-3" style="display: none;">
                     <label class="col-sm-4 col-form-label text-end">Divisi</label>
                     <div class="col-sm-8">
                         <?= $kode_divisi; ?>
@@ -78,7 +78,7 @@
 
         var dataPost = $('#formedit').serialize();
 
-        url = '<?php echo site_url('mst_supplier/update_data') ?>';
+        url = '<?php echo site_url('mst_supplier_po/update_data') ?>';
         data = dataPost;
         pesan = 'function update data gagal... 😢';
         dataok = multi_ajax_proses(url, data, pesan);

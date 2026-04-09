@@ -56,10 +56,24 @@
         color: #ffffff !important;
         font-weight: bold !important;
     } */
+
+    .status-waiting {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-waiting img {
+        width: 40px;
+        height: 40px;
+        display: block;
+    }
 </style>
 
 
 <link rel="stylesheet" href="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/'); ?>css_approve_manager.css">
+
+
 
 <style>
     .clsHold {
@@ -77,7 +91,13 @@
     .clsNew {
         background-color: #bdfabd !important;
     }
+
+    #prosesPO {
+        padding: 6px 2px !important;
+    }
 </style>
+
+<link rel="stylesheet" href="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/'); ?>bootstrap-grid.min.css">
 
 <div class="card cardwith">
 
@@ -91,14 +111,21 @@
 
 
 
-
-
-
-
     <div class="card-body">
 
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label text-end">Proses PO</label>
+                    <div class="col-sm-9">
+                        <?= $prosesPO; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <div class="datatable-container">
+
+        <div class="datatable-container" style="margin-top: 2% !important;">
 
             <div class="datatable-wrapper">
                 <table class="table table-bordered table-striped table-hover display nowrap" id="tblrequestpo" style="width: 100%">
@@ -183,9 +210,19 @@
     var HeadPPNUse = 0;
     var HeadCategory = '';
 
+    var spinner = `<?= site_url('assets/' . $this->session->userdata('pathtemplate') . '/SpinnerTable.gif') ?>`;
+
+    $(document).on('change', '#prosesPO', function() {
+        tblrequestpo.ajax.reload(null, false);
+
+    });
 
 
     $(document).ready(function() {
+
+        setInterval(function() {
+            tblrequestpo.ajax.reload(null, false);
+        }, 10000);
 
         var isDesktop = window.innerWidth > 768;
 
@@ -195,7 +232,7 @@
                 "url": "<?php echo site_url('dashboardmanager/fetch_table'); ?>",
                 "type": "POST",
                 "data": function(d) {
-
+                    d.prosesPO = $('#prosesPO').val();
                 },
                 "dataSrc": ""
             },
@@ -330,11 +367,14 @@
                     "render": function(data, type, row) {
 
                         if (row.acc_manager == "Y") {
-                            return ` <i class="fa fa-check" title="Accept"></i>`;
+                            //return ` <i class="fa fa-check" title="Accept"></i>`;
+                            return "Approve";
                         } else if (row.acc_manager == "R") {
-                            return '<i class="fa fa-window-close" title="Reject"></i>';
+                            //return '<i class="fa fa-window-close" title="Reject"></i>';
+                            return "Reject";
                         } else if (row.acc_manager == "H") {
-                            return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                            //return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                            return "Hold";
                         }
 
                         return row.acc_manager;
@@ -343,22 +383,56 @@
                 },
                 {
                     "data": "acc_name_manager"
-                },
+                }
+                // ,
+                // {
+                //     "data": null,
+                //     "className": "text-center",
+                //     "render": function(data, type, row) {
+
+                //         if (row.acc_director == "Y") {
+                //             return ` <i class="fa fa-check" title="Accept"></i>`;
+                //         } else if (row.acc_director == "R") {
+                //             return '<i class="fa fa-window-close" title="Reject"></i>';
+                //         } else if (row.acc_director == "H") {
+                //             return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                //         }
+
+                //         return row.acc_director;
+
+                //     }
+                // }
+                ,
                 {
-                    "data": null,
-                    "className": "text-center",
+                    "data": "acc_director",
                     "render": function(data, type, row) {
 
-                        if (row.acc_director == "Y") {
-                            return ` <i class="fa fa-check" title="Accept"></i>`;
+                        var setAccDirector = "";
+
+                        if (row.acc_director == "" && row.flag_email_director == 0) {
+                            setAccDirector = "";
+                        } else if (row.acc_director == "" && row.flag_email_director == 1) {
+                            setAccDirector = `
+                                <span class="status-waiting">
+                                    Waiting
+                                    <img src="${spinner}">
+                                </span>
+                            `;
+                        } else if (row.acc_director == "Y") {
+                            setAccDirector = "Approve";
                         } else if (row.acc_director == "R") {
-                            return '<i class="fa fa-window-close" title="Reject"></i>';
+                            setAccDirector = "Reject";
                         } else if (row.acc_director == "H") {
-                            return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                            //setAccDirector = "Hold";
+                            setAccDirector = `
+                                <span class="status-waiting">
+                                    Waiting
+                                    <img src="${spinner}">
+                                </span>
+                            `;
                         }
 
-                        return row.acc_director;
-
+                        return `<div class="acc-director-cell" data-id="${row.id_request}">${setAccDirector}</div>`;
                     }
                 }
 
@@ -444,6 +518,74 @@
 
 
     });
+
+    setInterval(function() {
+        updateAccDirectorStatus();
+    }, 5000);
+
+
+    function updateAccDirectorStatus() {
+
+        // ambil semua id_request dari table
+        let ids = [];
+
+        $('.acc-manager-cell').each(function() {
+            let id = $(this).data('id');
+            if (id) ids.push(id);
+        });
+
+        //console.log(ids);
+
+        if (ids.length === 0) return;
+
+        $.ajax({
+            url: '<?= site_url("request_po/get_status_acc_manager") ?>',
+            method: 'POST',
+            data: {
+                ids: ids
+            },
+            dataType: 'json', // 🔥 WAJIB
+            success: function(res) {
+                //console.log('RESPONSE:', res);
+
+                if (!res || !res.data || !Array.isArray(res.data)) {
+                    console.error('Response tidak sesuai format', res);
+                    return;
+                }
+
+                res.data.forEach(item => {
+                    let html = "";
+
+                    if (item.acc_director == "" && item.flag_email_director == 0) {
+                        html = "";
+                    } else if (item.acc_director == "" && item.flag_email_director == 1) {
+                        html = `
+                            <span class="status-waiting">
+                                Waiting
+                                <img src="${spinner}">
+                            </span>
+                        `;
+                    } else if (item.acc_director == "Y") {
+                        html = "Approve";
+                    } else if (item.acc_director == "R") {
+                        html = "Reject";
+                    } else if (item.acc_director == "H") {
+                        //html = "Hold";
+                        html = `
+                            <span class="status-waiting">
+                                Waiting
+                                <img src="${spinner}">
+                            </span>
+                        `;
+                    }
+
+                    $(`.acc-director-cell[data-id="${item.id_request}"]`).html(html);
+                });
+            }
+        });
+    }
+
+
 
     let pressTimer;
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);

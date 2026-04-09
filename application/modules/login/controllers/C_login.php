@@ -133,6 +133,7 @@ class C_login extends CI_Controller
         $this->session->unset_userdata('PO_username');
         $this->session->unset_userdata('PO_kodedivisi');
         $this->session->unset_userdata('PO_hakakses');
+        $this->session->unset_userdata('PO_email');
         redirect(site_url());
     }
 

@@ -13,6 +13,18 @@
         background: #09bc45;
         color: white;
     }
+
+    .status-waiting {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-waiting img {
+        width: 40px;
+        height: 40px;
+        display: block;
+    }
 </style>
 
 <div class="card cardwith">
@@ -53,6 +65,8 @@
                             <th>PPN %</th>
                             <th>Nilai Lain</th>
                             <th>PPN</th>
+                            <th>Approval 1</th>
+                            <th>Approval 2</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,11 +85,18 @@
 <script src="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/'); ?>jquery-3.7.1.min.js"></script>
 
 
+
 <script type="text/javascript">
     var tblrequestpo;
     let modalStack = [];
+    var spinner = `<?= site_url('assets/' . $this->session->userdata('pathtemplate') . '/SpinnerTable.gif') ?>`;
 
     $(document).ready(function() {
+
+        setInterval(function() {
+            tblrequestpo.ajax.reload(null, false);
+        }, 20000);
+
         tblrequestpo = $('#tblrequestpo').DataTable({
             "ajax": {
                 "url": "<?php echo site_url('request_po/fetch_table'); ?>",
@@ -95,7 +116,8 @@
                         var nopo = escapeHtml(row.nopo);
 
                         return `
-                        
+                        <button type="button" onclick="printData(this,'${row.id_pesan}', '${nopo}')"
+                        class="btn btn-sm btn-primary" title="Cetak" > <i class="fa fa-print" ></i> </button>    
 
                         <a href="javascript:void(0)" onclick="editData('${row.id_request}')" 
                         class="btn btn-sm btn-primary" title="Edit">
@@ -320,6 +342,63 @@
                         return FuncHitungPPN(row.id_category, row.ppn_used, row.subtotalharga).ppn;
 
                     }
+                },
+
+                {
+                    "data": "acc_manager",
+                    "render": function(data, type, row) {
+
+                        var setAccMgr = "";
+
+                        if (row.acc_manager == "" && row.flag_email_manager == 0) {
+                            setAccMgr = "";
+                        } else if (row.acc_manager == "" && row.flag_email_manager == 1) {
+                            setAccMgr = `
+                                <span class="status-waiting">
+                                    Waiting
+                                    <img src="${spinner}">
+                                </span>
+                            `;
+                        } else if (row.acc_manager == "Y") {
+                            setAccMgr = "Approve";
+                        } else if (row.acc_manager == "R") {
+                            setAccMgr = "Reject";
+                        }
+
+                        return `<div class="acc-manager-cell" data-id="${row.id_request}">${setAccMgr}</div>`;
+                    }
+                },
+                {
+                    "data": "acc_director",
+                    "render": function(data, type, row) {
+
+                        var setAccDirector = "";
+
+                        if (row.acc_director == "" && row.flag_email_director == 0) {
+                            setAccDirector = "";
+                        } else if (row.acc_director == "" && row.flag_email_director == 1) {
+                            setAccDirector = `
+                                <span class="status-waiting">
+                                    Waiting
+                                    <img src="${spinner}">
+                                </span>
+                            `;
+                        } else if (row.acc_director == "Y") {
+                            setAccDirector = "Approve";
+                        } else if (row.acc_director == "R") {
+                            setAccDirector = "Reject";
+                        } else if (row.acc_director == "H") {
+                            //setAccDirector = "Hold";
+                            setAccDirector = `
+                                <span class="status-waiting">
+                                    Waiting
+                                    <img src="${spinner}">
+                                </span>
+                            `;
+                        }
+
+                        return `<div class="acc-director-cell" data-id="${row.id_request}">${setAccDirector}</div>`;
+                    }
                 }
 
             ],
@@ -336,13 +415,138 @@
                 "targets": [0, 1],
                 "orderable": false
             }, {
-                "targets": [3, 4, 10, 18, 19, 20, 21],
+                "targets": [3, 4, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
                 "visible": false
-            }]
+            }],
+            rowCallback: function(row, data) {
+                $(row).attr('data-id_request', data.id_request);
+            }
         });
 
     });
 
+    setInterval(function() {
+        updateAccManagerStatus();
+    }, 5000);
+
+    setInterval(function() {
+        updateAccDirectorStatus();
+    }, 5000);
+
+    function updateAccManagerStatus() {
+
+        // ambil semua id_request dari table
+        let ids = [];
+
+        $('.acc-manager-cell').each(function() {
+            let id = $(this).data('id');
+            if (id) ids.push(id);
+        });
+
+        //console.log(ids);
+
+        if (ids.length === 0) return;
+
+        $.ajax({
+            url: '<?= site_url("request_po/get_status_acc_manager") ?>',
+            method: 'POST',
+            data: {
+                ids: ids
+            },
+            dataType: 'json', // 🔥 WAJIB
+            success: function(res) {
+                console.log('RESPONSE:', res);
+
+                if (!res || !res.data || !Array.isArray(res.data)) {
+                    console.error('Response tidak sesuai format', res);
+                    return;
+                }
+
+                res.data.forEach(item => {
+                    let html = "";
+
+                    if (item.acc_manager == "" && item.flag_email_manager == 0) {
+                        html = "";
+                    } else if (item.acc_manager == "" && item.flag_email_manager == 1) {
+                        html = `
+                            <span class="status-waiting">
+                                Waiting
+                                <img src="${spinner}">
+                            </span>
+                        `;
+                    } else if (item.acc_manager == "Y") {
+                        html = "Approve";
+                    } else if (item.acc_manager == "R") {
+                        html = "Reject";
+                    }
+
+                    $(`.acc-manager-cell[data-id="${item.id_request}"]`).html(html);
+                });
+            }
+        });
+    }
+
+
+    function updateAccDirectorStatus() {
+
+        // ambil semua id_request dari table
+        let ids = [];
+
+        $('.acc-manager-cell').each(function() {
+            let id = $(this).data('id');
+            if (id) ids.push(id);
+        });
+
+        //console.log(ids);
+
+        if (ids.length === 0) return;
+
+        $.ajax({
+            url: '<?= site_url("request_po/get_status_acc_manager") ?>',
+            method: 'POST',
+            data: {
+                ids: ids
+            },
+            dataType: 'json', // 🔥 WAJIB
+            success: function(res) {
+                //console.log('RESPONSE:', res);
+
+                if (!res || !res.data || !Array.isArray(res.data)) {
+                    console.error('Response tidak sesuai format', res);
+                    return;
+                }
+
+                res.data.forEach(item => {
+                    let html = "";
+
+                    if (item.acc_director == "" && item.flag_email_director == 0) {
+                        html = "";
+                    } else if (item.acc_director == "" && item.flag_email_director == 1) {
+                        html = `
+                            <span class="status-waiting">
+                                Waiting
+                                <img src="${spinner}">
+                            </span>
+                        `;
+                    } else if (item.acc_director == "Y") {
+                        html = "Approve";
+                    } else if (item.acc_director == "R") {
+                        html = "Reject";
+                    } else if (item.acc_director == "H") {
+                        //html = "Hold";
+                        html = `
+                            <span class="status-waiting">
+                                Waiting
+                                <img src="${spinner}">
+                            </span>
+                        `;
+                    }
+
+                    $(`.acc-director-cell[data-id="${item.id_request}"]`).html(html);
+                });
+            }
+        });
+    }
 
     function printData(el, id_pesan, nopo) {
         var row = $(el).closest('tr');
@@ -436,6 +640,8 @@
             };
             pesan = 'function send_approve data gagal... 😢';
             dataok = multi_ajax_proses(url, data, pesan);
+
+            console.log(dataok);
 
 
             if (dataok.msg != 'Ya') {

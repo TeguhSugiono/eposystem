@@ -25,6 +25,13 @@
                     </div>
                 </div>
 
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label text-end">Ex</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control form-control-sm" id="ex" name="ex" value="<?= quotStr($GetDataEdit->ex); ?>" required>
+                    </div>
+                </div>
+
             </form>
 
         </div>

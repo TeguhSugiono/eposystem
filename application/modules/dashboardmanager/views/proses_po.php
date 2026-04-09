@@ -27,7 +27,7 @@
     $classHold = "block";
     if ($GetDataRequest[0]['id_status_approval'] == "4") {
         $classHold = "none";
-        $classCancel = "none";
+        //$classCancel = "none";
     }
 
     $classAccept = "block";
@@ -36,11 +36,11 @@
         $classAccept = "none";
         $classReject = "none";
         $classHold = "none";
-        $classCancel = "block";
+        //$classCancel = "block";
     }
 
     if ($GetDataRequest[0]['acc_director'] == "Y") {
-        $classCancel = "none";
+        //$classCancel = "none";
     }
     ?>
 </style>

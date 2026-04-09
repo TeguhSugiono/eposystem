@@ -22,6 +22,19 @@ class C_request_po extends CI_Controller
 
         // $ParamArray = array(
         //     'Table' => 'tbl_request_po',
+        //     'WhereData' => array('flag_request' => 0, 'id_request' => 6),
+        //     'Clause' => "(flag_email_manager = 0 or flag_email_director=0)",
+        //     'Field' => '*,get_nopo(id_pesan) nopo,(SELECT nama_dept FROM masterdivisi where kode_divisi=tbl_request_po.kode_divisi) nama_dept,
+        //                 (SELECT format(hitung_grandtotal(subtotalharga,ppn_param_date(tglpesan),ppn,id_category,discount_total),2) FROM transpesan_head where id_pesan = tbl_request_po.id_pesan) grandtotal'
+        // );
+        // $arrayPoRequest = $this->m_function->value_result_array($ParamArray);
+
+        // echo $this->db->last_query();
+
+        // die;
+
+        // $ParamArray = array(
+        //     'Table' => 'tbl_request_po',
         //     'WhereData' => array('id_pesan' => '1590'),
         //     'OrderBy' => 'id_request desc',
         //     'Limit' => '1'
@@ -111,6 +124,7 @@ class C_request_po extends CI_Controller
                     INNER JOIN `transpesan_head` `b` ON `a`.`id_pesan`=`b`.`id_pesan`
                     INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
                     where a.id_request not in (SELECT id_request from transpesan_head_old)
+                    and a.kode_divisi = '" . $PO_kodedivisi . "'
 
                     UNION ALL
 
@@ -127,7 +141,7 @@ class C_request_po extends CI_Controller
                     FROM tbl_request_po a
                     INNER JOIN `transpesan_head_old` `b` ON `a`.`id_request`=`b`.`id_request`
                     INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
-
+                    and a.kode_divisi = '" . $PO_kodedivisi . "'
                     ) x
                     ORDER BY  id_request ASC,nopo ASC ";
 
@@ -638,12 +652,14 @@ class C_request_po extends CI_Controller
         );
         $arrayPoRequest = $this->m_function->value_result_array($ParamArray);
 
+        $sql = $this->db->last_query();
+
 
         foreach ($arrayPoRequest as $PoRequest) {
 
             $flag_email_manager = $PoRequest['flag_email_manager'];
             $kode_divisi = $PoRequest['kode_divisi'];
-            $user_request = ucfirst(strtolower($PoRequest['user_request']));
+            $user_request = ucfirst(strtolower($this->session->userdata('PO_username')));
             $nopo = $PoRequest['nopo'];
             $nama_dept =  $PoRequest['nama_dept'];
             $grandtotal =  format_dolar_nol($PoRequest['grandtotal']);
@@ -712,7 +728,8 @@ class C_request_po extends CI_Controller
                 $PesanNotfikasi = array(
                     'msg' => 'Ya',
                     'pesan' => "✔ Berhasil kirim ke {$data['target']} via BAYAR<br>",
-                    'Respon' => $Respon
+                    'Respon' => $Respon,
+                    'sql' => $sql
                 );
                 return $PesanNotfikasi;
                 die;
@@ -734,7 +751,8 @@ class C_request_po extends CI_Controller
                 $PesanNotfikasi = array(
                     'msg' => 'Ya',
                     'pesan' => "✔ Berhasil kirim ke {$data['target']} via gratis<br>",
-                    'Respon' => $Respongratis
+                    'Respon' => $Respongratis,
+                    'sql' => $sql
                 );
                 return $PesanNotfikasi;
                 die;
@@ -947,5 +965,15 @@ class C_request_po extends CI_Controller
             'pesan' => "Data Request Berhasil Dihapus 😊",
         );
         echo json_encode($pesan_data);
+    }
+
+    function c_get_status_acc_manager()
+    {
+        $ids = $this->input->post('ids');
+
+        $this->db->where_in('id_request', $ids);
+        $data = $this->db->get('tbl_request_po')->result();
+
+        echo json_encode(['data' => $data]);
     }
 }

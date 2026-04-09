@@ -96,8 +96,8 @@
                         ['title' => 'Category',   'url' => 'mst_category',   'icon' => 'fa fa-list'],
                         ['title' => 'Satuan',   'url' => 'mst_satuan',   'icon' => 'fa fa-list'],
                         ['title' => 'Barang',   'url' => 'mst_barang',   'icon' => 'fa fa-list'],
-                        ['title' => 'Supplier', 'url' => 'mst_supplier', 'icon' => 'fa fa-list'],
-                        ['title' => 'Bank', 'url' => 'mst_bank', 'icon' => 'fa fa-list'],
+                        ['title' => 'Supplier', 'url' => 'mst_supplier_po', 'icon' => 'fa fa-list'],
+                        // ['title' => 'Bank', 'url' => 'mst_bank', 'icon' => 'fa fa-list'],
                         ['title' => 'Proyek',   'url' => 'mst_proyek',   'icon' => 'fa fa-list']
                     ]
                 ],
@@ -106,13 +106,18 @@
                     'icon'     => 'fa fa-cart-arrow-down',
                     'children' => [
                         ['title' => 'Purchase Order',   'url' => 'trans_purchaseorder',   'icon' => 'fa fa-file-invoice'],
-                        ['title' => 'Terima Barang',   'url' => 'trans_receipt',   'icon' => 'fa fa-file-invoice'],
+                        // ['title' => 'Terima Barang',   'url' => 'trans_receipt',   'icon' => 'fa fa-file-invoice'],
                     ]
                 ],
                 [
                     'title' => 'Request PO',
                     'url'   => 'request_po',
                     'icon'  => 'fa fa-paper-plane'
+                ],
+                [
+                    'title' => 'LogOut',
+                    'url'   => 'logout',
+                    'icon'  => 'fa fa-sign-out-alt'
                 ]
 
             ];
@@ -125,6 +130,11 @@
                         'title' => 'Dashboard',
                         'url'   => '',
                         'icon'  => 'fa fa-home'
+                    ],
+                    [
+                        'title' => 'LogOut',
+                        'url'   => 'logout',
+                        'icon'  => 'fa fa-sign-out-alt'
                     ]
                 ];
 
@@ -140,6 +150,11 @@
                         'title' => 'Report',
                         'url'   => 'report_direktur',
                         'icon'  => 'fa fa-file-alt'
+                    ],
+                    [
+                        'title' => 'LogOut',
+                        'url'   => 'logout',
+                        'icon'  => 'fa fa-sign-out-alt'
                     ]
                 ];
 
@@ -317,8 +332,8 @@
                 ['title' => 'Category',   'url' => 'mst_category',   'icon' => 'fa fa-list'],
                 ['title' => 'Satuan',   'url' => 'mst_satuan',   'icon' => 'fa fa-list'],
                 ['title' => 'Barang',   'url' => 'mst_barang',   'icon' => 'fa fa-list'],
-                ['title' => 'Supplier', 'url' => 'mst_supplier', 'icon' => 'fa fa-list'],
-                ['title' => 'Bank', 'url' => 'mst_bank', 'icon' => 'fa fa-list'],
+                ['title' => 'Supplier', 'url' => 'mst_supplier_po', 'icon' => 'fa fa-list'],
+                // ['title' => 'Bank', 'url' => 'mst_bank', 'icon' => 'fa fa-list'],
                 ['title' => 'Proyek',   'url' => 'mst_proyek',   'icon' => 'fa fa-list']
             ]
         ],
@@ -327,13 +342,18 @@
             'icon'     => 'fa fa-cart-arrow-down',
             'children' => [
                 ['title' => 'Purchase Order',   'url' => 'trans_purchaseorder',   'icon' => 'fa fa-file-invoice'],
-                ['title' => 'Terima Barang',   'url' => 'trans_receipt',   'icon' => 'fa fa-file-invoice'],
+                // ['title' => 'Terima Barang',   'url' => 'trans_receipt',   'icon' => 'fa fa-file-invoice'],
             ]
         ],
         [
             'title' => 'Request PO',
             'url'   => 'request_po',
             'icon'  => 'fa fa-paper-plane'
+        ],
+        [
+            'title' => 'LogOut',
+            'url'   => 'logout',
+            'icon'  => 'fa fa-sign-out-alt'
         ]
     ];
 
@@ -344,6 +364,11 @@
                 'title' => 'Dashboard',
                 'url'   => '',
                 'icon'  => 'fa fa-home'
+            ],
+            [
+                'title' => 'LogOut',
+                'url'   => 'logout',
+                'icon'  => 'fa fa-sign-out-alt'
             ]
         ];
         $menu_items[0]['url'] = 'dashboardmanager';
@@ -358,6 +383,11 @@
                 'title' => 'Report',
                 'url'   => 'report_direktur',
                 'icon'  => 'fa fa-file-alt'
+            ],
+            [
+                'title' => 'LogOut',
+                'url'   => 'logout',
+                'icon'  => 'fa fa-sign-out-alt'
             ]
         ];
         $menu_items[0]['url'] = 'dashboarddirektur';

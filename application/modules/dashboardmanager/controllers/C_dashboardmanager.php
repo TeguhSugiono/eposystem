@@ -26,10 +26,18 @@ class C_dashboardmanager extends CI_Controller
             redirect(site_url('login'));
         }
 
+        $arraydata = array(
+            'all' => 'All Data',
+            'yes' => 'Sudah Proses',
+            'no' => 'Belum Proses'
+        );
+        $prosesPO = ComboNonDbOld($arraydata, 'prosesPO', 'no', 'form-control form-control-sm');
+
+
         $comp = array(
             'content' => 'view',
+            'prosesPO' => $prosesPO
         );
-
 
         $this->load->view('dashboard/index', $comp);
     }
@@ -101,6 +109,8 @@ class C_dashboardmanager extends CI_Controller
 
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
+        $prosesPO = $this->input->post('prosesPO');
+
         // $ArrayJoin = array(
         //     array('transpesan_head b', 'a.id_pesan=b.id_pesan', 'inner'),
         //     array('tbl_request_approval c', 'a.id_status_approval=c.id_status_approval', 'inner')
@@ -136,9 +146,15 @@ class C_dashboardmanager extends CI_Controller
                     INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
                     where a.id_request not in (SELECT id_request from transpesan_head_old)
                     and b.status != 'V' and a.flag_request != '9' and a.flag_email_manager = '1' 
-                    and a.kode_divisi = '" . $PO_kodedivisi . "'
+                    and a.kode_divisi = '" . $PO_kodedivisi . "' ";
 
-                    UNION ALL
+        if ($prosesPO == "yes") {
+            $query .= " and ifnull(a.acc_manager,'') <> '' ";
+        } else if ($prosesPO == "no") {
+            $query .= " and ifnull(a.acc_manager,'') = '' ";
+        }
+
+        $query .= "       UNION ALL
 
                     SELECT 
                     a.id_request,a.id_pesan,a.time_request,a.user_request,a.reason,a.id_status_approval,a.acc_manager,
@@ -155,9 +171,15 @@ class C_dashboardmanager extends CI_Controller
                     INNER JOIN `transpesan_head_old` `b` ON `a`.`id_request`=`b`.`id_request`
                     INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
                     and b.status != 'V' and a.flag_request != '9' and a.flag_email_manager = '1' 
-                    and a.kode_divisi = '" . $PO_kodedivisi . "'
-                    
-                    ) x
+                    and a.kode_divisi = '" . $PO_kodedivisi . "' ";
+
+        if ($prosesPO == "yes") {
+            $query .= " and ifnull(a.acc_manager,'') <> '' ";
+        } else if ($prosesPO == "no") {
+            $query .= " and ifnull(a.acc_manager,'') = '' ";
+        }
+
+        $query .= "            ) x
                     ORDER BY  FIELD(id_status_approval, 4, 3,2, 1),time_acc_director desc,time_request ";
         //ORDER BY  id_request ASC,nopo ASC ";
 
@@ -194,19 +216,11 @@ class C_dashboardmanager extends CI_Controller
             );
             $GetDataDetail = $this->m_function->value_result_array($ParamArray);
 
-            if ($GetDataHeader[0]['comp'] == "MSA") {
-                $ConectDB = "dbAcct";
-            } else if ($GetDataHeader[0]['comp'] == "BAL") {
-                $ConectDB = "dbAcctBal";
-            } else {
-                $ConectDB = "dbAcct";
-            }
 
             $ParamArray = array(
-                'ConectDB' => $ConectDB,
-                'Table' => 'fin_ap_m_supplier',
-                'WhereData' => array('suppl_code' => $GetDataHeader[0]['kodesupplier']),
-                'Field' => '*,concat(address1," ",address2," ",address3) alamat',
+                'Table' => 'mastersupplier',
+                'WhereData' => array('kodesupplier' => $GetDataHeader[0]['kodesupplier']),
+                'Field' => '*,kodesupplier as suppl_code,namasupplier as suppl_name',
             );
             $GetDataSupplier = $this->m_function->value_result_array($ParamArray);
         } else {
@@ -391,40 +405,76 @@ class C_dashboardmanager extends CI_Controller
         echo json_encode($pesan_data);
     }
 
+    // function c_proses_reject_managerOld()
+    // {
+    //     $id_pesan_det = $this->input->post('id_pesan_det');
+    //     $id_request_det =  $this->input->post('id_request_det');
+
+    //     //update ke transpesan_head
+    //     $DataUpdate = array(
+    //         'flag_finish' => 0,
+    //         'flag_id_request' => 0,
+    //     );
+
+
+    //     $ParamUpdate = array(
+    //         'Table' => 'transpesan_head',
+    //         'DataUpdate' => $DataUpdate,
+    //         'WhereData' => array('id_pesan' => $id_pesan_det)
+    //     );
+
+    //     if (!$this->m_function->update_data($ParamUpdate) >= 1) {
+    //         $pesan_data = array(
+    //             'msg' => 'Tidak',
+    //             'pesan' => 'Update ke table transpesan_head gagal...!!!  😢',
+    //         );
+    //         echo json_encode($pesan_data);
+    //         die;
+    //     }
+
+
+    //     $DataUpdate = array(
+    //         //'id_status_approval' => 1,
+    //         'acc_manager' => 'R',
+    //         'time_acc_manager' => tanggal_sekarang(),
+    //         'acc_name_manager' => $this->session->userdata('PO_username'),
+    //         'flag_request' => 0,
+    //         'flag_email_manager' => 0
+    //     );
+
+    //     $ParamUpdate = array(
+    //         'Table' => 'tbl_request_po',
+    //         'DataUpdate' => $DataUpdate,
+    //         'WhereData' => array('id_request' => $id_request_det)
+    //     );
+
+    //     if (!$this->m_function->update_data($ParamUpdate) >= 1) {
+    //         $pesan_data = array(
+    //             'msg' => 'Tidak',
+    //             'pesan' => 'Update ke table tbl_request_po gagal...!!!  😢',
+    //         );
+    //         echo json_encode($pesan_data);
+    //         die;
+    //     }
+
+    //     $pesan_data = array(
+    //         'msg' => 'Ya',
+    //         'pesan' => 'Data Po Di Reject...'
+    //     );
+
+    //     echo json_encode($pesan_data);
+    // }
+
     function c_proses_reject_manager()
     {
         $id_pesan_det = $this->input->post('id_pesan_det');
         $id_request_det =  $this->input->post('id_request_det');
 
-        //update ke transpesan_head
-        $DataUpdate = array(
-            'flag_finish' => 0,
-            'flag_id_request' => 0,
-        );
-
-        $ParamUpdate = array(
-            'Table' => 'transpesan_head',
-            'DataUpdate' => $DataUpdate,
-            'WhereData' => array('id_pesan' => $id_pesan_det)
-        );
-
-        if (!$this->m_function->update_data($ParamUpdate) >= 1) {
-            $pesan_data = array(
-                'msg' => 'Tidak',
-                'pesan' => 'Update ke table transpesan_head gagal...!!!  😢',
-            );
-            echo json_encode($pesan_data);
-            die;
-        }
-
 
         $DataUpdate = array(
-            //'id_status_approval' => 1,
             'acc_manager' => 'R',
             'time_acc_manager' => tanggal_sekarang(),
             'acc_name_manager' => $this->session->userdata('PO_username'),
-            'flag_request' => 0,
-            'flag_email_manager' => 0
         );
 
         $ParamUpdate = array(

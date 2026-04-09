@@ -238,14 +238,32 @@ if (!function_exists('tanggal_sekarang_with_nol')) {
     }
 }
 
+// if (!function_exists('date_db')) {
+//     function date_db($tgl)
+//     {
+//         if ($tgl == '' || $tgl == NULL || $tgl == '0000:00:00' || $tgl == '0000:00:00 00:00:00') {
+//             return NULL;
+//         } else {
+//             return date('Y-m-d', strtotime($tgl));
+//         }
+//     }
+// }
+
 if (!function_exists('date_db')) {
     function date_db($tgl)
     {
-        if ($tgl == '' || $tgl == NULL || $tgl == '0000:00:00' || $tgl == '0000:00:00 00:00:00') {
-            return NULL;
-        } else {
-            return date('Y-m-d', strtotime($tgl));
+        if (!$tgl) return NULL;
+
+        // coba format indo dulu
+        $date = DateTime::createFromFormat('d/m/Y', $tgl);
+
+        // kalau gagal, coba strtotime
+        if (!$date) {
+            $timestamp = strtotime($tgl);
+            return $timestamp ? date('Y-m-d', $timestamp) : NULL;
         }
+
+        return $date->format('Y-m-d');
     }
 }
 

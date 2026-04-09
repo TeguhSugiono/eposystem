@@ -77,7 +77,13 @@
     .clsNew {
         background-color: #bdfabd !important;
     }
+
+    #prosesPO {
+        padding: 6px 2px !important;
+    }
 </style>
+
+<link rel="stylesheet" href="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/'); ?>bootstrap-grid.min.css">
 
 <div class="card cardwith">
 
@@ -97,8 +103,19 @@
 
     <div class="card-body">
 
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label text-end">Proses PO</label>
+                    <div class="col-sm-9">
+                        <?= $prosesPO; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <div class="datatable-container">
+
+        <div class="datatable-container" style="margin-top: 2% !important;">
 
             <div class="datatable-wrapper">
                 <table class="table table-bordered table-striped table-hover display nowrap" id="tblrequestpo" style="width: 100%">
@@ -184,8 +201,16 @@
     var HeadCategory = '';
 
 
+    $(document).on('change', '#prosesPO', function() {
+        tblrequestpo.ajax.reload(null, false);
+
+    });
 
     $(document).ready(function() {
+
+        setInterval(function() {
+            tblrequestpo.ajax.reload(null, false);
+        }, 10000);
 
         var isDesktop = window.innerWidth > 768;
 
@@ -195,7 +220,7 @@
                 "url": "<?php echo site_url('dashboarddirektur/fetch_table'); ?>",
                 "type": "POST",
                 "data": function(d) {
-
+                    d.prosesPO = $('#prosesPO').val();
                 },
                 "dataSrc": ""
             },
@@ -323,23 +348,46 @@
                     "data": "id_status_approval"
                 },
 
+                // {
+                //     "data": null,
+                //     "className": "text-center",
+                //     "render": function(data, type, row) {
+
+                //         if (row.acc_manager == "Y") {
+                //             return ` <i class="fa fa-check" title="Accept"></i>`;
+                //         } else if (row.acc_manager == "R") {
+                //             return '<i class="fa fa-window-close" title="Reject"></i>';
+                //         } else if (row.acc_manager == "H") {
+                //             return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                //         }
+
+                //         return row.acc_manager;
+
+                //     }
+                // },
+
                 {
                     "data": null,
                     "className": "text-center",
                     "render": function(data, type, row) {
 
                         if (row.acc_manager == "Y") {
-                            return ` <i class="fa fa-check" title="Accept"></i>`;
+                            //return ` <i class="fa fa-check" title="Accept"></i>`;
+                            return "Approve By " + row.acc_name_manager;
                         } else if (row.acc_manager == "R") {
-                            return '<i class="fa fa-window-close" title="Reject"></i>';
+                            //return '<i class="fa fa-window-close" title="Reject"></i>';
+                            return "Reject By " + row.acc_name_manager;
                         } else if (row.acc_manager == "H") {
-                            return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                            //return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                            return "Hold By " + row.acc_name_manager;
                         }
 
                         return row.acc_manager;
 
                     }
                 },
+
+
                 {
                     "data": "acc_name_manager"
                 },
@@ -349,11 +397,14 @@
                     "render": function(data, type, row) {
 
                         if (row.acc_director == "Y") {
-                            return ` <i class="fa fa-check" title="Accept"></i>`;
+                            //return ` <i class="fa fa-check" title="Accept"></i>`;
+                            return "Approve";
                         } else if (row.acc_director == "R") {
-                            return '<i class="fa fa-window-close" title="Reject"></i>';
+                            //return '<i class="fa fa-window-close" title="Reject"></i>';
+                            return "Reject";
                         } else if (row.acc_director == "H") {
-                            return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                            //return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                            return "Hold";
                         }
 
                         return row.acc_director;
@@ -415,7 +466,7 @@
                     "orderable": false
                 },
                 {
-                    "targets": [1, 2, 6, 7, 8, 9, 14],
+                    "targets": [1, 2, 6, 7, 8, 9, 14, 16],
                     "visible": false
                 }
             ],

@@ -218,6 +218,16 @@
 
 
                 <div class="row rowA">
+
+                    <div class="col-md-4">
+                        <div class="form-group row rowX">
+                            <label class="col-sm-3 col-form-label text-end">Tgl Penawaran</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control form-control-sm" id="tgl_noreff" name="tgl_noreff" value="<?= $tgl_noreff; ?>">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-4">
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">No Penawaran</label>
@@ -237,7 +247,7 @@
                     </div>
 
 
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="display: none;">
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">Tanda Tangan</label>
                             <div class="col-sm-9">
@@ -353,7 +363,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Category</label>
+                            <label class="col-sm-3 col-form-label text-end">Jns Pajak Brg</label>
                             <div class="col-sm-9">
                                 <?= $id_category; ?>
                             </div>
@@ -629,8 +639,8 @@
 
 
                 // Reload tabel utama kalau ada
-                if (typeof tblmstbarang !== 'undefined') {
-                    tblmstbarang.ajax.reload(null, false);
+                if (typeof tbltranshead !== 'undefined') {
+                    tbltranshead.ajax.reload(null, false);
                 }
             }, 300);
         }
@@ -888,44 +898,44 @@
 
 
 
-    $(document).on('change', '#company', function() {
-        var company = $(this).val();
+    // $(document).on('change', '#company', function() {
+    //     var company = $(this).val();
 
-        url = '<?php echo site_url('trans_purchaseorder/get_po_number') ?>';
-        data = {
-            company: company
-        };
-        pesan = 'function get_po_number gagal... 😢';
-        dataok = multi_ajax_proses(url, data, pesan);
+    //     url = '<?php echo site_url('trans_purchaseorder/get_po_number') ?>';
+    //     data = {
+    //         company: company
+    //     };
+    //     pesan = 'function get_po_number gagal... 😢';
+    //     dataok = multi_ajax_proses(url, data, pesan);
 
-        //console.log(dataok);
+    //     //console.log(dataok);
 
-        if (dataok.msg != "Ya") {
-            alert(dataok.pesan);
-            return;
-        }
+    //     if (dataok.msg != "Ya") {
+    //         alert(dataok.pesan);
+    //         return;
+    //     }
 
-        $('#nopo').val(dataok.nopo);
-        $('#tglpesan').focus();
-
-
-        url = '<?php echo site_url('trans_purchaseorder/get_po_supplier ') ?>';
-        data = {
-            company: company
-        };
-        pesan = 'function get_po_supplier gagal... 😢';
-        dataCombo = multi_ajax_proses(url, data, pesan);
+    //     $('#nopo').val(dataok.nopo);
+    //     $('#tglpesan').focus();
 
 
-
-        valueField = "suppl_code";
-        textField = "suppl_name";
-        placeholder = ['', '~Pilih Supplier~'];
-        generateCombo(dataCombo.po_supplier, 'suppl_code', valueField, textField, placeholder);
+    //     url = '<?php echo site_url('trans_purchaseorder/get_po_supplier ') ?>';
+    //     data = {
+    //         company: company
+    //     };
+    //     pesan = 'function get_po_supplier gagal... 😢';
+    //     dataCombo = multi_ajax_proses(url, data, pesan);
 
 
 
-    });
+    //     valueField = "suppl_code";
+    //     textField = "suppl_name";
+    //     placeholder = ['', '~Pilih Supplier~'];
+    //     generateCombo(dataCombo.po_supplier, 'suppl_code', valueField, textField, placeholder);
+
+
+
+    // });
 
     $(document).on('change', '#suppl_code', function() {
 
@@ -939,12 +949,12 @@
         pesan = 'function get_po_bank gagal... 😢';
         dataCombo = multi_ajax_proses(url, data, pesan);
 
-        //console.log(dataCombo);
+        console.log(dataCombo);
 
         valueField = "id_bank";
         textField = "nama_bank";
         placeholder = ['', '~Pilih Bank~'];
-        generateCombo(dataCombo.po_bank, 'id_bank', valueField, textField, placeholder);
+        generateComboEdt(dataCombo.po_bank, 'id_bank', valueField, textField, placeholder);
 
         //$('#pembayaran').focus();
     });
@@ -1002,6 +1012,10 @@
 
 
     $(document).on('change', '#tglkrm', function() {
+        $('#tgl_noreff').focus();
+    });
+
+    $(document).on('change', '#tgl_noreff', function() {
         $('#noreff').focus();
     });
 

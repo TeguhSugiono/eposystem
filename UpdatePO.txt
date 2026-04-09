@@ -34,3 +34,48 @@ Sama dengan point 2.
       tipe request Cancel akan berubah menjadi Revisi
 	  status data po akan kembali ke user dan secara otomatis
 	  po yg terkunci akan terbuka dan bisa di edit oleh user
+	  
+   c. Jika sudah direvisi user maka po bisa lsg diproses kirim untuk request persetujuan
+	  User mengirimkan Po
+	  Po terkirim ke manager
+	  
+   d. pada saat po mau di approve atau di modal(popup) tipe revisi maka nanti
+      akan terlihat penanda/pemberitahuan bagian mana yg telah berubah 
+	  (baik diproses approve manager atau direktur)
+      untuk selanjutnya proses hampir sama dengan point diatas
+	  
+10. Setelah disetujui untuk tipe revisi data PO akan terkunci dan tidak dapat di modifikasi atau di hapus
+    kode QR PO otomatis terbuat yang baru .
+	
+	
+	
+1. ATK (Alat Tulis Kantor)
+Kertas, pulpen, pensil, map, stapler, sticky notes, dll.
+2. Peralatan Kantor
+Printer, scanner, mesin fotokopi, laminating, kalkulator, dll.
+3. Furniture / Perabot Kantor
+Meja, kursi, lemari arsip, rak dokumen, meja meeting.
+4. Peralatan IT / Elektronik
+Komputer, laptop, monitor, keyboard, mouse, router, switch, server.
+5. Perlengkapan Kebersihan
+Sapu, pel, vacuum cleaner, sabun, tissue, tempat sampah.
+6. Perlengkapan Pantry
+Gelas, dispenser, kopi, teh, gula, microwave, kulkas.
+7. Peralatan Gudang
+Pallet, hand pallet, trolley, timbangan, rak gudang.
+8. Peralatan Safety / K3
+Helm safety, rompi, sepatu safety, sarung tangan, masker.
+9. Sparepart / Suku Cadang
+Baut, mur, oli, belt, filter, komponen mesin.
+10. Peralatan Operasional
+Alat kerja yang dipakai untuk operasional harian perusahaan.
+11. Material Produksi
+Bahan baku yang dipakai untuk proses produksi.
+12. Peralatan Maintenance
+Obeng, tang, bor, kunci inggris, toolbox.
+13. Kendaraan & Aksesoris
+Mobil operasional, motor, ban, aki.
+14. Perlengkapan Security
+CCTV, alarm, access door, HT.
+15. Perlengkapan Promosi / Marketing
+Banner, brosur, merchandise, display produk.

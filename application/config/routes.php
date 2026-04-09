@@ -12,7 +12,7 @@ $route['translate_uri_dashes'] = FALSE;
 
 $route['login'] = 'login/c_login';
 $route['auth'] = 'login/c_login/auth';
-// $route['logout'] = 'login/c_login/logout';
+$route['logout'] = 'login/c_login/logout';
 
 $route['dashboard'] = 'dashboard/c_dashboard';
 $route['dashboard/sendEmail'] = 'dashboard/c_dashboard/c_sendEmail';
@@ -42,13 +42,21 @@ $route['mst_barang/update_data'] = 'mst_barang/c_mst_barang/c_update_data';
 $route['mst_barang/delete_data'] = 'mst_barang/c_mst_barang/c_delete_data';
 
 
-$route['mst_supplier'] = 'mst_supplier/c_mst_supplier';
-$route['mst_supplier/fetch_table'] = 'mst_supplier/c_mst_supplier/c_fetch_table';
-$route['mst_supplier/add_data'] = 'mst_supplier/c_mst_supplier/c_add_data';
-$route['mst_supplier/save_data'] = 'mst_supplier/c_mst_supplier/c_save_data';
-$route['mst_supplier/edit_data/(:any)'] = 'mst_supplier/c_mst_supplier/c_edit_data/$1';
-$route['mst_supplier/update_data'] = 'mst_supplier/c_mst_supplier/c_update_data';
-$route['mst_supplier/delete_data'] = 'mst_supplier/c_mst_supplier/c_delete_data';
+// $route['mst_supplier'] = 'mst_supplier/c_mst_supplier';
+// $route['mst_supplier/fetch_table'] = 'mst_supplier/c_mst_supplier/c_fetch_table';
+// $route['mst_supplier/add_data'] = 'mst_supplier/c_mst_supplier/c_add_data';
+// $route['mst_supplier/save_data'] = 'mst_supplier/c_mst_supplier/c_save_data';
+// $route['mst_supplier/edit_data/(:any)'] = 'mst_supplier/c_mst_supplier/c_edit_data/$1';
+// $route['mst_supplier/update_data'] = 'mst_supplier/c_mst_supplier/c_update_data';
+// $route['mst_supplier/delete_data'] = 'mst_supplier/c_mst_supplier/c_delete_data';
+
+$route['mst_supplier_po'] = 'mst_supplier_po/c_mst_supplier_po';
+$route['mst_supplier_po/fetch_table'] = 'mst_supplier_po/c_mst_supplier_po/c_fetch_table';
+$route['mst_supplier_po/add_data'] = 'mst_supplier_po/c_mst_supplier_po/c_add_data';
+$route['mst_supplier_po/save_data'] = 'mst_supplier_po/c_mst_supplier_po/c_save_data';
+$route['mst_supplier_po/edit_data/(:any)'] = 'mst_supplier_po/c_mst_supplier_po/c_edit_data/$1';
+$route['mst_supplier_po/update_data'] = 'mst_supplier_po/c_mst_supplier_po/c_update_data';
+$route['mst_supplier_po/delete_data'] = 'mst_supplier_po/c_mst_supplier_po/c_delete_data';
 
 $route['mst_customer'] = 'mst_customer/c_mst_customer';
 $route['mst_customer/fetch_table'] = 'mst_customer/c_mst_customer/c_fetch_table';
@@ -120,6 +128,7 @@ $route['request_po/send_approve'] = 'request_po/c_request_po/c_send_approve';
 $route['request_po/delete_data'] = 'request_po/c_request_po/c_delete_data';
 $route['request_po/request_batal'] = 'request_po/c_request_po/c_request_batal';
 $route['request_po/refresh_cbo_po'] = 'request_po/c_request_po/c_refresh_cbo_po';
+$route['request_po/get_status_acc_manager'] = 'request_po/c_request_po/c_get_status_acc_manager';
 
 
 //$route['request_po/test_wa'] = 'request_po/c_request_po/c_test_wa';

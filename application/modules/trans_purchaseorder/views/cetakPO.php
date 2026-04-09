@@ -33,14 +33,14 @@
         }
 
         .content {
-            min-height: 570px;
+            min-height: 600px;
             margin: 0px !important;
             /* Ubah nilai ini untuk tinggi content */
             /* height: 800px; */
         }
 
         .footer {
-            min-height: 250px;
+            min-height: 220px;
             margin: 0px !important;
             /* Ubah nilai ini untuk tinggi footer */
             /* height: 250px; */
@@ -84,9 +84,9 @@
                     <table width="100%" style="border:1px solid black;">
                         <tr>
                             <td>Kepada Yth.(Attention) </br>
-                                <b> <?= $GetSupplier[0]['suppl_name']; ?> </b> </br>
-                                <?= $GetSupplier[0]['address1'] . ' ' . $GetSupplier[0]['address2'] . ' ' . $GetSupplier[0]['address3']; ?> </br>
-                                <?= $GetSupplier[0]['phone']; ?> </br>
+                                <b> <?= $GetSupplier[0]['namasupplier']; ?> </b> </br>
+                                <?= $GetSupplier[0]['alamat']; ?> </br>
+                                <?= $GetSupplier[0]['telp']; ?> </br>
                                 <?= $GetSupplier[0]['fax']; ?>
                             </td>
                         </tr>
@@ -251,7 +251,13 @@
                         <tr></tr>
                         <tr></tr>
                         <tr>
-                            <td style="border:1px solid black" class="textcenter"><b><?= ucwords(strtolower($GetTTD[0]['username'])); ?></b></br>
+                            <?php
+                            $ttd = "";
+                            if ($GetTTD) {
+                                $ttd = ucwords(strtolower($GetTTD[0]['username']));
+                            }
+                            ?>
+                            <td style="border:1px solid black" class="textcenter"><b><?= $ttd; ?></b></br>
                                 <i>(General Manager )</i>
                             </td>
                         </tr>
@@ -266,24 +272,24 @@
                     </table>
                     <table width="95%" style="border:1px solid black">
                         <tr>
-                            <td>Atas Nama</td>
-                            <td>:</td>
-                            <td><?= $GetBank[0]['atas_nama']; ?></td>
+                            <td style="width: 30% !important;">Atas Nama</td>
+                            <td style="width: 5% !important;">:</td>
+                            <td style="width: 65% !important;"><?= !empty($GetBank[0]['atasnama']) ? $GetBank[0]['atasnama'] : ''; ?></td>
                         </tr>
                         <tr>
                             <td> Nama Bank</td>
                             <td>:</td>
-                            <td><?= $GetBank[0]['nama_bank']; ?></td>
+                            <td><?= !empty($GetBank[0]['namabank']) ? $GetBank[0]['namabank'] : ''; ?></td>
                         </tr>
                         <tr>
                             <td>Nomer Rekening</td>
                             <td>:</td>
-                            <td><?= $GetBank[0]['no_rek']; ?></td>
+                            <td><?= !empty($GetBank[0]['norek']) ? $GetBank[0]['norek'] : ''; ?></td>
                         </tr>
                         <tr>
                             <td>Alamat cabang</td>
                             <td>:</td>
-                            <td><?= $GetBank[0]['alamat']; ?></td>
+                            <td><?= !empty($GetBank[0]['alamat']) ? $GetBank[0]['alamat'] : ''; ?></td>
                         </tr>
                     </table>
                 </td>

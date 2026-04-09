@@ -26,8 +26,16 @@ class C_dashboarddirektur extends CI_Controller
             redirect(site_url('login'));
         }
 
+        $arraydata = array(
+            'all' => 'All Data',
+            'yes' => 'Sudah Proses',
+            'no' => 'Belum Proses'
+        );
+        $prosesPO = ComboNonDbOld($arraydata, 'prosesPO', 'no', 'form-control form-control-sm');
+
         $comp = array(
             'content' => 'view',
+            'prosesPO' => $prosesPO
         );
 
 
@@ -102,6 +110,8 @@ class C_dashboarddirektur extends CI_Controller
 
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
+        $prosesPO = $this->input->post('prosesPO');
+
         // $ArrayJoin = array(
         //     array('transpesan_head b', 'a.id_pesan=b.id_pesan', 'inner'),
         //     array('tbl_request_approval c', 'a.id_status_approval=c.id_status_approval', 'inner')
@@ -137,9 +147,17 @@ class C_dashboarddirektur extends CI_Controller
                     INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
                     where a.id_request not in (SELECT id_request from transpesan_head_old)
                     and b.status != 'V' and a.flag_request != '9' and a.flag_email_manager = '1' 
-                    and a.flag_email_director = '1' and a.acc_manager = 'Y'
+                    and a.flag_email_director = '1' and a.acc_manager = 'Y' ";
 
-                    UNION ALL
+
+        if ($prosesPO == "yes") {
+            $query .= " and ifnull(a.acc_director,'') <> '' ";
+            $query .= " and ifnull(a.acc_director,'') <> 'H' ";
+        } else if ($prosesPO == "no") {
+            $query .= " and (ifnull(a.acc_director,'') = '' or ifnull(a.acc_director,'') = 'H') ";
+        }
+
+        $query .= "             UNION ALL
 
                     SELECT 
                     a.id_request,a.id_pesan,a.time_request,a.user_request,a.reason,a.id_status_approval,a.acc_manager,
@@ -156,9 +174,18 @@ class C_dashboarddirektur extends CI_Controller
                     INNER JOIN `transpesan_head_old` `b` ON `a`.`id_request`=`b`.`id_request`
                     INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
                     and b.status != 'V' and a.flag_request != '9' and a.flag_email_manager = '1' 
-                    and a.flag_email_director = '1' and a.acc_manager = 'Y'
+                    and a.flag_email_director = '1' and a.acc_manager = 'Y' ";
 
-                    ) x
+
+        if ($prosesPO == "yes") {
+            $query .= " and ifnull(a.acc_director,'') <> '' ";
+            $query .= " and ifnull(a.acc_director,'') <> 'H' ";
+        } else if ($prosesPO == "no") {
+            $query .= " and (ifnull(a.acc_director,'') = '' or ifnull(a.acc_director,'') = 'H') ";
+        }
+
+
+        $query .= "            ) x
                     ORDER BY  FIELD(id_status_approval, 4, 3,2, 1),time_acc_director desc,time_request ";
         //ORDER BY  id_request ASC,nopo ASC ";
 
@@ -191,19 +218,10 @@ class C_dashboarddirektur extends CI_Controller
             $GetDataDetail = $this->m_function->value_result_array($ParamArray);
 
 
-            if ($GetDataHeader[0]['comp'] == "MSA") {
-                $ConectDB = "dbAcct";
-            } else if ($GetDataHeader[0]['comp'] == "BAL") {
-                $ConectDB = "dbAcctBal";
-            } else {
-                $ConectDB = "dbAcct";
-            }
-
             $ParamArray = array(
-                'ConectDB' =>  $ConectDB,
-                'Table' => 'fin_ap_m_supplier',
-                'WhereData' => array('suppl_code' => $GetDataHeader[0]['kodesupplier']),
-                'Field' => '*,concat(address1," ",address2," ",address3) alamat',
+                'Table' => 'mastersupplier',
+                'WhereData' => array('kodesupplier' => $GetDataHeader[0]['kodesupplier']),
+                'Field' => '*,kodesupplier as suppl_code,namasupplier as suppl_name',
             );
             $GetDataSupplier = $this->m_function->value_result_array($ParamArray);
         } else {
@@ -293,7 +311,7 @@ class C_dashboarddirektur extends CI_Controller
 
 
         $DataUpdate = array(
-            'id_status_approval' => 4, //kode 4 adalah hold po
+            //'id_status_approval' => 4, //kode 4 adalah hold po
             'acc_director' => 'H',
             'time_acc_director' => tanggal_sekarang(),
             'acc_name_director' => $this->session->userdata('PO_username')
@@ -488,7 +506,13 @@ class C_dashboarddirektur extends CI_Controller
             'WhereData' => array('id_request' => $id_request_det)
         );
 
+        $ParamUpdateTTD = array(
+            'Table' => 'transpesan_head',
+            'DataUpdate' => array('ttd' => 'helmi'),
+            'WhereData' => array('id_pesan' => $id_pesan_det)
+        );
 
+        $this->m_function->update_data($ParamUpdateTTD);
 
         if (!$this->m_function->update_data($ParamUpdate) >= 1) {
             $pesan_data = array(
@@ -563,11 +587,11 @@ class C_dashboarddirektur extends CI_Controller
         ];
         $GetReceivedWA = $this->m_function->value_result_array($ParamArray);
 
-        $data_sendto_manager = [
-            'target' => $GetReceivedWA[0]['phone_acc1'],
-            'message' => $MessageWa,
-            'countryCode' => '62',
-        ];
+        // $data_sendto_manager = [
+        //     'target' => $GetReceivedWA[0]['phone_acc1'],
+        //     'message' => $MessageWa,
+        //     'countryCode' => '62',
+        // ];
 
         // Kirim via bayar
         $Respon = $this->fonnte_guzzle->send($data, $TokenBayar);
@@ -575,7 +599,7 @@ class C_dashboarddirektur extends CI_Controller
 
         $PesanNotfikasi = array();
 
-        $ResponMGR = $this->fonnte_guzzle->send($data_sendto_manager, $TokenBayar);
+        //$ResponMGR = $this->fonnte_guzzle->send($data_sendto_manager, $TokenBayar);
 
 
         if ($StatusBayar === 1) {
@@ -681,11 +705,11 @@ class C_dashboarddirektur extends CI_Controller
         ];
         $GetReceivedWA = $this->m_function->value_result_array($ParamArray);
 
-        $data_sendto_manager = [
-            'target' => $GetReceivedWA[0]['phone_acc1'],
-            'message' => $MessageWa,
-            'countryCode' => '62',
-        ];
+        // $data_sendto_manager = [
+        //     'target' => $GetReceivedWA[0]['phone_acc1'],
+        //     'message' => $MessageWa,
+        //     'countryCode' => '62',
+        // ];
 
         // Kirim via bayar
         $Respon = $this->fonnte_guzzle->send($data, $TokenBayar);
@@ -693,7 +717,7 @@ class C_dashboarddirektur extends CI_Controller
 
         $PesanNotfikasi = array();
 
-        $ResponMGR = $this->fonnte_guzzle->send($data_sendto_manager, $TokenBayar);
+        //$ResponMGR = $this->fonnte_guzzle->send($data_sendto_manager, $TokenBayar);
 
 
         if ($StatusBayar === 1) {
@@ -720,7 +744,7 @@ class C_dashboarddirektur extends CI_Controller
         $Respongratis = $this->fonnte_guzzle->send($data, $Tokengratis);
         $Statusgratis = (int)($Respongratis['status'] ?? 0);
 
-        $RespongratisMGR = $this->fonnte_guzzle->send($data_sendto_manager, $Tokengratis);
+        //$RespongratisMGR = $this->fonnte_guzzle->send($data_sendto_manager, $Tokengratis);
 
         if ($Statusgratis === 1) {
             //echo "✔ Berhasil kirim ke {$data['target']} via gratis<br>";

@@ -1,6 +1,6 @@
 <style>
     .cardwith {
-        width: 40% !important;
+        width: 70% !important;
     }
 
     @media (max-width: 768px) {
@@ -29,6 +29,7 @@
                             <th>Aksi</th>
                             <th>No</th>
                             <th>Category</th>
+                            <th>Ex</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,14 +101,21 @@
 
                 {
                     "data": "nama"
+                },
+                {
+                    "data": "ex"
                 }
 
             ],
-            "pageLength": 10,
+            "lengthMenu": [
+                [10, 25, 50, 100, 1000],
+                [10, 25, 50, 100, 1000]
+            ],
+            "pageLength": 25,
             "order": [],
             "ordering": true,
             "scrollX": true,
-            "scrollY": "380px",
+            "scrollY": "560px",
             "scrollCollapse": true,
             "searching": true,
             "bLengthChange": true,

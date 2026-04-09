@@ -11,7 +11,7 @@
                         <div class="datatable-wrapper">
 
                             <!-- <input type="text" class="form-control form-control-sm" id="currentRowId" name="currentRowId" value="<-?= $currentRowId; ?>"> -->
-
+                            <?= $this->session->userdata('PO_kodedivisi'); ?>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped table-hover display nowrap" id="tabelItemBarang" style="width: 100%">
                                     <thead>

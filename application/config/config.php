@@ -390,7 +390,7 @@ $config['encryption_key'] = 'T39UHSUG10N0';
 */
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
-$config['sess_expiration'] = 10000;
+$config['sess_expiration'] = 100000;
 $config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;

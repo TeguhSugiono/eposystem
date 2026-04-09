@@ -222,6 +222,16 @@
 
 
                 <div class="row rowA">
+
+                    <div class="col-md-4">
+                        <div class="form-group row rowX">
+                            <label class="col-sm-3 col-form-label text-end">Tgl Penawaran</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control form-control-sm" id="tgl_noreff" name="tgl_noreff">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-4">
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">No Penawaran</label>
@@ -241,7 +251,7 @@
                     </div>
 
 
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="display: none;">
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">Tanda Tangan</label>
                             <div class="col-sm-9">
@@ -357,7 +367,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Category</label>
+                            <label class="col-sm-3 col-form-label text-end">Jns Pajak Brg</label>
                             <div class="col-sm-9">
                                 <?= $id_category; ?>
                             </div>
@@ -536,6 +546,8 @@
         if ($('#id_modal_add').length && $('#bodyItem tr').length === 0) {
             tambahBarisUtama();
         }
+        // var test = getToday();
+        // console.log(test);
         loadParamPPN(getToday());
     });
 
@@ -691,8 +703,8 @@
                 if (typeof counter !== 'undefined') counter = 0;
 
                 // Reload tabel utama kalau ada
-                if (typeof tblmstbarang !== 'undefined') {
-                    tblmstbarang.ajax.reload(null, false);
+                if (typeof tbltranshead !== 'undefined') {
+                    tbltranshead.ajax.reload(null, false);
                 }
             }, 300);
         }
@@ -703,21 +715,21 @@
     $(document).on('change', '#company', function() {
         var company = $(this).val();
 
-        url = '<?php echo site_url('trans_purchaseorder/get_po_number') ?>';
-        data = {
-            company: company
-        };
-        pesan = 'function get_po_number gagal... 😢';
-        dataok = multi_ajax_proses(url, data, pesan);
+        // url = '<-?php echo site_url('trans_purchaseorder/get_po_number') ?>';
+        // data = {
+        //     company: company
+        // };
+        // pesan = 'function get_po_number gagal... 😢';
+        // dataok = multi_ajax_proses(url, data, pesan);
 
-        //console.log(dataok);
+        // if (dataok.msg != "Ya") {
+        //     alert(dataok.pesan);
+        //     return;
+        // }
 
-        if (dataok.msg != "Ya") {
-            alert(dataok.pesan);
-            return;
-        }
+        // $('#nopo').val(dataok.nopo);
 
-        $('#nopo').val(dataok.nopo);
+
         $('#tglpesan').focus();
 
 
@@ -774,7 +786,7 @@
     });
 
     function loadParamPPN(tglpesan) {
-
+        //console.log(tglpesan);
 
         url = '<?php echo site_url('trans_purchaseorder/get_po_ppn') ?>';
         data = {
@@ -782,7 +794,9 @@
         };
         pesan = 'function get_po_ppn gagal... 😢';
         dataCombo = multi_ajax_proses(url, data, pesan);
+
         //console.log(dataCombo);
+
         valueField = "jml_ppn";
         textField = "keterangan";
         placeholder = [dataCombo['po_ppn'][0].jml_ppn, dataCombo['po_ppn'][0].keterangan];
@@ -814,6 +828,10 @@
 
 
     $(document).on('change', '#tglkrm', function() {
+        $('#tgl_noreff').focus();
+    });
+
+    $(document).on('change', '#tgl_noreff', function() {
         $('#noreff').focus();
     });
 
@@ -877,6 +895,24 @@
 
     function save() {
 
+        var company = $('#company').val();
+
+        url = '<?php echo site_url('trans_purchaseorder/get_po_number') ?>';
+        data = {
+            company: company
+        };
+        pesan = 'function get_po_number gagal... 😢';
+        dataok = multi_ajax_proses(url, data, pesan);
+
+        if (dataok.msg != "Ya") {
+            alert(dataok.pesan);
+            return;
+        }
+
+        $('#nopo').val(dataok.nopo);
+
+
+
         if ($('#nopo').val() == "") {
             alert('Perusahaan Belum Dipilih...');
             return;
@@ -916,6 +952,8 @@
             alert('Detail Barang Tidak Boleh Kosong...');
             return;
         }
+
+
 
         var dataPost = $('#formadd').serialize();
 

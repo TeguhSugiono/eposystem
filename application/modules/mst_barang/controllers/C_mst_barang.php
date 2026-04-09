@@ -48,7 +48,7 @@ class C_mst_barang extends CI_Controller
             'OrderBy' => 'created_on desc'
         );
 
-        $ParamArray = hakakses($ParamArray);
+        //$ParamArray = hakakses($ParamArray);
 
         $GetData = $this->m_function->value_result_array($ParamArray);
 
@@ -58,9 +58,11 @@ class C_mst_barang extends CI_Controller
     function c_add_data()
     {
 
+        $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
         $ParamArray = array(
             'Table' => 'categorybarang',
-            'Field' => 'nama as "code",nama'
+            'Field' => 'nama as "code",nama',
+            'WhereData' => array('kode_divisi' => $PO_kodedivisi, 'flagdelete' => 0),
         );
         $arraydata = $this->m_function->value_result_array($ParamArray);
         array_push($arraydata, array('no' => '', 'nama' => '~Pilih Category~'));
@@ -74,7 +76,8 @@ class C_mst_barang extends CI_Controller
 
         $ParamArray = array(
             'Table' => 'satuanbarang',
-            'Field' => 'namasatuan as "code",namasatuan'
+            'Field' => 'namasatuan as "code",namasatuan',
+            'WhereData' => array('flagdelete' => 0),
         );
         $arraydata = $this->m_function->value_result_array($ParamArray);
         array_push($arraydata, array('no' => '', 'namasatuan' => '~Pilih Satuan~'));

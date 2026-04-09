@@ -2,7 +2,7 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class C_mst_supplier extends CI_Controller
+class C_mst_supplier_po extends CI_Controller
 {
 
     function __construct()
@@ -61,7 +61,7 @@ class C_mst_supplier extends CI_Controller
         $comp = array(
             'kode_divisi' => $kode_divisi
         );
-        $this->load->view('add', $comp);
+        $this->load->view('add_supplier', $comp);
     }
 
 
@@ -192,6 +192,49 @@ class C_mst_supplier extends CI_Controller
             die;
         }
 
+        //save bank
+
+        $atas_nama = $this->input->post('atasnama');
+        $nama_bank = $this->input->post('namabank');
+        $no_rek = $this->input->post('norek');
+        $alamat = $this->input->post('alamatbank');
+
+
+        foreach ($atas_nama as $index => $Array_atas_nama) {
+            if (empty($Array_atas_nama)) continue;
+
+            if ($Array_atas_nama[$index] != "") {
+
+
+                $ArraySave = array(
+                    'atasnama' => $atas_nama[$index],
+                    'namabank' => $nama_bank[$index],
+                    'norek' => $no_rek[$index],
+                    'alamat' => $alamat[$index],
+                    'created_on' => tanggal_sekarang(),
+                    'created_by' => $this->session->userdata('PO_username'),
+                    'kodesupplier' => $kodesupplier
+                );
+
+                $ParamSave = array(
+                    'Table' => 'masterbank',
+                    'DataInsert' => $ArraySave
+                );
+
+
+                if (!$this->m_function->save_data($ParamSave) >= 1) {
+                    $pesan_data = array(
+                        'msg' => 'Tidak',
+                        'pesan' => 'Insert ke table masterbank gagal...!!!  😢',
+                    );
+                    echo json_encode($pesan_data);
+                    die;
+                }
+            }
+        }
+
+
+        //end save bank
 
         $pesan_data = array(
             'msg' => 'Ya',
@@ -225,11 +268,20 @@ class C_mst_supplier extends CI_Controller
         );
         $kode_divisi = ComboDb($createcombo);
 
+
+        $ParamArray = array(
+            'Table' => 'masterbank',
+            'WhereData' => array('kodesupplier' => $kodesupplier, 'flagdelete' => 0),
+            'OrderBy' => 'id_bank asc'
+        );
+        $ArrayBank = $this->m_function->value_result_array($ParamArray);
+
         $comp = array(
             'kode_divisi' => $kode_divisi,
-            'GetDataEdit' => $GetDataEdit
+            'GetDataEdit' => $GetDataEdit,
+            'ArrayBank' => $ArrayBank
         );
-        $this->load->view('edit', $comp);
+        $this->load->view('edit_supplier', $comp);
     }
 
     function c_update_data()
@@ -269,6 +321,127 @@ class C_mst_supplier extends CI_Controller
             die;
         }
 
+        //update bank
+
+        // $ParamArray = array(
+        //     'Table' => 'masterbank',
+        //     'WhereData' => array('kodesupplier' => $kodesupplier, 'flagdelete' => 0),
+        //     'Field' => 'id_bank'
+        // );
+
+        // if ($this->m_function->check_value($ParamArray) != "") {
+        //     $ArrayIdBank = $this->m_function->value_result_array($ParamArray);
+        //     $ArrayIdBank = array_column($ArrayIdBank, 'id_bank');
+
+        //     $ArrayUpdate = array(
+        //         'flagdelete' => 9,
+        // 'edited_on' => tanggal_sekarang(),
+        // 'edited_by' => $this->session->userdata('PO_username')
+        //     );
+
+        //     $ParamUpdateBank = array(
+        //         'Table' => 'masterbank',
+        //         'DataUpdate' => $ArrayUpdate,
+        //         'WhereIN' => array('fieldIN' => 'id_bank', 'fieldINValue' => $ArrayIdBank)
+        //     );
+
+
+        //     if (!$this->m_function->update_data($ParamUpdateBank) >= 1) {
+        //         $pesan_data = array(
+        //             'msg' => 'Tidak',
+        //             'pesan' => 'Delete ke table masterbank gagal...!!!  😢',
+        //         );
+        //         echo json_encode($pesan_data);
+        //         die;
+        //     }
+        // }
+
+
+
+
+
+        $atas_nama = $this->input->post('atasnama');
+        $nama_bank = $this->input->post('namabank');
+        $no_rek = $this->input->post('norek');
+        $alamat = $this->input->post('alamatbank');
+        $id_bank = $this->input->post('id_bank');
+        $deleted_id_bank = $this->input->post('deleted_id_bank');
+
+        if (!empty($deleted_id_bank)) {
+            foreach ($deleted_id_bank as $id) {
+                if (!empty($id)) {
+                    // Hapus data bank dari database
+                    $this->db->where('id_bank', $id);
+                    $deleteBank =  $this->db->update('masterbank', array('flagdelete' => 9, 'edited_on' => tanggal_sekarang(), 'edited_by' => $this->session->userdata('PO_username')));
+                }
+            }
+        }
+
+
+        foreach ($atas_nama as $index => $Array_atas_nama) {
+            if (empty($Array_atas_nama)) continue;
+
+
+
+            if ($id_bank[$index] != "") {
+
+                $ArrayUpdate = array(
+                    'atasnama' => $atas_nama[$index],
+                    'namabank' => $nama_bank[$index],
+                    'norek' => $no_rek[$index],
+                    'alamat' => $alamat[$index],
+                    'edited_on' => tanggal_sekarang(),
+                    'edited_by' => $this->session->userdata('PO_username')
+                );
+
+                $ParamUpdate = array(
+                    'Table' => 'masterbank',
+                    'DataUpdate' => $ArrayUpdate,
+                    'WhereData' => array('id_bank' => $id_bank[$index])
+                );
+
+                if (!$this->m_function->update_data($ParamUpdate) >= 1) {
+                    $pesan_data = array(
+                        'msg' => 'Tidak',
+                        'pesan' => 'Update ke table masterbank gagal...!!!  😢',
+                    );
+                    echo json_encode($pesan_data);
+                    die;
+                }
+            } else {
+
+                if ($atas_nama[$index] != "") {
+                    $ArraySave = array(
+                        'atasnama' => $atas_nama[$index],
+                        'namabank' => $nama_bank[$index],
+                        'norek' => $no_rek[$index],
+                        'alamat' => $alamat[$index],
+                        'created_on' => tanggal_sekarang(),
+                        'created_by' => $this->session->userdata('PO_username'),
+                        'kodesupplier' => $kodesupplier
+                    );
+
+                    $ParamSave = array(
+                        'Table' => 'masterbank',
+                        'DataInsert' => $ArraySave
+                    );
+
+
+                    if (!$this->m_function->save_data($ParamSave) >= 1) {
+                        $pesan_data = array(
+                            'msg' => 'Tidak',
+                            'pesan' => 'Update ke table masterbank gagal...!!!  😢',
+                        );
+                        echo json_encode($pesan_data);
+                        die;
+                    }
+                }
+            }
+        }
+
+        //end update bank
+
+
         $pesan_data = array(
             'msg' => 'Ya',
             'pesan' => "Data Supplier Berhasil DiUpdate : " . $kodesupplier . " 😊",
@@ -296,6 +469,21 @@ class C_mst_supplier extends CI_Controller
             $pesan_data = array(
                 'msg' => 'Tidak',
                 'pesan' => 'Delete ke table mastersupplier gagal...!!!  😢',
+            );
+            echo json_encode($pesan_data);
+            die;
+        }
+
+        $ParamUpdate = array(
+            'Table' => 'masterbank',
+            'DataUpdate' => array('flagdelete' => 9, 'edited_on' => tanggal_sekarang(), 'edited_by' => $this->session->userdata('PO_username')),
+            'WhereData' => array('kodesupplier' => $kodesupplier)
+        );
+
+        if (!$this->m_function->update_data($ParamUpdate) >= 1) {
+            $pesan_data = array(
+                'msg' => 'Tidak',
+                'pesan' => 'Delete ke table masterbank gagal...!!!  😢',
             );
             echo json_encode($pesan_data);
             die;
