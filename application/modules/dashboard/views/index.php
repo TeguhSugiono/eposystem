@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ePO System - Dashboard</title>
+    <title>ePO System <?php echo $this->session->userdata('PO_kode_company'); ?> - Dashboard </title>
     <link rel="icon" href="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/'); ?>logoPO.png" type="images/png" />
     <link rel="stylesheet" href="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/'); ?>styles.css">
     <link rel="stylesheet" href="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/'); ?>select2.min.css">
@@ -72,7 +72,7 @@
             <div class="nav-brand">
                 <a href="<?= site_url($linkdashboard); ?>" class="brand-link" style="font-weight: 700;color: #ecf0f1;">
                     <i class="fa fa-store"></i>
-                    <span>ePO System</span>
+                    <span>ePO System <?php echo $this->session->userdata('PO_kode_company'); ?></span>
                 </a>
             </div>
 
@@ -130,6 +130,11 @@
                         'title' => 'Dashboard',
                         'url'   => '',
                         'icon'  => 'fa fa-home'
+                    ],
+                    [
+                        'title' => 'Report',
+                        'url'   => 'report_manager',
+                        'icon'  => 'fa fa-file-alt'
                     ],
                     [
                         'title' => 'LogOut',
@@ -287,6 +292,14 @@
 
 
             <div class="content-area" id="contentArea">
+
+                <!-- <-?php echo $this->session->userdata('PO_kode_company'); ?>
+                <-?php echo $this->session->userdata('PO_name_tbl_qrcode'); ?>
+                <-?php echo $this->session->userdata('PO_name_tbl_request'); ?>
+                <-?php echo $this->session->userdata('PO_name_tbl_keterangan'); ?>
+                <-?php echo $this->session->userdata('PO_name_tbl_detail'); ?>
+                <-?php echo $this->session->userdata('PO_name_tbl_header'); ?> -->
+
                 <?php $this->load->view($content); ?>
             </div>
         </main>
@@ -364,6 +377,11 @@
                 'title' => 'Dashboard',
                 'url'   => '',
                 'icon'  => 'fa fa-home'
+            ],
+            [
+                'title' => 'Report',
+                'url'   => 'report_manager',
+                'icon'  => 'fa fa-file-alt'
             ],
             [
                 'title' => 'LogOut',

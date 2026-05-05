@@ -74,24 +74,10 @@ class C_mst_barang extends CI_Controller
         );
         $category = ComboDb($createcombo);
 
-        $ParamArray = array(
-            'Table' => 'satuanbarang',
-            'Field' => 'namasatuan as "code",namasatuan',
-            'WhereData' => array('flagdelete' => 0),
-        );
-        $arraydata = $this->m_function->value_result_array($ParamArray);
-        array_push($arraydata, array('no' => '', 'namasatuan' => '~Pilih Satuan~'));
 
-        $createcombo = array(
-            'data' => array_reverse($arraydata, true),
-            'set_data' => array('set_id' => ''),
-            'attribute' => array('idname' => 'satuan', 'class' => 'select2', 'placeholder' => '~Pilih Satuan~'),
-        );
-        $satuan = ComboDb($createcombo);
 
         $comp = array(
-            'category' => $category,
-            'satuan' => $satuan,
+            'category' => $category
         );
         $this->load->view('add', $comp);
     }
@@ -195,7 +181,7 @@ class C_mst_barang extends CI_Controller
         $itembarang = $this->input->post('itembarang');
         $merk = $this->input->post('merk');
         $type = $this->input->post('type');
-        $satuan = $this->input->post('satuan');
+
 
         $ArraySave = array(
             'kodebarang' => $kodebarang,
@@ -203,7 +189,6 @@ class C_mst_barang extends CI_Controller
             'itembarang' => $itembarang,
             'merk' => $merk,
             'type' => $type,
-            'satuan' => $satuan,
             'kode_divisi' => $PO_kodedivisi,
             'created_on' => tanggal_sekarang(),
             'created_by' => $this->session->userdata('PO_username')
@@ -257,23 +242,9 @@ class C_mst_barang extends CI_Controller
         );
         $category = ComboDb($createcombo);
 
-        $ParamArray = array(
-            'Table' => 'satuanbarang',
-            'Field' => 'namasatuan as "code",namasatuan'
-        );
-        $arraydata = $this->m_function->value_result_array($ParamArray);
-        array_push($arraydata, array('no' => '', 'namasatuan' => '~Pilih Satuan~'));
-
-        $createcombo = array(
-            'data' => array_reverse($arraydata, true),
-            'set_data' => array('set_id' => $GetDataEdit->satuan),
-            'attribute' => array('idname' => 'satuan', 'class' => 'select2', 'placeholder' => '~Pilih Satuan~'),
-        );
-        $satuan = ComboDb($createcombo);
 
         $comp = array(
             'category' => $category,
-            'satuan' => $satuan,
             'GetDataEdit' => $GetDataEdit
         );
         $this->load->view('edit', $comp);
@@ -297,14 +268,28 @@ class C_mst_barang extends CI_Controller
         $itembarang = $this->input->post('itembarang');
         $merk = $this->input->post('merk');
         $type = $this->input->post('type');
-        $satuan = $this->input->post('satuan');
+
+        $ParamArray = array(
+            'Table' => 'masterbarang',
+            'WhereData' => array('kodebarang' => $kodebarang)
+        );
+        $GetDataEdit = $this->m_function->value_result_row($ParamArray);
+
+        if ($GetDataEdit->flagtrans == 1) {
+            $pesan_data = array(
+                'msg' => 'Tidak',
+                'pesan' => 'Data Barang Sudah Sudah terhubung dengan Transaksi PO...!!!  😢',
+            );
+            echo json_encode($pesan_data);
+            die;
+        }
 
         $ArrayUpdate = array(
             'category' => $category,
             'itembarang' => $itembarang,
             'merk' => $merk,
             'type' => $type,
-            'satuan' => $satuan,
+
             'edited_on' => tanggal_sekarang(),
             'edited_by' => $this->session->userdata('PO_username')
         );
@@ -335,6 +320,22 @@ class C_mst_barang extends CI_Controller
     function c_delete_data()
     {
         $kodebarang = $this->input->post('kodebarang');
+
+
+        $ParamArray = array(
+            'Table' => 'masterbarang',
+            'WhereData' => array('kodebarang' => $kodebarang)
+        );
+        $GetDataEdit = $this->m_function->value_result_row($ParamArray);
+
+        if ($GetDataEdit->flagtrans == 1) {
+            $pesan_data = array(
+                'msg' => 'Tidak',
+                'pesan' => 'Data Barang Sudah Sudah terhubung dengan Transaksi PO...!!!  😢',
+            );
+            echo json_encode($pesan_data);
+            die;
+        }
 
         $ArrayUpdate = array(
             'flagdelete' => 9,

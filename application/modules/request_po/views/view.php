@@ -360,9 +360,11 @@
                                 </span>
                             `;
                         } else if (row.acc_manager == "Y") {
-                            setAccMgr = "Approve";
+                            setAccMgr = "Approved";
                         } else if (row.acc_manager == "R") {
-                            setAccMgr = "Reject";
+                            setAccMgr = "Rejected";
+                        } else if (row.acc_manager == "C") {
+                            setAccMgr = "Canceled";
                         }
 
                         return `<div class="acc-manager-cell" data-id="${row.id_request}">${setAccMgr}</div>`;
@@ -384,9 +386,9 @@
                                 </span>
                             `;
                         } else if (row.acc_director == "Y") {
-                            setAccDirector = "Approve";
+                            setAccDirector = "Approved";
                         } else if (row.acc_director == "R") {
-                            setAccDirector = "Reject";
+                            setAccDirector = "Rejected";
                         } else if (row.acc_director == "H") {
                             //setAccDirector = "Hold";
                             setAccDirector = `
@@ -395,6 +397,8 @@
                                     <img src="${spinner}">
                                 </span>
                             `;
+                        } else if (row.acc_director == "C") {
+                            setAccDirector = "Canceled";
                         }
 
                         return `<div class="acc-director-cell" data-id="${row.id_request}">${setAccDirector}</div>`;
@@ -475,9 +479,11 @@
                             </span>
                         `;
                     } else if (item.acc_manager == "Y") {
-                        html = "Approve";
+                        html = "Approved";
                     } else if (item.acc_manager == "R") {
-                        html = "Reject";
+                        html = "Rejected";
+                    } else if (item.acc_manager == "C") {
+                        html = "Canceled";
                     }
 
                     $(`.acc-manager-cell[data-id="${item.id_request}"]`).html(html);
@@ -529,9 +535,9 @@
                             </span>
                         `;
                     } else if (item.acc_director == "Y") {
-                        html = "Approve";
+                        html = "Approved";
                     } else if (item.acc_director == "R") {
-                        html = "Reject";
+                        html = "Rejected";
                     } else if (item.acc_director == "H") {
                         //html = "Hold";
                         html = `
@@ -540,6 +546,8 @@
                                 <img src="${spinner}">
                             </span>
                         `;
+                    } else if (item.acc_director == "C") {
+                        html = "Canceled";
                     }
 
                     $(`.acc-director-cell[data-id="${item.id_request}"]`).html(html);

@@ -35,12 +35,7 @@
                         <input type="text" class="form-control form-control-sm" id="type" name="type" required>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <label class="col-sm-4 col-form-label text-end">Satuan</label>
-                    <div class="col-sm-8">
-                        <?= $satuan; ?>
-                    </div>
-                </div>
+
             </form>
 
 

@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/fontawesome_640/css/'); ?>fontawesome.min.css">
     <link rel="stylesheet" href="<?php echo site_url('assets/' . $this->session->userdata('pathtemplate') . '/'); ?>css_login.css">
 
+    <style>
+        #id_company {
+            padding: 6px 2px !important;
+            /* line-height: 20px !important; */
+        }
+    </style>
+
 </head>
 
 <body class="min-h-screen relative overflow-hidden">
@@ -100,7 +107,6 @@
                     </p>
                 </div>
 
-                <!-- form method="POST" action="login.php" class="space-y-4" -->
                 <form action="<?= site_url('auth'); ?>" method="post" class="space-y-4">
                     <div class="space-y-2">
                         <label for="email" class="text-sm font-medium text-gray-700">
@@ -141,7 +147,7 @@
                     </div>
 
                     <div class="flex items-center justify-between">
-
+                        <?= $id_company; ?>
                     </div>
 
                     <div class="text-center mb-6">
@@ -180,6 +186,17 @@
                 eyeIcon.classList.add('fa-eye');
             }
         }
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const company = document.getElementById('id_company').value;
+
+            if (!company) {
+                e.preventDefault();
+                alert('Perusahaan wajib dipilih!');
+                document.getElementById('id_company').focus();
+                return false;
+            }
+        });
     </script>
 </body>
 

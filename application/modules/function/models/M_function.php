@@ -508,7 +508,7 @@ class M_function extends CI_Model
         $data_password = $password_hash;
         $Date = tanggal_sekarang();
         $delimiter = "::";
-        $combined_data = $data_email . $delimiter . $custom_id . $delimiter . $data_password . $delimiter . $Date;
+        $combined_data = $data_email . $delimiter . $custom_id . $delimiter . $data_password . $delimiter . $Date . $delimiter . $this->session->userdata('PO_kode_company');
 
         $id = $combined_data;
 

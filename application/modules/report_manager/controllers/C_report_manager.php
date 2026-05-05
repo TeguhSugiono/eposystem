@@ -2,7 +2,7 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class C_report_direktur extends CI_Controller
+class C_report_manager extends CI_Controller
 {
 
     function __construct()
@@ -44,26 +44,15 @@ class C_report_direktur extends CI_Controller
             '' => 'ALL',
             'Y' => 'Accept',
             'R' => 'Reject',
-            'H' => 'Hold',
-            'C' => 'Cancel'
-        );
-        $typeApprove = ComboNonDbOld($arraydata, 'typeApprove', '', 'form-control form-control-sm SettDisplayReport');
-
-
-        $arraydata = array(
-            '' => 'ALL',
-            'Y' => 'Accept',
-            'R' => 'Reject',
             'C' => 'Canceled By Direktur'
         );
-        $typeApproveMgr = ComboNonDbOld($arraydata, 'typeApproveMgr', '', 'form-control form-control-sm SettDisplayReport');
+        $typeApprove = ComboNonDbOld($arraydata, 'typeApprove', '', 'form-control form-control-sm SettDisplayReport');
 
         $comp = array(
             'content' => 'view',
             // 'selectperusahaan' => $selectperusahaan,
             // 'id_status_approval' => $id_status_approval,
-            'typeApprove' => $typeApprove,
-            'typeApproveMgr' => $typeApproveMgr
+            'typeApprove' => $typeApprove
         );
 
         $this->load->view('dashboard/index', $comp);
@@ -79,7 +68,6 @@ class C_report_direktur extends CI_Controller
         $typeApprove = $data[2];
         $tglpesan1 = $data[3];
         $tglpesan2 = $data[4];
-        $typeApproveMgr = $data[5];
 
         $query = " SELECT  'nomor' as 'No',date_format(c.tglpesan,'%d %M %Y') 'Tgl PO',c.nopo 'No Po',b.nama_divisi 'Dept',
                 format(c.subtotalharga,2) 'Subtotal',
@@ -102,7 +90,7 @@ class C_report_direktur extends CI_Controller
         // }
 
         if ($typeApprove != "") {
-            $query .= " and a.acc_director='" . $typeApprove . "' ";
+            $query .= " and a.acc_manager='" . $typeApprove . "' ";
         }
 
         if ($tglpesan1 != "") {
@@ -130,12 +118,12 @@ class C_report_direktur extends CI_Controller
         //     $query2 .= " and get_company(b.nopo)='" . $selectperusahaan . "' ";
         // }
 
-        if ($typeApproveMgr != "") {
-            $query .= " and a.acc_manager='" . $typeApproveMgr . "' ";
-        }
+        // if ($id_status_approval != "") {
+        //     $query2 .= " and a.id_status_approval='" . $id_status_approval . "' ";
+        // }
 
         if ($typeApprove != "") {
-            $query2 .= " and a.acc_director='" . $typeApprove . "' ";
+            $query2 .= " and a.acc_manager='" . $typeApprove . "' ";
         }
 
         if ($tglpesan1 != "") {
@@ -191,7 +179,6 @@ class C_report_direktur extends CI_Controller
         $typeApprove = @$this->input->post('typeApprove');
         $tglpesan1 = @$this->input->post('tglpesan1');
         $tglpesan2 = @$this->input->post('tglpesan2');
-        $typeApproveMgr = @$this->input->post('typeApproveMgr');
 
         //$PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
@@ -208,20 +195,12 @@ class C_report_direktur extends CI_Controller
         //     $query .= " and get_company(c.nopo)='" . $selectperusahaan . "' ";
         // }
 
-        // if ($typeApproveMgr == "") {
-        //     $query .= " and a.acc_manager in ('Y','R') ";
-        // } elseif ($typeApproveMgr != "Y" || $typeApproveMgr != "R") {
-        //     $query .= " and a.acc_manager = '" . $typeApproveMgr . "' ";
-        // } else {
-        //     $query .= " and a.acc_manager = 'C' ";
+        // if ($id_status_approval != "") {
+        //     $query .= " and a.id_status_approval='" . $id_status_approval . "' ";
         // }
 
-        if ($typeApproveMgr != "") {
-            $query .= " and a.acc_manager='" . $typeApproveMgr . "' ";
-        }
-
         if ($typeApprove != "") {
-            $query .= " and a.acc_director='" . $typeApprove . "' ";
+            $query .= " and a.acc_manager='" . $typeApprove . "' ";
         }
 
         if ($tglpesan1 != "") {

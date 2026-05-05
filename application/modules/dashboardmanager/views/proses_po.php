@@ -136,6 +136,7 @@
                                     <th>No</th>
                                     <th>Nama Barang</th>
                                     <th>Qty</th>
+                                    <th>Satuan</th>
                                     <th>Harga</th>
                                     <th>Discount</th>
                                     <th>Total</th>
@@ -292,6 +293,10 @@
                     "className": "text-right"
                 },
                 {
+                    "data": "satuanbarang",
+                    "className": "text-center"
+                },
+                {
                     "data": null,
                     "className": "text-right",
                     "render": function(data, type, row) {
@@ -419,6 +424,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td class="text-right"><strong>Subtotal</strong></td>
                         <td class="text-right" style="${addclass1}"><strong>${formatNumberSeparator(parseFloat(HeadSubtotal))}</strong></td>
                     </tr>`;
@@ -435,6 +441,7 @@
 
                 subtotalRow = `
                     <tr class="subtotal-row">
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -464,6 +471,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td class="text-right"><strong>PPN</strong></td>
                         <td class="text-right" style="${addclass3}"><strong>${formatNumberSeparator(parseFloat(hitungppn))}</strong></td>
                     </tr>`;
@@ -479,6 +487,7 @@
 
                 subtotalRow = `
                     <tr class="subtotal-row">
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>

@@ -166,9 +166,17 @@ $route['dashboarddirektur/proses_accept_direktur'] = 'dashboarddirektur/c_dashbo
 $route['dashboarddirektur/send_back_notifikasi'] = 'dashboarddirektur/c_dashboarddirektur/c_send_back_notifikasi';
 $route['dashboarddirektur/proses_reject_direktur'] = 'dashboarddirektur/c_dashboarddirektur/c_proses_reject_direktur';
 $route['dashboarddirektur/send_back_notifikasi_reject'] = 'dashboarddirektur/c_dashboarddirektur/c_send_back_notifikasi_reject';
+$route['dashboarddirektur/proses_cancel_direktur'] = 'dashboarddirektur/c_dashboarddirektur/c_proses_cancel_direktur';
+
 
 
 $route['report_direktur'] = 'report_direktur/c_report_direktur';
 $route['report_direktur/getnamesupplier'] = 'report_direktur/c_report_direktur/c_getnamesupplier';
 $route['report_direktur/fetch_table'] = 'report_direktur/c_report_direktur/c_fetch_table';
 $route['report_direktur/export'] = 'report_direktur/c_report_direktur/c_export';
+
+
+$route['report_manager'] = 'report_manager/c_report_manager';
+$route['report_manager/getnamesupplier'] = 'report_manager/c_report_manager/c_getnamesupplier';
+$route['report_manager/fetch_table'] = 'report_manager/c_report_manager/c_fetch_table';
+$route['report_manager/export'] = 'report_manager/c_report_manager/c_export';

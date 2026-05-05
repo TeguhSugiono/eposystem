@@ -8,12 +8,29 @@ require_once(APPPATH . 'third_party/fpdi/src/autoload.php');
 class C_trans_purchaseorder extends CI_Controller
 {
 
+
+    protected $PO_kode_company;
+    protected $PO_name_tbl_qrcode;
+    protected $PO_name_tbl_request;
+    protected $PO_name_tbl_keterangan;
+    protected $PO_name_tbl_detail;
+    protected $PO_name_tbl_header;
+
+
     function __construct()
     {
         parent::__construct();
         if ($this->session->userdata('PO_logged') <> 1) {
             redirect(site_url('login'));
         }
+
+
+        $this->PO_kode_company      = $this->session->userdata('PO_kode_company');
+        $this->PO_name_tbl_qrcode    = $this->session->userdata('PO_name_tbl_qrcode');
+        $this->PO_name_tbl_request   = $this->session->userdata('PO_name_tbl_request');
+        $this->PO_name_tbl_keterangan   = $this->session->userdata('PO_name_tbl_keterangan');
+        $this->PO_name_tbl_detail = $this->session->userdata('PO_name_tbl_detail');
+        $this->PO_name_tbl_header = $this->session->userdata('PO_name_tbl_header');
     }
 
 
@@ -88,7 +105,7 @@ class C_trans_purchaseorder extends CI_Controller
 
         //Get Header PO
         $ParamArray = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->PO_name_tbl_header,
             'WhereData' => array('id_pesan' => $id_pesan),
             'Field' => '*,get_company(nopo) as comp'
         );
@@ -130,7 +147,7 @@ class C_trans_purchaseorder extends CI_Controller
 
         //GET DETAIL BARANG
         $ParamArray = array(
-            'Table' => 'transpesan_det',
+            'Table' => $this->PO_name_tbl_detail,
             'WhereData' => array('id_pesan' => $GetHeaderPO[0]['id_pesan']),
             'OrderBy' => 'no asc'
         );
@@ -139,9 +156,10 @@ class C_trans_purchaseorder extends CI_Controller
 
         //hitung data detail dan keterangan barang
         $ParamArray = array(
-            'Table' => 'transpesan_det',
+            'Table' => $this->PO_name_tbl_detail,
             'WhereData' => array('id_pesan' => $GetHeaderPO[0]['id_pesan']),
-            'Field' => 'no'
+            'Field' => 'no',
+            'OrderBy' => 'no asc'
         );
         $datadetail = $this->m_function->value_result_array($ParamArray);
         $JumlahDetail = 0;
@@ -150,24 +168,28 @@ class C_trans_purchaseorder extends CI_Controller
             $JumlahDetail = $JumlahDetail + 1;
             // array_push($ArrayInKet, $dtdetail['no']);
         }
-        //echo $JumlahDetail;
+        // echo $this->db->last_query() . '<br>';
+        //echo $JumlahDetail . '<br>';
 
         $arrayNo = array_column($datadetail, 'no');
 
         $ParamArray = array(
-            'Table' => 'transpesan_det_keterangan',
+            'Table' => $this->PO_name_tbl_keterangan,
             'WhereIN' => array('fieldIN' => 'id_transpesan_det', 'fieldINValue' => $arrayNo)
         );
         $JumlahKet = $this->m_function->check_num_row($ParamArray);
-        // echo $JumlahKet;
+        //echo $JumlahKet . '<br>';
         // die;
         //end hitung data detail dan keterangan barang
-        $batasbarisbawah = 18;
+        $batasbarisbawah = 21; //ini adalah mau berapa baris detail dan keterangan detailnya
         $sisabaris = 0;
         if ($JumlahDetail + $JumlahKet <= $batasbarisbawah) {
             //patok baris detail dan keterangan
             $sisabaris = $batasbarisbawah - ($JumlahDetail + $JumlahKet);
         }
+
+        //echo $sisabaris;
+        // die;
 
         $htmlDet = "";
         $nomor = 1;
@@ -195,9 +217,9 @@ class C_trans_purchaseorder extends CI_Controller
                 <tr>
                     <td valign='top'>{$nomor}</td>
                     <td valign='top'>{$NamaBarang}</td>
-                    <td nowrap='nowrap'>{$GetProyek[0]['lokasiproyek']}</td>
+                    <td nowrap='nowrap' class='textcenter'>{$GetProyek[0]['lokasiproyek']}</td>
                     <td class='textcenter'>{$DetailPO['qtymsk']}</td>
-                    <td>{$GetBrg[0]['satuan']}</td>
+                    <td class='textcenter'>{$GetBrg[0]['satuan']}</td>
                     <td align='right'>{$hargasatuan}</td>
                     <td align='right'>{$diskon}</td>
                     <td align='right'>{$total}</td>
@@ -205,7 +227,7 @@ class C_trans_purchaseorder extends CI_Controller
             ";
 
             $ParamArray = array(
-                'Table' => 'transpesan_det_keterangan',
+                'Table' => $this->PO_name_tbl_keterangan,
                 'WhereData' => array('id_transpesan_det' => $DetailPO['no']),
                 'OrderBy' => 'seqno asc'
             );
@@ -218,7 +240,7 @@ class C_trans_purchaseorder extends CI_Controller
                             <td valign='top' class='no-border-top-bottom'></td>
                             <td valign='top' class='no-border-top-bottom'>{$Keterangan['keteranganbarang']}</td>
                             <td nowrap='nowrap' class='no-border-top-bottom'></td>
-                            <td class='textcenter' class='no-border-top-bottom'></td>
+                            <td class='textcenter no-border-top-bottom'></td>
                             <td class='no-border-top-bottom'></td>
                             <td align='right' class='no-border-top-bottom'></td>
                             <td align='right' class='no-border-top-bottom'></td>
@@ -235,7 +257,7 @@ class C_trans_purchaseorder extends CI_Controller
         for ($a = 1; $a <= $sisabaris; $a++) {
             $htmlDet .= "
                         <tr>
-                            <td valign='top' class='no-border-top-bottom' style='height:14px;'></td>
+                            <td valign='top' class='no-border-top-bottom' style='height:15px !important;'></td>
                             <td valign='top' class='no-border-top-bottom'></td>
                             <td nowrap='nowrap' class='no-border-top-bottom'></td>
                             <td class='no-border-top-bottom'></td>
@@ -253,7 +275,7 @@ class C_trans_purchaseorder extends CI_Controller
         //ambil barcode/qrcode
 
         $ParamArray = array(
-            'Table' => 'transpesan_qrcode',
+            'Table' => $this->PO_name_tbl_qrcode,
             'WhereData' => array('id_pesan' => $GetHeaderPO[0]['id_pesan'], 'id_request' => $GetHeaderPO[0]['flag_id_request']),
             'Field' => 'path'
         );
@@ -293,15 +315,18 @@ class C_trans_purchaseorder extends CI_Controller
 
         $html = $this->load->view('cetakPO', $data, true);
 
-        // echo $html;
-        // exit;
+        // //$html = $this->load->view('cetakPO_BelumAdaKop', $data, true);
+        // // echo $html;
+        // // exit;
 
 
-        //$html = $this->load->view('cetakPOPage', $data, true);
+        // //$html = $this->load->view('cetakPOPage', $data, true);
 
-        //print_r($html);die;
-        // run dompdf
+        // //print_r($html);die;
+        // // run dompdf
         $this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
+
+        //$this->load->view('cetakPO', $data);
     }
 
 
@@ -315,7 +340,7 @@ class C_trans_purchaseorder extends CI_Controller
         );
 
         $ParamArray = array(
-            'Table' => 'transpesan_head a',
+            'Table' => $this->PO_name_tbl_header . ' a',
             'WhereData' => array('a.kode_divisi' => $PO_kodedivisi, 'a.status !=' => 'V'),
             'Clause' => "a.tipedata is null",
             'OrderBy' => 'a.created_on desc,a.tglpesan desc',
@@ -338,11 +363,11 @@ class C_trans_purchaseorder extends CI_Controller
         $ArrayJoin = array(
             array('masterbarang b', 'a.kodebarang=b.kodebarang', 'left'),
             array('masterproyek c', 'a.kodeproyek=c.kodeproyek', 'left'),
-            //array('transpesan_head d', 'a.id_pesan=d.id_pesan', 'inner')
         );
 
         $ParamArray = array(
-            'Table' => 'transpesan_det a',
+            'Field' => 'a.*,b.*,c.*,a.satuan as satuanbarang',
+            'Table' => $this->PO_name_tbl_detail . ' a',
             'WhereData' => array('a.id_pesan' => $id_pesan),
             'OrderBy' => 'a.no asc',
             'ArrayJoin' => $ArrayJoin,
@@ -368,14 +393,13 @@ class C_trans_purchaseorder extends CI_Controller
         $id_pesan =  $this->input->post('id_pesan');
 
         $ParamArray = array(
-            //'Table' => 'transpesan_head',
             'WhereData' => array('id_pesan' => $id_pesan),
         );
 
         //$GetDataHeader = $this->m_function->value_result_array($ParamArray);
 
         //unset($ParamArray['Table']);
-        $ParamArray['Table'] = 'transpesan_det a';
+        $ParamArray['Table'] = $this->PO_name_tbl_detail . ' a';
 
         $ArrayJoin = array(
             array('masterbarang b', 'a.kodebarang=b.kodebarang', 'left')
@@ -398,9 +422,8 @@ class C_trans_purchaseorder extends CI_Controller
 
                 $NamaBarang =  $DataDetail['itembarang'] . ' ' . $DataDetail['merk'] . ' ' . $DataDetail['type'];
 
-                //cek ke table transpesan_det_keterangan
                 $ParamArray = array(
-                    'Table' => 'transpesan_det_keterangan',
+                    'Table' => $this->PO_name_tbl_keterangan,
                     'WhereData' => array('id_transpesan_det' => $DataDetail['no']),
                     'OrderBy' => 'seqno asc'
                 );
@@ -440,9 +463,9 @@ class C_trans_purchaseorder extends CI_Controller
 
                 $NamaBarang =  $DataDetail['itembarang'] . ' ' . $DataDetail['merk'] . ' ' . $DataDetail['type'];
 
-                //cek ke table transpesan_det_keterangan
+
                 $ParamArray = array(
-                    'Table' => 'transpesan_det_keterangan',
+                    'Table' => $this->PO_name_tbl_keterangan,
                     'WhereData' => array('id_transpesan_det' => $DataDetail['no']),
                     'OrderBy' => 'seqno asc'
                 );
@@ -496,7 +519,7 @@ class C_trans_purchaseorder extends CI_Controller
         $id_pesan =  $this->input->post('id_pesan');
 
         $ParamArray = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->PO_name_tbl_header,
             'WhereData' => array('id_pesan' => $id_pesan),
             'Field' => '*,get_company(nopo) as comp'
         );
@@ -630,7 +653,7 @@ class C_trans_purchaseorder extends CI_Controller
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
         $ParamArray = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->PO_name_tbl_header,
             'WhereData' => array('id_pesan' => $id_pesan),
             'Field' => '*,get_company(nopo) as comp'
         );
@@ -791,6 +814,14 @@ class C_trans_purchaseorder extends CI_Controller
         $arraydata = $this->m_function->value_result_array($ParamArray);
         $dataProyek = $arraydata;
 
+        $ParamArray = array(
+            'Table' => 'satuanbarang',
+            'Field' => 'namasatuan as kodesatuan,namasatuan',
+            'WhereData' => array('kode_divisi' => $this->session->userdata('PO_kodedivisi')),
+
+        );
+        $arraydata = $this->m_function->value_result_array($ParamArray);
+        $dataSatuan = $arraydata;
 
 
         $ParamArray = array(
@@ -804,7 +835,7 @@ class C_trans_purchaseorder extends CI_Controller
 
 
         $ParamArray = array(
-            'Table' => 'transpesan_det',
+            'Table' => $this->PO_name_tbl_detail,
             'WhereData' => array('id_pesan' => $id_pesan),
             'OrderBy' => 'no asc'
         );
@@ -817,7 +848,7 @@ class C_trans_purchaseorder extends CI_Controller
 
             // Ambil keterangan dari tabel keterangan
             $ParamKeterangan = array(
-                'Table' => 'transpesan_det_keterangan', // nama tabel keterangan
+                'Table' => $this->PO_name_tbl_keterangan, // nama tabel keterangan
                 'WhereData' => array('id_transpesan_det' => $id_transpesan_det), // atau 'id_det' kalau beda
                 'OrderBy' => 'seqno asc' // optional, biar urut
             );
@@ -851,7 +882,8 @@ class C_trans_purchaseorder extends CI_Controller
             'id_pesan' => $id_pesan,
             'flag_finish' => $flag_finish,
             'flag_revisi' => $flag_revisi,
-            'tgl_noreff' => $tgl_noreff
+            'tgl_noreff' => $tgl_noreff,
+            'dataSatuan' => $dataSatuan
         );
 
         $this->load->view('edit', $comp);
@@ -912,7 +944,7 @@ class C_trans_purchaseorder extends CI_Controller
 
         $createcombo = array(
             'data' => array_reverse($arraydata, true),
-            'set_data' => array('set_id' => ''),
+            'set_data' => array('set_id' => $this->PO_kode_company),
             'attribute' => array('idname' => 'company', 'class' => 'select-gradient', 'placeholder' => '~Pilih Perusahaan~'),
         );
         $company = ComboDb($createcombo);
@@ -983,6 +1015,16 @@ class C_trans_purchaseorder extends CI_Controller
         $arraydata = $this->m_function->value_result_array($ParamArray);
         $dataProyek = $arraydata;
 
+
+        $ParamArray = array(
+            'Table' => 'satuanbarang',
+            'Field' => 'namasatuan as kodesatuan,namasatuan',
+            'WhereData' => array('kode_divisi' => $this->session->userdata('PO_kodedivisi')),
+
+        );
+        $arraydata = $this->m_function->value_result_array($ParamArray);
+        $dataSatuan = $arraydata;
+
         $comp = array(
             'company' => $company,
             'ttd' => $ttd,
@@ -991,7 +1033,8 @@ class C_trans_purchaseorder extends CI_Controller
             'id_bank' => $id_bank,
             'jml_ppn' => $jml_ppn,
             'id_category' => $id_category,
-            'dataProyek' => $dataProyek
+            'dataProyek' => $dataProyek,
+            'dataSatuan' => $dataSatuan
         );
 
         $this->load->view('add', $comp);
@@ -1099,7 +1142,7 @@ class C_trans_purchaseorder extends CI_Controller
     {
 
 
-        $company = $this->input->post('company');
+        $company = $this->PO_kode_company;
         $suppl_code = $this->input->post('suppl_code');
 
         $ParamArray = array(
@@ -1123,7 +1166,7 @@ class C_trans_purchaseorder extends CI_Controller
     function c_get_po_rek()
     {
         $id_bank = $this->input->post('id_bank');
-        $company = $this->input->post('company');
+        $company = $this->PO_kode_company;
 
         $ParamArray = array(
             'Table' => 'masterbank',
@@ -1147,19 +1190,17 @@ class C_trans_purchaseorder extends CI_Controller
     function c_get_po_number()
     {
 
-
-
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
-        $company = $this->input->post('company');
+        $company = $this->PO_kode_company;
 
         $tahun    = date('Y');
         $bln       = date('m');
 
         $ParamArray = array(
-            'Table' => 'masterdivisi',
+            'Table' => 'masterdivisi_po',
             'WhereData' => array('kode_divisi' => $PO_kodedivisi),
-            'Field' => 'nama_divisi'
+            'Field' => 'kode_po'
         );
 
         $GetNameDivisi = $this->m_function->check_value($ParamArray);
@@ -1201,9 +1242,13 @@ class C_trans_purchaseorder extends CI_Controller
             }
         }
 
-        $GetNoPO = sprintf("%03d", $this->m_function->check_value($ParamArray)); //%04d
+        $GetNoPO = sprintf("%04d", $this->m_function->check_value($ParamArray)); //%04d
 
-        $nopo   = "{$GetNoPO}/{$GetNameDivisi}/{$company}/{$bln}/{$tahun}";
+        //$nopo   = "{$GetNoPO}/{$GetNameDivisi}/{$company}/{$bln}/{$tahun}";
+
+        //format IT PT MSA UME-0290-IT-MSA-04-2026
+
+        $nopo = "UME-" . $GetNoPO . "-" . $GetNameDivisi . "-" . $company . "-" . $bln . "-" . $tahun;
 
         $this->db->query("UNLOCK TABLES");
 
@@ -1252,7 +1297,7 @@ class C_trans_purchaseorder extends CI_Controller
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
         $ParamArray = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->PO_name_tbl_header,
             'Field' => 'max(id_pesan) as id_pesan'
         );
 
@@ -1299,10 +1344,11 @@ class C_trans_purchaseorder extends CI_Controller
         $harga        = $this->input->post('harga');
         $disc       = $this->input->post('disc');
         $total       = $this->input->post('total');
+        $satuan       = $this->input->post('kodesatuan');
 
 
         $ParamArray = array(
-            'Table' => 'transpesan_det',
+            'Table' => $this->PO_name_tbl_detail,
             'Field' => 'max(no) as no',
             'WhereData' => array('id_pesan <>' => 0),
             'OrderBy' => 'no desc'
@@ -1326,7 +1372,8 @@ class C_trans_purchaseorder extends CI_Controller
                 'hargasatuan' => floatval(str_replace(",", "", $harga[$index])),
                 'diskon' => floatval(str_replace(",", "", $disc[$index])),
                 'kodeproyek' => $kode_proyek[$index],
-                'total' => floatval(str_replace(",", "", $total[$index]))
+                'total' => floatval(str_replace(",", "", $total[$index])),
+                'satuan' => $satuan[$index],
             );
 
 
@@ -1358,17 +1405,17 @@ class C_trans_purchaseorder extends CI_Controller
 
 
         $ParamSave = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->PO_name_tbl_header,
             'DataInsert' => $ArrayHeader
         );
 
         $ParamSaveDetail = array(
-            'Table' => 'transpesan_det',
+            'Table' => $this->PO_name_tbl_detail,
             'DataInsert' => $ArrayDetail
         );
 
         $ParamSaveDetailKeterangan = array(
-            'Table' => 'transpesan_det_keterangan',
+            'Table' => $this->PO_name_tbl_keterangan,
             'DataInsert' => $ArrayKeteranganDetail
         );
 
@@ -1408,7 +1455,7 @@ class C_trans_purchaseorder extends CI_Controller
         //untuk update running number 
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
-        $company = $this->input->post('company');
+        $company = $this->PO_kode_company;
 
         $tahun    = date('Y');
 
@@ -1525,9 +1572,10 @@ class C_trans_purchaseorder extends CI_Controller
         $harga        = $this->input->post('harga');
         $disc       = $this->input->post('disc');
         $total       = $this->input->post('total');
+        $satuan       = $this->input->post('kodesatuan');
 
         $ParamArray = array(
-            'Table' => 'transpesan_det',
+            'Table' => $this->PO_name_tbl_detail,
             'Field' => 'max(no) as no',
             'WhereData' => array('id_pesan <>' => 0),
             'OrderBy' => 'no desc'
@@ -1552,7 +1600,8 @@ class C_trans_purchaseorder extends CI_Controller
                 'hargasatuan' => floatval(str_replace(",", "", $harga[$index])),
                 'diskon' => floatval(str_replace(",", "", $disc[$index])),
                 'kodeproyek' => $kode_proyek[$index],
-                'total' => floatval(str_replace(",", "", $total[$index]))
+                'total' => floatval(str_replace(",", "", $total[$index])),
+                'satuan' => $satuan[$index],
             );
 
             //array keterangan barang
@@ -1584,7 +1633,7 @@ class C_trans_purchaseorder extends CI_Controller
 
 
         $ParamDeleteDetail = array(
-            'Table' => 'transpesan_det',
+            'Table' => $this->PO_name_tbl_detail,
             'WhereData' => array('id_pesan' => $id_pesan),
         );
 
@@ -1599,8 +1648,8 @@ class C_trans_purchaseorder extends CI_Controller
 
 
         $ParamDeleteDetailKet = array(
-            'Table' => 'transpesan_det_keterangan',
-            'Native_Query' => "delete FROM transpesan_det_keterangan  where id_transpesan_det in (SELECT no FROM transpesan_det where id_pesan='" . $id_pesan . "')"
+            'Table' => $this->PO_name_tbl_keterangan,
+            'Native_Query' => "delete FROM " . $this->PO_name_tbl_keterangan . "  where id_transpesan_det in (SELECT no FROM " . $this->PO_name_tbl_detail . " where id_pesan='" . $id_pesan . "')"
         );
 
         if (!$this->m_function->execute_native_query($ParamDeleteDetailKet) >= 1) {
@@ -1617,7 +1666,7 @@ class C_trans_purchaseorder extends CI_Controller
         //update data
 
         $ParamUpdate = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->PO_name_tbl_header,
             'DataUpdate' => $ArrayHeader,
             'WhereData' => array('id_pesan' => $id_pesan)
         );
@@ -1632,7 +1681,7 @@ class C_trans_purchaseorder extends CI_Controller
         }
 
         $ParamSaveDetail = array(
-            'Table' => 'transpesan_det',
+            'Table' => $this->PO_name_tbl_detail,
             'DataInsert' => $ArrayDetail
         );
 
@@ -1646,7 +1695,7 @@ class C_trans_purchaseorder extends CI_Controller
         }
 
         $ParamSaveDetailKeterangan = array(
-            'Table' => 'transpesan_det_keterangan',
+            'Table' => $this->PO_name_tbl_keterangan,
             'DataInsert' => $ArrayKeteranganDetail
         );
 
@@ -1667,7 +1716,7 @@ class C_trans_purchaseorder extends CI_Controller
         if ($flag_revisi == 1) {
 
             $ParamUpdate = array(
-                'Table' => 'transpesan_head',
+                'Table' => $this->PO_name_tbl_header,
                 'DataUpdate' => $ArrayHeader,
                 'WhereData' => array('id_pesan' => $id_pesan)
             );
@@ -1705,14 +1754,14 @@ class C_trans_purchaseorder extends CI_Controller
         );
 
         $ParamUpdate = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->PO_name_tbl_header,
             'DataUpdate' => $ArrayUpdate,
             'WhereData' => array('id_pesan' => $id_pesan)
         );
 
         //cek po
         $ParamCek = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->PO_name_tbl_header,
             'WhereData' => array('id_pesan' => $id_pesan),
             'Field' => 'flag_finish'
         );

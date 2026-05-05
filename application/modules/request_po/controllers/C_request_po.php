@@ -19,12 +19,30 @@ class C_request_po extends CI_Controller
     function index()
     {
 
+        // $ParamArray = array(
+        //     'Table' => $this->session->userdata('PO_name_tbl_request'),
+        //     'WhereData' => array('flag_request' => 0, 'id_request' => $id_request),
+        //     'Clause' => "(flag_email_manager = 0 or flag_email_director=0)",
+        //     // 'Field' => '*,getd_nopo(id_pesan) nopo,(SELECT nama_dept FROM masterdivisi where kode_divisi=' . $this->session->userdata('PO_name_tbl_request') . '.kode_divisi) nama_dept,
+        //     //             (SELECT format(hitung_grandtotal(subtotalharga,ppn_param_date(tglpesan),ppn,id_category,discount_total),2) 
+        //     //             FROM ' . $this->session->userdata('PO_name_tbl_header') . ' where id_pesan = ' . $this->session->userdata('PO_name_tbl_request') . '.id_pesan) grandtotal'
+        //     'Field' => '*,(select nopo from ' . $this->session->userdata('PO_name_tbl_header') . '  
+        //                 where ' . $this->session->userdata('PO_name_tbl_header') . '.id_pesan=' . $this->session->userdata('PO_name_tbl_request') . '.id_pesan) nopo, 
+        //                 (SELECT nama_dept FROM masterdivisi where kode_divisi=' . $this->session->userdata('PO_name_tbl_request') . '.kode_divisi) nama_dept,
+        //                 (SELECT format(hitung_grandtotal(subtotalharga,ppn_param_date(tglpesan),ppn,id_category,discount_total),2) 
+        //                 FROM ' . $this->session->userdata('PO_name_tbl_header') . ' where id_pesan = ' . $this->session->userdata('PO_name_tbl_request') . '.id_pesan) grandtotal'
+        // );
+        // $arrayPoRequest = $this->m_function->value_result_array($ParamArray);
+
+        // echo $this->db->last_query();
+        // die;
+
 
         // $ParamArray = array(
         //     'Table' => 'tbl_request_po',
         //     'WhereData' => array('flag_request' => 0, 'id_request' => 6),
         //     'Clause' => "(flag_email_manager = 0 or flag_email_director=0)",
-        //     'Field' => '*,get_nopo(id_pesan) nopo,(SELECT nama_dept FROM masterdivisi where kode_divisi=tbl_request_po.kode_divisi) nama_dept,
+        //     'Field' => '*,getd_nopo(id_pesan) nopo,(SELECT nama_dept FROM masterdivisi where kode_divisi=tbl_request_po.kode_divisi) nama_dept,
         //                 (SELECT format(hitung_grandtotal(subtotalharga,ppn_param_date(tglpesan),ppn,id_category,discount_total),2) FROM transpesan_head where id_pesan = tbl_request_po.id_pesan) grandtotal'
         // );
         // $arrayPoRequest = $this->m_function->value_result_array($ParamArray);
@@ -120,8 +138,8 @@ class C_request_po extends CI_Controller
                     b.flag_finish,b.flag_id_request,b.flag_revisi
                     ,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, 
                     id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used
-                    FROM tbl_request_po a
-                    INNER JOIN `transpesan_head` `b` ON `a`.`id_pesan`=`b`.`id_pesan`
+                    FROM " . $this->session->userdata('PO_name_tbl_request') . " a
+                    INNER JOIN " . $this->session->userdata('PO_name_tbl_header') . " b ON `a`.`id_pesan`=`b`.`id_pesan`
                     INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
                     where a.id_request not in (SELECT id_request from transpesan_head_old)
                     and a.kode_divisi = '" . $PO_kodedivisi . "'
@@ -138,7 +156,7 @@ class C_request_po extends CI_Controller
                     b.flag_finish,b.flag_id_request,b.flag_revisi
                     ,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, 
                     id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used
-                    FROM tbl_request_po a
+                    FROM " . $this->session->userdata('PO_name_tbl_request') . " a
                     INNER JOIN `transpesan_head_old` `b` ON `a`.`id_request`=`b`.`id_request`
                     INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
                     and a.kode_divisi = '" . $PO_kodedivisi . "'
@@ -159,7 +177,7 @@ class C_request_po extends CI_Controller
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
         $ParamArray = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->session->userdata('PO_name_tbl_header'),
             'Field' => 'id_pesan,nopo',
             'WhereData' => array('status !=' => 'V', 'kode_divisi' => $PO_kodedivisi, 'flag_finish' => 0),
             'Clause' => "tipedata is null",
@@ -211,7 +229,7 @@ class C_request_po extends CI_Controller
 
         //cek dulu
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('flag_request' => 0, 'id_pesan' => $id_pesan)
         );
         if ($this->m_function->check_row($ParamArray) > 0) {
@@ -226,7 +244,7 @@ class C_request_po extends CI_Controller
 
         //cek dulu
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('id_pesan' => $id_pesan, 'flag_request !=' => '9'),
             'OrderBy' => 'id_request desc',
             'Limit' => '1',
@@ -237,7 +255,7 @@ class C_request_po extends CI_Controller
         if ($CaseRequestBefore == $id_status_approval) {
 
             $ParamArray = array(
-                'Table' => 'tbl_request_po',
+                'Table' => $this->session->userdata('PO_name_tbl_request'),
                 'WhereData' => array('id_pesan' => $id_pesan, 'flag_request !=' => '9'),
                 'OrderBy' => 'id_request desc',
                 'Limit' => '1',
@@ -265,7 +283,7 @@ class C_request_po extends CI_Controller
 
 
         $ParamSave = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'DataInsert' => $ArraySave
         );
 
@@ -292,7 +310,7 @@ class C_request_po extends CI_Controller
 
 
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('id_request' => $id_request)
         );
 
@@ -302,7 +320,7 @@ class C_request_po extends CI_Controller
         $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
         $ParamArray = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->session->userdata('PO_name_tbl_header'),
             'Field' => 'id_pesan,nopo',
             'WhereData' => array('status !=' => 'V', 'kode_divisi' => $PO_kodedivisi),
             'OrderBy' => 'id_pesan asc'
@@ -359,8 +377,9 @@ class C_request_po extends CI_Controller
         $arraydata = array();
         if ($id_status_approval == 2 || $id_status_approval == 3) {
             $ParamArray = array(
-                'Table' => 'tbl_request_po',
-                'Field' => 'id_pesan,get_nopo(id_pesan) as nopo',
+                'Table' => $this->session->userdata('PO_name_tbl_request'),
+                'Field' => 'id_pesan,(select nopo from ' . $this->session->userdata('PO_name_tbl_header') . '  
+                where ' . $this->session->userdata('PO_name_tbl_header') . '.id_pesan=' . $this->session->userdata('PO_name_tbl_request') . '.id_pesan) nopo',
                 'WhereData' => array('acc_manager' => 'Y', 'acc_director' => 'Y')
             );
             $arraydata = $this->m_function->value_result_array($ParamArray);
@@ -369,7 +388,7 @@ class C_request_po extends CI_Controller
             $PO_kodedivisi = $this->session->userdata('PO_kodedivisi');
 
             $ParamArray = array(
-                'Table' => 'transpesan_head',
+                'Table' => $this->session->userdata('PO_name_tbl_header'),
                 'Field' => 'id_pesan,nopo',
                 'WhereData' => array('status !=' => 'V', 'kode_divisi' => $PO_kodedivisi, 'flag_finish' => 0)
             );
@@ -403,7 +422,7 @@ class C_request_po extends CI_Controller
             );
 
             $ParamUpdate = array(
-                'Table' => 'tbl_request_po',
+                'Table' => $this->session->userdata('PO_name_tbl_request'),
                 'DataUpdate' => $ArrayUpdate,
                 'WhereData' => array('id_request' => $id_request)
             );
@@ -421,7 +440,7 @@ class C_request_po extends CI_Controller
 
             //cek dulu
             $ParamArray = array(
-                'Table' => 'tbl_request_po',
+                'Table' => $this->session->userdata('PO_name_tbl_request'),
                 'WhereData' => array('flag_request' => 0, 'id_pesan' => $id_pesan)
             );
             if ($this->m_function->check_row($ParamArray) > 0) {
@@ -443,7 +462,7 @@ class C_request_po extends CI_Controller
             );
 
             $ParamUpdate = array(
-                'Table' => 'tbl_request_po',
+                'Table' => $this->session->userdata('PO_name_tbl_request'),
                 'DataUpdate' => $ArrayUpdate,
                 'WhereData' => array('id_request' => $id_request)
             );
@@ -546,7 +565,7 @@ class C_request_po extends CI_Controller
             );
 
             $ParamUpdate = array(
-                'Table' => 'tbl_request_po',
+                'Table' => $this->session->userdata('PO_name_tbl_request'),
                 'DataUpdate' => $ArrayUpdate,
                 'WhereData' => array('id_request' => $id_request)
             );
@@ -569,7 +588,7 @@ class C_request_po extends CI_Controller
             );
 
             $ParamUpdate = array(
-                'Table' => 'transpesan_head',
+                'Table' => $this->session->userdata('PO_name_tbl_header'),
                 'DataUpdate' => $ArrayUpdate,
                 'WhereData' => array('nopo' => $nopo)
             );
@@ -604,7 +623,7 @@ class C_request_po extends CI_Controller
         $this->load->library('Fonnte_guzzle');
 
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('id_request' => $id_request),
             'Field' => 'kode_divisi'
         );
@@ -644,11 +663,18 @@ class C_request_po extends CI_Controller
 
         //isi value wa eposystem
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('flag_request' => 0, 'id_request' => $id_request),
             'Clause' => "(flag_email_manager = 0 or flag_email_director=0)",
-            'Field' => '*,get_nopo(id_pesan) nopo,(SELECT nama_dept FROM masterdivisi where kode_divisi=tbl_request_po.kode_divisi) nama_dept,
-                        (SELECT format(hitung_grandtotal(subtotalharga,ppn_param_date(tglpesan),ppn,id_category,discount_total),2) FROM transpesan_head where id_pesan = tbl_request_po.id_pesan) grandtotal'
+            // 'Field' => '*,get_dnopo(id_pesan) nopo,
+            //             (SELECT nama_dept FROM masterdivisi where kode_divisi=' . $this->session->userdata('PO_name_tbl_request') . '.kode_divisi) nama_dept,
+            //             (SELECT format(hitung_grandtotal(subtotalharga,ppn_param_date(tglpesan),ppn,id_category,discount_total),2) 
+            //             FROM ' . $this->session->userdata('PO_name_tbl_header') . ' where id_pesan = ' . $this->session->userdata('PO_name_tbl_request') . '.id_pesan) grandtotal'
+            'Field' => '*,(select nopo from ' . $this->session->userdata('PO_name_tbl_header') . '  
+                        where ' . $this->session->userdata('PO_name_tbl_header') . '.id_pesan=' . $this->session->userdata('PO_name_tbl_request') . '.id_pesan) nopo,
+                        (SELECT nama_dept FROM masterdivisi where kode_divisi=' . $this->session->userdata('PO_name_tbl_request') . '.kode_divisi) nama_dept,
+                        (SELECT format(hitung_grandtotal(subtotalharga,ppn_param_date(tglpesan),ppn,id_category,discount_total),2) 
+                        FROM ' . $this->session->userdata('PO_name_tbl_header') . ' where id_pesan = ' . $this->session->userdata('PO_name_tbl_request') . '.id_pesan) grandtotal'
         );
         $arrayPoRequest = $this->m_function->value_result_array($ParamArray);
 
@@ -680,7 +706,7 @@ class C_request_po extends CI_Controller
                 $LinkHash = $this->m_function->CreateLinkManager($email_manager);
 
                 $ParamUpdate = array(
-                    'Table' => 'tbl_request_po',
+                    'Table' => $this->session->userdata('PO_name_tbl_request'),
                     'DataUpdate' => array('flag_email_manager' => 1, 'acc_manager' => '', 'time_acc_manager' => NULL, 'acc_name_manager' => ''),
                     'WhereData' => array('id_request' => $PoRequest['id_request'])
                 );
@@ -786,7 +812,7 @@ class C_request_po extends CI_Controller
         );
 
         $ParamUpdate = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'DataUpdate' => $ArrayUpdate,
             'WhereData' => array('id_request' => $id_request)
         );
@@ -809,7 +835,7 @@ class C_request_po extends CI_Controller
         );
 
         $ParamUpdate = array(
-            'Table' => 'transpesan_head',
+            'Table' => $this->session->userdata('PO_name_tbl_header'),
             'DataUpdate' => $ArrayUpdate,
             'WhereData' => array('nopo' => $nopo)
         );
@@ -839,7 +865,7 @@ class C_request_po extends CI_Controller
         $nopo = $this->input->post('nopo');
 
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('id_request' => $id_request),
         );
         $ResultRequest = $this->m_function->value_result_array($ParamArray);
@@ -885,7 +911,7 @@ class C_request_po extends CI_Controller
         );
 
         $ParamUpdate = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'DataUpdate' => $ArrayUpdate,
             'WhereData' => array('id_request' => $id_request)
         );
@@ -905,7 +931,7 @@ class C_request_po extends CI_Controller
             );
 
             $ParamUpdate = array(
-                'Table' => 'transpesan_head',
+                'Table' => $this->session->userdata('PO_name_tbl_header'),
                 'DataUpdate' => $ArrayUpdate,
                 'WhereData' => array('nopo' => $nopo, 'flag_id_request' => $id_request)
             );
@@ -927,7 +953,7 @@ class C_request_po extends CI_Controller
 
         //cek dulu
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('flag_request !=' => 0, 'id_request' => $id_request)
         );
         if ($this->m_function->check_row($ParamArray) > 0) {
@@ -946,7 +972,7 @@ class C_request_po extends CI_Controller
         );
 
         $ParamUpdate = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'DataUpdate' => $ArrayUpdate,
             'WhereData' => array('id_request' => $id_request)
         );
@@ -972,7 +998,7 @@ class C_request_po extends CI_Controller
         $ids = $this->input->post('ids');
 
         $this->db->where_in('id_request', $ids);
-        $data = $this->db->get('tbl_request_po')->result();
+        $data = $this->db->get($this->session->userdata('PO_name_tbl_request'))->result();
 
         echo json_encode(['data' => $data]);
     }

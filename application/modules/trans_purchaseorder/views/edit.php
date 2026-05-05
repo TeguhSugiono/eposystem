@@ -199,7 +199,7 @@
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">Tgl Pesan</label>
                             <div class="col-sm-9">
-                                <input type="date" class="form-control form-control-sm" id="tglpesan" name="tglpesan" value="<?= $tglpesan; ?>">
+                                <input type="date" class="form-control form-control-sm" id="tglpesan" name="tglpesan" min="<?= date('Y-m-d'); ?>" value="<?= $tglpesan; ?>">
                             </div>
                         </div>
                     </div>
@@ -214,7 +214,36 @@
 
                 </div>
 
+                <div class="row rowA">
 
+                    <div class="col-md-4">
+                        <div class="form-group row rowX">
+                            <label class="col-sm-3 col-form-label text-end">Jatuh Tempo</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control form-control-sm" id="tgltempo" name="tgltempo" value="<?= $tgltempo; ?>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group row rowX">
+                            <label class="col-sm-3 col-form-label text-end">No MR</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="nomr" name="nomr" value="<?= $nomr; ?>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group row rowX">
+                            <label class="col-sm-3 col-form-label text-end">Keterangan</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="keteranganH" name="keteranganH" value="<?= $keteranganH; ?>" required>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
 
 
                 <div class="row rowA">
@@ -239,9 +268,9 @@
 
                     <div class="col-md-4">
                         <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">No MR</label>
+                            <label class="col-sm-3 col-form-label text-end">Subtotal</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm" id="nomr" name="nomr" value="<?= $nomr; ?>">
+                                <input type="text" class="form-control form-control-sm text-right" id="subtotalharga" name="subtotalharga" value="0.p00" readonly>
                             </div>
                         </div>
                     </div>
@@ -279,9 +308,9 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Subtotal</label>
+                            <label class="col-sm-3 col-form-label text-end">Nilai Lain</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm text-right" id="subtotalharga" name="subtotalharga" value="0.p00" readonly>
+                                <input type="text" class="form-control form-control-sm text-right" id="nilai_lain" name="nilai_lain" value="0.00" readonly>
                             </div>
                         </div>
                     </div>
@@ -309,36 +338,6 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Nilai Lain</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm text-right" id="nilai_lain" name="nilai_lain" value="0.00" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-                <div class="row rowA">
-                    <div class="col-md-4">
-                        <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Keterangan</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm" id="keteranganH" name="keteranganH" value="<?= $keteranganH; ?>" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Jatuh Tempo</label>
-                            <div class="col-sm-9">
-                                <input type="date" class="form-control form-control-sm" id="tgltempo" name="tgltempo" value="<?= $tgltempo; ?>">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">PPN</label>
                             <div class="col-sm-9 d-flex align-items-center">
                                 <input type="checkbox" id="chkppn" name="chkppn" <?= $PPNChecked; ?> style="margin-right:8px;">
@@ -346,7 +345,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
 
@@ -377,6 +375,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
 
@@ -399,6 +398,21 @@
                     </div>
                 </div>
 
+
+
+
+                <div class="row rowA">
+                    <div class="col-md-4">
+
+                    </div>
+                    <div class="col-md-4">
+
+                    </div>
+                    <div class="col-md-4">
+
+                    </div>
+                </div>
+
                 <div class="row rowA">
                     <div class="card-body">
                         <div class="datatable-container">
@@ -408,14 +422,23 @@
                                     <table class="table table-bordered table-hover mb-0" id="tabelItem">
                                         <thead class="table-dark">
                                             <tr>
-                                                <th width="5%">No</th>
+                                                <!-- <th width="5%">No</th>
                                                 <th width="12%">Kode Proyek</th>
                                                 <th width="33%">Item Barang</th>
                                                 <th width="8%">Qty</th>
                                                 <th width="12%">Harga</th>
                                                 <th width="8%">Disc (%)</th>
                                                 <th width="12%">Total</th>
-                                                <th width="10%">Aksi</th>
+                                                <th width="10%">Aksi</th> -->
+                                                <th width="5%">No</th>
+                                                <th width="12%">Kode Proyek</th>
+                                                <th width="31%">Item Barang</th>
+                                                <th width="6%">Qty</th>
+                                                <th width="7%">Satuan</th>
+                                                <th width="12%">Harga</th>
+                                                <th width="8%">Disc (%)</th>
+                                                <th width="12%">Total</th>
+                                                <th width="7%">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody id="bodyItem">
@@ -473,6 +496,8 @@
 
     var ArrayProyek = <?= json_encode($dataProyek) ?>;
     var ArrayBarang = <?= json_encode($dataBarang) ?>;
+    var ArraySatuan = <?= json_encode($dataSatuan) ?>;
+
 
     setTimeout(() => {
 
@@ -504,6 +529,8 @@
         loadParamPPN("<?= $tglpesan; ?>");
         const ArrayPoDetail = <?= json_encode($ArrayPoDetail) ?>;
 
+        console.log(ArrayPoDetail);
+
         if (ArrayPoDetail.length > 0) {
             ArrayPoDetail.forEach((item, i) => {
                 tambahBarisUtama();
@@ -521,6 +548,21 @@
                     );
 
                     $('#kodeproyek_' + idx).val(item.kodeproyek).trigger('change');
+
+
+                    generateComboEdt(
+                        ArraySatuan,
+                        'kodesatuan_' + idx,
+                        'kodesatuan',
+                        'namasatuan',
+                        ['', '~Pilih Satuan~']
+                    );
+
+                    $('#kodesatuan_' + idx).val(item.satuan).trigger('change');
+
+
+
+
 
                     const barang = ArrayBarang.find(b => b.kodebarang === item.kodebarang);
                     $('#item_barang_' + idx).val(barang ? barang.nmbrg : item.kodebarang);
@@ -574,6 +616,15 @@
         </select>
     `;
 
+        const selectSatuan = `
+            <select name="kodesatuan[${counter}]" 
+                    id="kodesatuan_${counter}" 
+                    class="form-control form-control-sm select2"                     
+                    data-placeholder="~Pilih Satuan~">
+                <option value="">~Pilih Satuan~</option>
+            </select>
+        `;
+
         const row = `
     <tr data-id="${counter}">
         <td class="text-center align-middle fw-bold">${counter}</td>
@@ -588,6 +639,7 @@
             <div class="keterangan-container" id="ket-${counter}"></div>
         </td>
         <td><input type="text" id="qty_${counter}" name="qty[${counter}]" class="form-control form-control-sm hitung text-right" value="1.00"></td>
+        <td>${selectSatuan}</td>
         <td><input type="text" id="harga_${counter}" name="harga[${counter}]" class="form-control form-control-sm hitung text-right" value="0.00"></td>
         <td><input type="text" id="disc_${counter}" name="disc[${counter}]" class="form-control form-control-sm hitung text-right" value="0.00"></td>
         <td><input type="text" id="total_${counter}" name="total[${counter}]" class="form-control form-control-sm text-right" value="0.00" readonly></td>
@@ -607,8 +659,23 @@
             ['', '~Pilih Proyek~']
         );
 
+        generateComboEdt(
+            ArraySatuan,
+            'kodesatuan_' + counter,
+            'kodesatuan',
+            'namasatuan',
+            ['', '~Pilih Satuan~']
+        );
+
         // FIX: Init select2
         $('#kodeproyek_' + counter).select2({
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#id_modal_edit')
+        });
+
+
+        $('#kodesatuan_' + counter).select2({
             allowClear: true,
             width: '100%',
             dropdownParent: $('#id_modal_edit')
@@ -1012,7 +1079,7 @@
 
 
     $(document).on('change', '#tglkrm', function() {
-        $('#tgl_noreff').focus();
+        $('#nomr').focus();
     });
 
     $(document).on('change', '#tgl_noreff', function() {
@@ -1158,6 +1225,11 @@
             // Cek Item Barang
             const itemBarang = $(`#item_barang_${counter}`).val();
             if (!itemBarang || itemBarang.trim() === '') {
+                isValid = false;
+            }
+
+            const kodesatuan = $(`#kodesatuan_${counter}`).val();
+            if (!kodesatuan || kodesatuan.trim() === '') {
                 isValid = false;
             }
         });

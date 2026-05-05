@@ -53,6 +53,9 @@ class C_dashboardmanager extends CI_Controller
 
         $ArrayData = explode("::", $dekripsi);
 
+        // print_r($ArrayData);
+        // die;
+
         $data_email = $ArrayData[0];
         $data_password = $ArrayData[2];
         $data_date = $ArrayData[3];
@@ -84,6 +87,14 @@ class C_dashboardmanager extends CI_Controller
 
         $password_hash_dari_db = $dataLogin->password_hash;
 
+        $ParamArray = array(
+            'Table' => 'mastercompany_po',
+            'WhereData' => array('kode_company' => $ArrayData[4])
+        );
+
+        $dataTblTransaksi =  $this->m_function->value_result_row($ParamArray);
+
+
 
         if ($data_password == $password_hash_dari_db) {
             $data = array(
@@ -91,7 +102,13 @@ class C_dashboardmanager extends CI_Controller
                 'PO_username' => $dataLogin->username,
                 'PO_kodedivisi' => $dataLogin->kode_divisi,
                 'PO_hakakses' => $dataLogin->hak_akses,
-                'PO_email' => $dataLogin->email
+                'PO_email' => $dataLogin->email,
+                'PO_kode_company' => $ArrayData[4],
+                'PO_name_tbl_header' => $dataTblTransaksi->name_tbl_header,
+                'PO_name_tbl_detail' => $dataTblTransaksi->name_tbl_detail,
+                'PO_name_tbl_keterangan' => $dataTblTransaksi->name_tbl_keterangan,
+                'PO_name_tbl_request' => $dataTblTransaksi->name_tbl_request,
+                'PO_name_tbl_qrcode' => $dataTblTransaksi->name_tbl_qrcode
             );
             $this->m_function->string_array_toSession($data);
 
@@ -141,8 +158,8 @@ class C_dashboardmanager extends CI_Controller
                     ,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, 
                     id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used,
                     (SELECT nama_dept FROM masterdivisi where kode_divisi=a.kode_divisi) dept
-                    FROM tbl_request_po a
-                    INNER JOIN `transpesan_head` `b` ON `a`.`id_pesan`=`b`.`id_pesan`
+                    FROM " . $this->session->userdata('PO_name_tbl_request') . " a
+                    INNER JOIN " . $this->session->userdata('PO_name_tbl_header') . " b ON `a`.`id_pesan`=`b`.`id_pesan`
                     INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
                     where a.id_request not in (SELECT id_request from transpesan_head_old)
                     and b.status != 'V' and a.flag_request != '9' and a.flag_email_manager = '1' 
@@ -167,7 +184,7 @@ class C_dashboardmanager extends CI_Controller
                     ,status_approval,hitung_grandtotal(subtotalharga, ppn_param_date(tglpesan), ppn, 
                     id_category, discount_total ) AS grandtotal,ppn_param_date(b.tglpesan) AS ppn_used,
                     (SELECT nama_dept FROM masterdivisi where kode_divisi=a.kode_divisi) dept
-                    FROM tbl_request_po a
+                    FROM " . $this->session->userdata('PO_name_tbl_request') . " a
                     INNER JOIN `transpesan_head_old` `b` ON `a`.`id_request`=`b`.`id_request`
                     INNER JOIN `tbl_request_approval` `c` ON `a`.`id_status_approval`=`c`.`id_status_approval`
                     and b.status != 'V' and a.flag_request != '9' and a.flag_email_manager = '1' 
@@ -204,14 +221,14 @@ class C_dashboardmanager extends CI_Controller
         if ($ckdta->num_rows() == 0) {
             //$hehehe = 1;
             $ParamArray = array(
-                'Table' => 'transpesan_head v',
+                'Table' => $this->session->userdata('PO_name_tbl_header') . ' v',
                 'WhereData' => array('id_pesan' => $id_pesan),
                 'Field' => '*,(SELECT xx.nama_dept FROM masterdivisi xx where xx.kode_divisi=v.kode_divisi) dept,get_company(nopo) as comp'
             );
             $GetDataHeader = $this->m_function->value_result_array($ParamArray);
 
             $ParamArray = array(
-                'Table' => 'transpesan_det',
+                'Table' => $this->session->userdata('PO_name_tbl_detail'),
                 'WhereData' => array('id_pesan' => $id_pesan),
             );
             $GetDataDetail = $this->m_function->value_result_array($ParamArray);
@@ -248,7 +265,7 @@ class C_dashboardmanager extends CI_Controller
 
 
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('id_request' => $id_request)
         );
         $GetDataRequest = $this->m_function->value_result_array($ParamArray);
@@ -309,7 +326,8 @@ class C_dashboardmanager extends CI_Controller
             );
 
             $ParamArray = array(
-                'Table' => 'transpesan_det a',
+                'Field' => 'a.*,b.*,c.*,a.satuan as satuanbarang',
+                'Table' => $this->session->userdata('PO_name_tbl_detail') . ' a',
                 'WhereData' => array('a.id_pesan' => $id_pesan),
                 'OrderBy' => 'a.no asc',
                 'ArrayJoin' => $ArrayJoin,
@@ -379,7 +397,7 @@ class C_dashboardmanager extends CI_Controller
         );
 
         $ParamUpdate = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'DataUpdate' => $DataUpdate,
             'WhereData' => array('id_request' => $id_request_det)
         );
@@ -478,7 +496,7 @@ class C_dashboardmanager extends CI_Controller
         );
 
         $ParamUpdate = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'DataUpdate' => $DataUpdate,
             'WhereData' => array('id_request' => $id_request_det)
         );
@@ -519,7 +537,7 @@ class C_dashboardmanager extends CI_Controller
             );
 
             $ParamUpdate = array(
-                'Table' => 'tbl_request_po',
+                'Table' => $this->session->userdata('PO_name_tbl_request'),
                 'DataUpdate' => $DataUpdate,
                 'WhereData' => array('id_request' => $id_request_det)
             );
@@ -556,7 +574,7 @@ class C_dashboardmanager extends CI_Controller
         $this->load->library('Fonnte_guzzle');
 
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('id_request' => $id_request),
             'Field' => 'kode_divisi'
         );
@@ -588,11 +606,14 @@ class C_dashboardmanager extends CI_Controller
 
         //isi value wa eposystem
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('flag_request' => 1, 'flag_email_manager' => 1, 'id_request' => $id_request),
             'Clause' => "(flag_email_director=0)",
-            'Field' => '*,get_nopo(id_pesan) nopo,(SELECT nama_dept FROM masterdivisi where kode_divisi=tbl_request_po.kode_divisi) nama_dept,
-                        (SELECT format(hitung_grandtotal(subtotalharga,ppn_param_date(tglpesan),ppn,id_category,discount_total),2) FROM transpesan_head where id_pesan = tbl_request_po.id_pesan) grandtotal'
+            'Field' => '*,
+                        (select nopo from ' . $this->session->userdata('PO_name_tbl_header') . '  
+                        where ' . $this->session->userdata('PO_name_tbl_header') . '.id_pesan=' . $this->session->userdata('PO_name_tbl_request') . '.id_pesan) nopo,
+                        (SELECT nama_dept FROM masterdivisi where kode_divisi=' . $this->session->userdata('PO_name_tbl_request') . '.kode_divisi) nama_dept,
+                        (SELECT format(hitung_grandtotal(subtotalharga,ppn_param_date(tglpesan),ppn,id_category,discount_total),2) FROM ' . $this->session->userdata('PO_name_tbl_header') . ' where id_pesan =' . $this->session->userdata('PO_name_tbl_request') . '.id_pesan) grandtotal'
         );
         $arrayPoRequest = $this->m_function->value_result_array($ParamArray);
 
@@ -622,7 +643,7 @@ class C_dashboardmanager extends CI_Controller
                 $LinkHash = $this->m_function->CreateLinkManager($email_direktur);
 
                 $ParamUpdate = array(
-                    'Table' => 'tbl_request_po',
+                    'Table' => $this->session->userdata('PO_name_tbl_request'),
                     'DataUpdate' => array('flag_email_director' => 1, 'acc_director' => '', 'time_acc_director' => NULL, 'acc_name_director' => ''),
                     'WhereData' => array('id_request' => $PoRequest['id_request'])
                 );
@@ -733,9 +754,11 @@ class C_dashboardmanager extends CI_Controller
         $Tokengratis = $this->m_function->check_value($ParamArray);
 
         $ParamArray = array(
-            'Table' => 'tbl_request_po',
+            'Table' => $this->session->userdata('PO_name_tbl_request'),
             'WhereData' => array('id_request' => $id_request_det, 'id_pesan' => $id_pesan_det),
-            'Field' => '*,get_nopo(id_pesan) nopo'
+            'Field' => '*,
+                        (select nopo from ' . $this->session->userdata('PO_name_tbl_header') . '  
+                        where ' . $this->session->userdata('PO_name_tbl_header') . '.id_pesan=' . $this->session->userdata('PO_name_tbl_request') . '.id_pesan) nopo',
         );
         $arrayPoRequest = $this->m_function->value_result_array($ParamArray);
 

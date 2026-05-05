@@ -43,16 +43,7 @@
 
             <div class="col-md-4">
                 <div class="form-group row">
-                    <label class="col-sm-3 col-form-label text-end">Approve Manager</label>
-                    <div class="col-sm-9">
-                        <?= $typeApproveMgr; ?>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label text-end">Approve Direktur</label>
+                    <label class="col-sm-3 col-form-label text-end">Status</label>
                     <div class="col-sm-9">
                         <?= $typeApprove; ?>
                     </div>
@@ -128,9 +119,9 @@
     //     tblreportdirektur.ajax.reload(null, false);
     // });
 
-    $(document).on('change', '#typeApproveMgr', function() {
-        tblreportdirektur.ajax.reload(null, false);
-    });
+    // $(document).on('change', '#id_status_approval', function() {
+    //     tblreportdirektur.ajax.reload(null, false);
+    // });
 
     $(document).on('change', '#typeApprove', function() {
         tblreportdirektur.ajax.reload(null, false);
@@ -147,11 +138,11 @@
     $(document).ready(function() {
         tblreportdirektur = $('#tblreportdirektur').DataTable({
             "ajax": {
-                "url": "<?php echo site_url('report_direktur/fetch_table'); ?>",
+                "url": "<?php echo site_url('report_manager/fetch_table'); ?>",
                 "type": "POST",
                 "data": function(d) {
                     //d.selectperusahaan = $('#selectperusahaan').val();
-                    d.typeApproveMgr = $('#typeApproveMgr').val();
+                    //d.id_status_approval = $('#id_status_approval').val();
                     d.typeApprove = $('#typeApprove').val();
                     d.tglpesan1 = $('#tglpesan1').val();
                     d.tglpesan2 = $('#tglpesan2').val();
@@ -305,7 +296,6 @@
         var typeApprove = $('#typeApprove').val();
         var tglpesan1 = $('#tglpesan1').val();
         var tglpesan2 = $('#tglpesan2').val();
-        var typeApproveMgr = $('#typeApproveMgr').val();
 
         var data = [];
         data[0] = selectperusahaan;
@@ -313,9 +303,8 @@
         data[2] = typeApprove;
         data[3] = tglpesan1;
         data[4] = tglpesan2;
-        data[5] = typeApproveMgr;
 
-        var page = "<?php echo base_url(); ?>report_direktur/export?data=" + btoa(data);
+        var page = "<?php echo base_url(); ?>report_manager/export?data=" + btoa(data);
         window.open(page);
     }
 </script>

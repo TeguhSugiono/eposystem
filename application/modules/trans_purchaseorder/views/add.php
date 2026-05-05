@@ -203,7 +203,7 @@
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">Tgl Pesan</label>
                             <div class="col-sm-9">
-                                <input type="date" class="form-control form-control-sm" id="tglpesan" name="tglpesan">
+                                <input type="date" class="form-control form-control-sm" id="tglpesan" name="tglpesan" min="<?= date('Y-m-d'); ?>">
                             </div>
                         </div>
                     </div>
@@ -216,10 +216,38 @@
                         </div>
                     </div>
 
+
+
                 </div>
 
+                <div class="row rowA">
+                    <div class="col-md-4">
+                        <div class="form-group row rowX">
+                            <label class="col-sm-3 col-form-label text-end">Jatuh Tempo</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control form-control-sm" id="tgltempo" name="tgltempo">
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="col-md-4">
+                        <div class="form-group row rowX">
+                            <label class="col-sm-3 col-form-label text-end">No MR</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="nomr" name="nomr">
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="col-md-4">
+                        <div class="form-group row rowX">
+                            <label class="col-sm-3 col-form-label text-end">Keterangan</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="keteranganH" name="keteranganH" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row rowA">
 
@@ -243,9 +271,9 @@
 
                     <div class="col-md-4">
                         <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">No MR</label>
+                            <label class="col-sm-3 col-form-label text-end">Subtotal</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm" id="nomr" name="nomr">
+                                <input type="text" class="form-control form-control-sm text-right" id="subtotalharga" name="subtotalharga" value="0.00" readonly>
                             </div>
                         </div>
                     </div>
@@ -275,7 +303,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Pembayaran</label>
+                            <label class="col-sm-3 col-form-label text-end">Jns Pembayaran</label>
                             <div class="col-sm-9">
                                 <?= $pembayaran; ?>
                             </div>
@@ -283,9 +311,9 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Subtotal</label>
+                            <label class="col-sm-3 col-form-label text-end">Nilai Lain</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm text-right" id="subtotalharga" name="subtotalharga" value="0.00" readonly>
+                                <input type="text" class="form-control form-control-sm text-right" id="nilai_lain" name="nilai_lain" value="0.00" readonly>
                             </div>
                         </div>
                     </div>
@@ -313,36 +341,6 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Nilai Lain</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm text-right" id="nilai_lain" name="nilai_lain" value="0.00" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-                <div class="row rowA">
-                    <div class="col-md-4">
-                        <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Keterangan</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm" id="keteranganH" name="keteranganH" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group row rowX">
-                            <label class="col-sm-3 col-form-label text-end">Jatuh Tempo</label>
-                            <div class="col-sm-9">
-                                <input type="date" class="form-control form-control-sm" id="tgltempo" name="tgltempo">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">PPN</label>
                             <div class="col-sm-9 d-flex align-items-center">
                                 <input type="checkbox" id="chkppn" name="chkppn" checked style="margin-right:8px;">
@@ -350,13 +348,13 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
 
 
 
                 <div class="row rowA">
+
                     <div class="col-md-4">
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">Besar PPN</label>
@@ -373,6 +371,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-4">
                         <div class="form-group row rowX">
                             <label class="col-sm-3 col-form-label text-end">Biaya Lain</label>
@@ -381,6 +380,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
 
@@ -403,6 +403,21 @@
                     </div>
                 </div>
 
+
+
+
+                <div class="row rowA">
+                    <div class="col-md-4">
+
+                    </div>
+                    <div class="col-md-4">
+
+                    </div>
+                    <div class="col-md-4">
+
+                    </div>
+                </div>
+
                 <div class="row rowA">
                     <div class="card-body">
                         <div class="datatable-container">
@@ -414,12 +429,13 @@
                                             <tr>
                                                 <th width="5%">No</th>
                                                 <th width="12%">Kode Proyek</th>
-                                                <th width="33%">Item Barang</th>
-                                                <th width="8%">Qty</th>
+                                                <th width="31%">Item Barang</th>
+                                                <th width="6%">Qty</th>
+                                                <th width="7%">Satuan</th>
                                                 <th width="12%">Harga</th>
                                                 <th width="8%">Disc (%)</th>
                                                 <th width="12%">Total</th>
-                                                <th width="10%">Aksi</th>
+                                                <th width="7%">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody id="bodyItem">
@@ -460,6 +476,9 @@
 <script type="text/javascript">
     initSelect2('id_modal_add');
 
+    document.getElementById('company').addEventListener('mousedown', function(e) {
+        e.preventDefault();
+    });
 
     var counter = 0;
     var ArrayProyek = [];
@@ -467,13 +486,15 @@
     var textField = "";
     var placeholder = [];
     var currentRowId = null;
+    var ArraySatuan = [];
 
     function tambahBarisUtama() {
 
         counter++;
 
         ArrayProyek = <?= json_encode($dataProyek) ?>;
-        //console.log(ArrayProyek);
+        ArraySatuan = <?= json_encode($dataSatuan) ?>;
+
 
         const selectHtml = `
             <select name="kode_proyek[${counter}]" 
@@ -481,6 +502,15 @@
                     class="form-control form-control-sm select2"                     
                     data-placeholder="~Pilih Proyek~">
                 <option value="">~Pilih Proyek~</option>
+            </select>
+        `;
+
+        const selectSatuan = `
+            <select name="kodesatuan[${counter}]" 
+                    id="kodesatuan_${counter}" 
+                    class="form-control form-control-sm select2"                     
+                    data-placeholder="~Pilih Satuan~">
+                <option value="">~Pilih Satuan~</option>
             </select>
         `;
 
@@ -501,6 +531,9 @@
                 <div class="keterangan-container" id="ket-${counter}"></div>
             </td>
             <td data-label="Qty"><input type="text" onkeypress="return OnlyNumber(event)" id="qty_${counter}" name="qty[${counter}]" class="form-control form-control-sm hitung text-right" value="1.00" min="1" ></td>
+            <td data-label="Kode Satuan">
+                ${selectSatuan}
+            </td>
             <td data-label="Harga"><input type="text" onkeypress="return OnlyNumber(event)" id="harga_${counter}" name="harga[${counter}]" class="form-control form-control-sm hitung text-right" value="0.00" ></td>
             <td data-label="Disc"><input type="text" onkeypress="return OnlyNumber(event)" id="disc_${counter}" name="disc[${counter}]" class="form-control form-control-sm hitung text-right" value="0.00" min="0" max="100"></td>
             <td data-label="Total"><input type="text" id="total_${counter}" name="total[${counter}]" class="form-control form-control-sm text-right" value="0.00" readonly></td>
@@ -520,6 +553,19 @@
             );
 
             $('#kodeproyek_' + counter).val('').trigger('change');
+
+
+            generateCombo(
+                ArraySatuan,
+                'kodesatuan_' + counter,
+                'kodesatuan',
+                'namasatuan',
+                ['', '~Pilih Satuan~']
+            );
+
+            $('#satuan_' + counter).val('').trigger('change');
+
+
         }, 100);
 
     }
@@ -543,6 +589,10 @@
     }
 
     $(document).ready(function() {
+
+
+
+
         if ($('#id_modal_add').length && $('#bodyItem tr').length === 0) {
             tambahBarisUtama();
         }
@@ -773,6 +823,8 @@
         //$('#pembayaran').focus();
     });
 
+
+
     $(document).on('change', '#tglpesan', function() {
         $('#tglkrm').focus();
 
@@ -828,7 +880,7 @@
 
 
     $(document).on('change', '#tglkrm', function() {
-        $('#tgl_noreff').focus();
+        $('#nomr').focus();
     });
 
     $(document).on('change', '#tgl_noreff', function() {
@@ -897,34 +949,24 @@
 
         var company = $('#company').val();
 
-        url = '<?php echo site_url('trans_purchaseorder/get_po_number') ?>';
-        data = {
-            company: company
-        };
-        pesan = 'function get_po_number gagal... 😢';
-        dataok = multi_ajax_proses(url, data, pesan);
-
-        if (dataok.msg != "Ya") {
-            alert(dataok.pesan);
-            return;
-        }
-
-        $('#nopo').val(dataok.nopo);
+        // alert(company);
+        // return;
 
 
-
-        if ($('#nopo').val() == "") {
-            alert('Perusahaan Belum Dipilih...');
-            return;
-        }
+        // if ($('#nopo').val() == "") {
+        //     alert('Perusahaan Belum Dipilih...');
+        //     return;
+        // }
 
         if ($('#tglpesan').val() == "") {
             alert('Tgl Pesan Tidak Boleh Kosong...');
+            $('#tglpesan').focus();
             return;
         }
 
         if ($('#tglkrm').val() == "") {
             alert('Tgl Kirim Tidak Boleh Kosong...');
+            $('#tglkrm').focus();
             return;
         }
 
@@ -935,6 +977,7 @@
 
         if ($('#tgltempo').val() == "") {
             alert('Tgl Jatuh Temp Tidak Boleh Kosong...');
+            $('#tgltempo').focus();
             return;
         }
 
@@ -953,6 +996,19 @@
             return;
         }
 
+        url = '<?php echo site_url('trans_purchaseorder/get_po_number') ?>';
+        data = {
+            company: company
+        };
+        pesan = 'function get_po_number gagal... 😢';
+        dataok = multi_ajax_proses(url, data, pesan);
+
+        if (dataok.msg != "Ya") {
+            alert(dataok.pesan);
+            return;
+        }
+
+        $('#nopo').val(dataok.nopo);
 
 
         var dataPost = $('#formadd').serialize();
@@ -993,6 +1049,13 @@
             // Cek Item Barang
             const itemBarang = $(`#item_barang_${counter}`).val();
             if (!itemBarang || itemBarang.trim() === '') {
+                isValid = false;
+            }
+
+
+            // Cek Item Barang
+            const kodesatuan = $(`#kodesatuan_${counter}`).val();
+            if (!kodesatuan || kodesatuan.trim() === '') {
                 isValid = false;
             }
         });

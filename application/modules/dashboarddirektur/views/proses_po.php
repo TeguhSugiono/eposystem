@@ -20,19 +20,61 @@
         3	Revisi PO
         4	Hold PO */
     <?php
-    $classHold = "block";
-    if ($GetDataRequest[0]['id_status_approval'] == "4") {
+    // $classHold = "block";
+    // if ($GetDataRequest[0]['id_status_approval'] == "4") {
+    //     $classHold = "none";
+    // }
+
+    // $classAccept = "block";
+    // $classReject = "block";
+    // if ($GetDataRequest[0]['acc_director'] == "Y" || $GetDataRequest[0]['acc_director'] == "R") {
+    //     $classAccept = "none";
+    //     $classReject = "none";
+    //     $classHold = "none";
+    // }
+    // if ($GetDataRequest[0]['acc_director'] == "H") {
+    //     $classHold = "none";
+    // }
+
+
+
+    // Inisialisasi default
+    $classHold     = "block";
+    $classAccept   = "block";
+    $classReject   = "block";
+    $classCancelPO = "none";     // default disembunyikan
+
+    $accDirector = $GetDataRequest[0]['acc_director'] ?? '';
+    $accManager  = $GetDataRequest[0]['acc_manager']  ?? '';
+    $statusApproval = $GetDataRequest[0]['id_status_approval'] ?? '';
+
+    // ==================== LOGIC UTAMA ====================
+
+    // 1. Jika keduanya CANCEL ("C") → sembunyikan SEMUA tombol
+    if ($accDirector == "C" && $accManager == "C") {
+        $classHold     = "none";
+        $classAccept   = "none";
+        $classReject   = "none";
+        $classCancelPO = "none";
+    }
+    // 2. Jika keduanya APPROVE ("Y") → tampilkan hanya tombol Cancel PO
+    elseif ($accDirector == "Y" && $accManager == "Y") {
+        $classHold     = "none";
+        $classAccept   = "none";
+        $classReject   = "none";
+        $classCancelPO = "block";
+    }
+    // 3. Logic lama (Director sudah final atau Hold)
+    elseif ($accDirector == "Y" || $accDirector == "R") {
+        $classAccept = "none";
+        $classReject = "none";
+        $classHold   = "none";
+    } elseif ($accDirector == "H") {
         $classHold = "none";
     }
 
-    $classAccept = "block";
-    $classReject = "block";
-    if ($GetDataRequest[0]['acc_director'] == "Y" || $GetDataRequest[0]['acc_director'] == "R") {
-        $classAccept = "none";
-        $classReject = "none";
-        $classHold = "none";
-    }
-    if ($GetDataRequest[0]['acc_director'] == "H") {
+    // 4. Jika status approval = 4 → sembunyikan tombol Hold
+    if ($statusApproval == "4") {
         $classHold = "none";
     }
     ?>
@@ -127,6 +169,7 @@
                                     <th>No</th>
                                     <th>Nama Barang</th>
                                     <th>Qty</th>
+                                    <th>Satuan</th>
                                     <th>Harga</th>
                                     <th>Discount</th>
                                     <th>Total</th>
@@ -153,6 +196,7 @@
             <button class="btn btn-primary" onclick="accept()" style="display: <?= $classAccept; ?>;">Accept</button>
             <button class="btn btn-primary" onclick="hold()" style="display: <?= $classHold; ?>;">Hold</button>
             <button class="btn btn-primary" onclick="reject()" style="display: <?= $classReject; ?>;">Reject</button>
+            <button class="btn btn-danger" onclick="cancelpo()" style="display: <?= $classCancelPO; ?>;">Cancel PO</button>
             <button class="btn btn-secondary" onclick="closeModal('id_modal_add')">Close</button>
         </div>
     </div>
@@ -248,6 +292,10 @@
                 {
                     "data": "qtymsk",
                     "className": "text-right"
+                },
+                {
+                    "data": "satuanbarang",
+                    "className": "text-center"
                 },
                 {
                     "data": null,
@@ -368,6 +416,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td class="text-right"><strong>Subtotal</strong></td>
                         <td class="text-right" style="${addclass1}"><strong>${formatNumberSeparator(parseFloat(HeadSubtotal))}</strong></td>
                     </tr>`;
@@ -384,6 +433,7 @@
 
                 subtotalRow = `
                     <tr class="subtotal-row">
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -413,6 +463,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td class="text-right"><strong>PPN</strong></td>
                         <td class="text-right" style="${addclass3}"><strong>${formatNumberSeparator(parseFloat(hitungppn))}</strong></td>
                     </tr>`;
@@ -428,6 +479,7 @@
 
                 subtotalRow = `
                     <tr class="subtotal-row">
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -533,6 +585,36 @@
             alert(dataok.pesan);
             return false;
         }
+        alert(dataok.pesan);
+        closeModal('id_modal_add');
+        tblrequestpo.ajax.reload(null, false);
+    }
+
+    function cancelpo() {
+        var ponumber = "<?= $GetDataHeader[0]['nopo']; ?>";
+        var jawab = confirm(
+            "Apakah Anda Yakin Ingin CANCEL PO?\n\n" +
+            "No PO : " + ponumber
+        );
+
+        if (jawab === true) {
+            url = '<?php echo site_url('dashboarddirektur/proses_cancel_direktur') ?>';
+            data = {
+                id_pesan_det: id_pesan_det,
+                id_request_det: id_request_det
+            };
+            pesan = 'function cancel po gagal... 😢';
+            dataok = multi_ajax_proses(url, data, pesan);
+
+            if (dataok.msg != 'Ya') {
+                alert(dataok.pesan);
+                return false;
+            }
+
+        } else {
+            return false;
+        }
+
         alert(dataok.pesan);
         closeModal('id_modal_add');
         tblrequestpo.ajax.reload(null, false);

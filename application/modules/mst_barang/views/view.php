@@ -29,7 +29,6 @@
                             <th>Item Barang</th>
                             <th>Merk</th>
                             <th>Type</th>
-                            <th>Satuan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,9 +114,6 @@ class="btn btn-sm btn-primary" title="Hapus">
                 },
                 {
                     "data": "type"
-                },
-                {
-                    "data": "satuan"
                 }
 
 

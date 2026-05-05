@@ -23,7 +23,6 @@
                                             <th>Item Barang</th>
                                             <th>Merk</th>
                                             <th>Type</th>
-                                            <th>Satuan</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -109,9 +108,6 @@
                 },
                 {
                     "data": "type"
-                },
-                {
-                    "data": "satuan"
                 }
 
 

@@ -368,13 +368,15 @@
 
                         if (row.acc_manager == "Y") {
                             //return ` <i class="fa fa-check" title="Accept"></i>`;
-                            return "Approve";
+                            return "Approved";
                         } else if (row.acc_manager == "R") {
                             //return '<i class="fa fa-window-close" title="Reject"></i>';
-                            return "Reject";
+                            return "Rejected";
                         } else if (row.acc_manager == "H") {
                             //return '<i class="fa fa-hand-paper" title="Hold"></i>';
                             return "Hold";
+                        } else if (row.acc_manager == "C") {
+                            return "Canceled";
                         }
 
                         return row.acc_manager;
@@ -419,9 +421,9 @@
                                 </span>
                             `;
                         } else if (row.acc_director == "Y") {
-                            setAccDirector = "Approve";
+                            setAccDirector = "Approved";
                         } else if (row.acc_director == "R") {
-                            setAccDirector = "Reject";
+                            setAccDirector = "Rejected";
                         } else if (row.acc_director == "H") {
                             //setAccDirector = "Hold";
                             setAccDirector = `
@@ -430,6 +432,8 @@
                                     <img src="${spinner}">
                                 </span>
                             `;
+                        } else if (row.acc_director == "C") {
+                            return "Canceled";
                         }
 
                         return `<div class="acc-director-cell" data-id="${row.id_request}">${setAccDirector}</div>`;
@@ -566,9 +570,9 @@
                             </span>
                         `;
                     } else if (item.acc_director == "Y") {
-                        html = "Approve";
+                        html = "Approved";
                     } else if (item.acc_director == "R") {
-                        html = "Reject";
+                        html = "Rejected";
                     } else if (item.acc_director == "H") {
                         //html = "Hold";
                         html = `

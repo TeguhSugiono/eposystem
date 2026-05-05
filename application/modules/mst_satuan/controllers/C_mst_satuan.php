@@ -28,7 +28,7 @@ class C_mst_satuan extends CI_Controller
 
         $ParamArray = array(
             'Table' => 'satuanbarang',
-            'WhereData' => array('flagdelete' => 0),
+            'WhereData' => array('flagdelete' => 0, 'kode_divisi' => $this->session->userdata('PO_kodedivisi')),
             'OrderBy' => 'created_on desc'
         );
 
@@ -53,7 +53,8 @@ class C_mst_satuan extends CI_Controller
         $ArraySave = array(
             'namasatuan' => $namasatuan,
             'created_on' => tanggal_sekarang(),
-            'created_by' => $this->session->userdata('PO_username')
+            'created_by' => $this->session->userdata('PO_username'),
+            'kode_divisi' => $this->session->userdata('PO_kodedivisi'),
         );
 
 

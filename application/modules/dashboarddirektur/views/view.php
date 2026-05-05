@@ -373,13 +373,16 @@
 
                         if (row.acc_manager == "Y") {
                             //return ` <i class="fa fa-check" title="Accept"></i>`;
-                            return "Approve By " + row.acc_name_manager;
+                            return "Approved By " + row.acc_name_manager;
                         } else if (row.acc_manager == "R") {
                             //return '<i class="fa fa-window-close" title="Reject"></i>';
-                            return "Reject By " + row.acc_name_manager;
+                            return "Rejected By " + row.acc_name_manager;
                         } else if (row.acc_manager == "H") {
                             //return '<i class="fa fa-hand-paper" title="Hold"></i>';
                             return "Hold By " + row.acc_name_manager;
+                        } else if (row.acc_manager == "C") {
+                            //return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                            return "Canceled";
                         }
 
                         return row.acc_manager;
@@ -398,13 +401,16 @@
 
                         if (row.acc_director == "Y") {
                             //return ` <i class="fa fa-check" title="Accept"></i>`;
-                            return "Approve";
+                            return "Approved";
                         } else if (row.acc_director == "R") {
                             //return '<i class="fa fa-window-close" title="Reject"></i>';
-                            return "Reject";
+                            return "Rejected";
                         } else if (row.acc_director == "H") {
                             //return '<i class="fa fa-hand-paper" title="Hold"></i>';
                             return "Hold";
+                        } else if (row.acc_director == "C") {
+                            //return '<i class="fa fa-hand-paper" title="Hold"></i>';
+                            return "Canceled";
                         }
 
                         return row.acc_director;

@@ -132,6 +132,7 @@
                                 <th>No</th>
                                 <th>Nama Barang</th>
                                 <th>Qty</th>
+                                <th>Satuan</th>
                                 <th>Harga</th>
                                 <th>Discount</th>
                                 <th>Total</th>
@@ -466,7 +467,7 @@
 
                 ,
                 {
-                    "targets": [2],
+                    "targets": [2, 15],
                     "visible": false
                 }
 
@@ -521,6 +522,10 @@
                 {
                     "data": "qtymsk",
                     "className": "text-right"
+                },
+                {
+                    "data": "satuanbarang",
+                    "className": "text-center"
                 },
                 {
                     "data": null,
